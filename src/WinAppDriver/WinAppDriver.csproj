@@ -60,8 +60,12 @@
       <HintPath>.\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="UIAutomationClient" />
-    <Reference Include="UIAutomationTypes" />
+    <Reference Include="UIAutomationClient">
+      <HintPath>.\UIAutomationClient.dll</HintPath>
+    </Reference>
+    <Reference Include="UIAutomationTypes">
+      <HintPath>.\UIAutomationTypes.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Capabilities.cs" />
@@ -104,12 +108,16 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>signtool.exe sign /f $(ProjectDir)WinAppDriver.pfx /p WinAppDriver $(TargetPath)
+    <PostBuildEvent Condition=" '$(OS)' == 'Unix' ">
+echo "WinAppDriver" | signcode -spc $(ProjectDir)WinAppDriver.spc -v $(ProjectDir)WinAppDriver.pvk -a sha1 -$ commercial $(TargetPath)
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Unix' ">
+signtool.exe sign /f $(ProjectDir)WinAppDriver.pfx /p WinAppDriver $(TargetPath)
 
 md "c:\Program Files (x86)\WinAppDriver"
 copy /y $(TargetPath) "c:\Program Files (x86)\WinAppDriver"
 copy /y $(ProjectDir)Newtonsoft.Json.dll "c:\Program Files (x86)\WinAppDriver"
-</PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
