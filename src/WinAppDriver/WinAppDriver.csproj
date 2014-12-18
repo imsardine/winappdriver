@@ -1,0 +1,25 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <AssemblyName>WinAppDriver</AssemblyName>
+    <OutputPath>bin\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="*.cs" />
+    <Reference Include="Newtonsoft.Json.dll" />
+    <Reference Include="UIAutomationClient.dll" />
+    <Reference Include="UIAutomationTypes.dll" />
+  </ItemGroup>
+  <Target Name="Build">
+    <MakeDir Directories="$(OutputPath)" Condition="!Exists('$(OutputPath)')" />
+    <Csc Sources="@(Compile)"
+        References="@(Reference)"
+        OutputAssembly="$(OutputPath)$(AssemblyName).exe"
+        Win32Manifest="WinAppDriver.exe.manifest"
+        EmitDebugInformation="true" />
+    <Exec Command="signtool.exe sign /f WinAppDriver.pfx /p WinAppDriver $(OutputPath)$(AssemblyName).exe" />
+  </Target>
+  <Target Name="Clean" >
+    <Delete Files="$(OutputPath)$(AssemblyName).exe" />
+  </Target>
+  <Target Name="Rebuild" DependsOnTargets="Clean;Build" />
+</Project>
