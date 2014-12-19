@@ -119,6 +119,15 @@ copy /y $(TargetPath) "c:\Program Files (x86)\WinAppDriver"
 copy /y $(ProjectDir)Newtonsoft.Json.dll "c:\Program Files (x86)\WinAppDriver"
     </PostBuildEvent>
   </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+signtool.exe sign /f "$(ProjectDir)WinAppDriver.pfx" /p WinAppDriver "$(TargetPath)"
+
+md "c:\Program Files (x86)\WinAppDriver"
+copy /y "$(TargetPath)" "c:\Program Files (x86)\WinAppDriver"
+copy /y "$(ProjectDir)Newtonsoft.Json.dll" "c:\Program Files (x86)\WinAppDriver"
+</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
