@@ -92,7 +92,10 @@ namespace WinAppDriver {
         private void WriteResponse(HttpListenerResponse response, HttpStatusCode httpStatus,
             string contentType, string body)
         {
-            Console.WriteLine("Response (0):\n{1}", httpStatus, body, contentType);
+            string bodyHead = body.Length > 200 ? body.Substring(0, 200) : body;
+            Console.WriteLine("Response (Status: {0}, ContentType: {1}):\n{2}",
+                              httpStatus, contentType, bodyHead);
+
             response.StatusCode = (int)httpStatus;
             response.ContentType = contentType;
             response.ContentEncoding = Encoding.UTF8;

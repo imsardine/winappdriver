@@ -15,6 +15,7 @@ namespace WinAppDriver {
             manager.AddHandler(new NewSessionHandler(sessionManager));
             manager.AddHandler(new FindElementHandler());
             manager.AddHandler(new ClickElementHandler());
+            manager.AddHandler(new ScreenshotHandler());
             manager.AddHandler(new SetElementValueHandler());
 
             return manager;

@@ -60,6 +60,8 @@
       <HintPath>.\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="UIAutomationClient">
       <HintPath>.\UIAutomationClient.dll</HintPath>
     </Reference>
@@ -79,6 +81,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="RequestManager.cs" />
     <Compile Include="RouteAttribute.cs" />
+    <Compile Include="ScreenshotHandler.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Session.cs" />
     <Compile Include="SessionManager.cs" />
