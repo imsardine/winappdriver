@@ -34,18 +34,20 @@ namespace WinAppDriver {
             return null; // TODO throw exception (programming error)
         }
 
-        public object Handle(string method, string path, string body) {
+        public object Handle(string method, string path, string body, out Session session) {
+            session = null;
             Dictionary<string, string> urlParams = null;
+
             foreach (var endpoint in endpoints[method]) {
                 if (endpoint.IsMatch(method, path, out urlParams)) {
                     var handler = endpoint.Handler;
                     Console.WriteLine("A corresponding endpoint found: {0}", handler.GetType().FullName);
 
-                    Session session = null;
-                    if (urlParams.ContainsKey("sessionId"))
-                        session = sessionManager[urlParams["sessionId"]];
+                    if (urlParams.ContainsKey("sessionId")) {
+                        session = sessionManager[urlParams["sessionId"]]; // TODO invalid session?
+                    }
 
-                    return endpoint.Handler.Handle(urlParams, body, session);
+                    return endpoint.Handler.Handle(urlParams, body, ref session);
                 }
             }
 

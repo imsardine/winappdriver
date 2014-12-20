@@ -4,7 +4,7 @@ namespace WinAppDriver {
 
     interface IHandler {
 
-        object Handle(Dictionary<string, string> urlParams, string json, Session session);
+        object Handle(Dictionary<string, string> urlParams, string json, ref Session session);
 
     }
 

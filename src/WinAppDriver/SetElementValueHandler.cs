@@ -8,7 +8,7 @@ namespace WinAppDriver {
     [Route("POST", "/session/:sessionId/element/:id/value")]
     class SetElementValueHandler : IHandler {
 
-        public object Handle(Dictionary<string, string> urlParams, string body, Session session) {
+        public object Handle(Dictionary<string, string> urlParams, string body, ref Session session) {
             var element = session.GetUIElement(int.Parse(urlParams["id"]));
             var request = JsonConvert.DeserializeObject<ElementValueRequest>(body);
             
@@ -19,11 +19,7 @@ namespace WinAppDriver {
             
             ((ValuePattern)element.GetCurrentPattern(ValuePattern.Pattern)).SetValue(value);
 
-            return new Dictionary<string, object> {
-                { "sessionId", session.ID },
-                { "status", 0 },
-                { "value",  null }
-            };        
+            return null;
         }
 
         private class ElementValueRequest {

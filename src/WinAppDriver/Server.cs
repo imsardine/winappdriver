@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Text;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace WinAppDriver {
@@ -23,29 +25,83 @@ namespace WinAppDriver {
                 var context = listener.GetContext();
                 var request = context.Request;
                 var response = context.Response;
-                object result = HandleRequest(request);
-
-                string json = JsonConvert.SerializeObject(result);
-                byte[] buffer = System.Text.Encoding.UTF8.GetBytes(json);
-                response.ContentLength64 = buffer.Length;
-                response.ContentType = "application/json";
-                var output = response.OutputStream;
-                output.Write(buffer, 0, buffer.Length);
-                output.Close();
+                HandleRequest(request, response);
             }
         }
 
-        private object HandleRequest(HttpListenerRequest request) {
+        private void HandleRequest(HttpListenerRequest request, HttpListenerResponse response) {
             string method = request.HttpMethod;
             string path = request.Url.AbsolutePath;
             string body = new StreamReader(request.InputStream, request.ContentEncoding).ReadToEnd();
-            Console.WriteLine("A request received. {0} {1}\n{2}", method, path, body);
+            Console.WriteLine("Request: {0} {1}\n{2}", method, path, body);
 
-            // TODO put return object(s) into an envelop
-            // TODO cache exceptions here, convert into error code
-            return requestManager.Handle(method, path, body);
+            Session session = null;
+            try {
+                object result = requestManager.Handle(method, path, body, out session);
+                ResponseResult(method, path, result, session, response);
+            } catch (Exception ex) {
+                ResponseException(method, path, ex, session, response);
+            }
         }
 
+        private void ResponseResult(string method, string path, object result,
+            Session session, HttpListenerResponse response)
+        {
+            var message = new Dictionary<string, object> {
+                { "sessionId", (session != null ? session.ID : null) },
+                { "status", 0 },
+                { "value", result }
+            };
+
+            string json = JsonConvert.SerializeObject(message);
+            WriteResponse(response, HttpStatusCode.OK, "application/json", json);
+        }
+
+        private void ResponseException(string method, string path, Exception ex,
+            Session session, HttpListenerResponse response)
+        {
+            string body = null;
+            var httpStatus = HttpStatusCode.InternalServerError;
+            string contentType = "application/json";
+
+            if (ex is FailedCommandException)
+            {
+                var message = new Dictionary<string, object>
+                {
+                    { "sessionId", (session != null ? session.ID : null) },
+                    { "status", ((FailedCommandException)ex).Code },
+                    { "value", new Dictionary<string, object>
+                        {
+                            { "message", ex.Message } // TODO stack trace
+                        }
+                    }
+                };
+
+                body = JsonConvert.SerializeObject(message);
+            }
+            else
+            {
+                httpStatus = HttpStatusCode.BadRequest;
+                contentType = "text/plain";
+                body = ex.ToString();
+            }
+
+            WriteResponse(response, httpStatus, contentType, body);
+        }
+
+        private void WriteResponse(HttpListenerResponse response, HttpStatusCode httpStatus,
+            string contentType, string body)
+        {
+            Console.WriteLine("Response (0):\n{1}", httpStatus, body, contentType);
+            response.StatusCode = (int)httpStatus;
+            response.ContentType = contentType;
+            response.ContentEncoding = Encoding.UTF8;
+            byte[] buffer = System.Text.Encoding.UTF8.GetBytes(body);
+            response.ContentLength64 = buffer.Length;
+            var output = response.OutputStream;
+            output.Write(buffer, 0, buffer.Length);
+            output.Close();
+        }
     }
 
 }

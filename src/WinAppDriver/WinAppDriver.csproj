@@ -71,9 +71,11 @@
     <Compile Include="Capabilities.cs" />
     <Compile Include="ClickElementHandler.cs" />
     <Compile Include="EndPoint.cs" />
+    <Compile Include="FailedCommandException.cs" />
     <Compile Include="FindElementHandler.cs" />
     <Compile Include="IHandler.cs" />
     <Compile Include="NewSessionHandler.cs" />
+    <Compile Include="NoSuchElementException.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="RequestManager.cs" />
     <Compile Include="RouteAttribute.cs" />

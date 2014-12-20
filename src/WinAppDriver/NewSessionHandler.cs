@@ -15,7 +15,7 @@ namespace WinAppDriver {
             this.sessionManager = sessionManager;
         }
 
-        public object Handle(Dictionary<string, string> urlParams, string body, Session session) {
+        public object Handle(Dictionary<string, string> urlParams, string body, ref Session session) {
             NewSessionRequest request = JsonConvert.DeserializeObject<NewSessionRequest>(body);
             foreach (var kvp in request.DesiredCapabilities)
                 Console.WriteLine("{0} = {1} ({2})", kvp.Key, kvp.Value, kvp.Value.GetType());
@@ -28,10 +28,7 @@ namespace WinAppDriver {
             Process.Start("ActivateStoreApp", caps.AppUserModelId);
             session = sessionManager.CreateSession(caps);
 
-            return new Dictionary<string, object> {
-                { "sessionId", session.ID },
-                { "status", 0 }
-            };
+            return null; // TODO capabilities
         }
 
         private class NewSessionRequest {

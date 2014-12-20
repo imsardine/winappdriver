@@ -7,7 +7,7 @@ namespace WinAppDriver {
     [Route("POST", "/session/:sessionId/element")]
     class FindElementHandler : IHandler {
 
-        public object Handle(Dictionary<string, string> urlParams, string body, Session session) {
+        public object Handle(Dictionary<string, string> urlParams, string body, ref Session session) {
             FindElementRequest request = JsonConvert.DeserializeObject<FindElementRequest>(body);
 
             // TODO remove hard-coded windows title
@@ -22,13 +22,12 @@ namespace WinAppDriver {
 
             var element = app.FindFirst(TreeScope.Descendants, new PropertyCondition(
                 property, request.Locator));
-            int id = session.AddUIElement(element);
+            if (element == null) {
+                throw new NoSuchElementException(request.Strategy, request.Locator);
+            }
 
-            return new Dictionary<string, object> {
-                { "sessionId", session.ID },
-                { "status", 0 },
-                { "value",  new Dictionary<string, int> { { "ELEMENT", id } } }
-            };        
+            int id = session.AddUIElement(element);
+            return new Dictionary<string, int> { { "ELEMENT", id } };
         }
 
         private class FindElementRequest {
