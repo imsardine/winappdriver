@@ -2,6 +2,7 @@ using System;
 
 namespace WinAppDriver {
 
+    [System.AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     class RouteAttribute : Attribute {
 
         public RouteAttribute(string method, string pattern) {
