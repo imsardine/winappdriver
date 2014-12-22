@@ -28,7 +28,11 @@ namespace WinAppDriver {
             Process.Start("ActivateStoreApp", caps.AppUserModelId);
             session = sessionManager.CreateSession(caps);
 
-            return null; // TODO capabilities
+            // TODO formal capabilities
+            return new Dictionary<string, string>
+            {
+                { "platformName", "WinApp" }
+            };
         }
 
         private class NewSessionRequest {
