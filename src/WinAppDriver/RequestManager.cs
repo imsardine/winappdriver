@@ -20,18 +20,24 @@ namespace WinAppDriver {
 
         public void AddHandler(IHandler handler) {
             // TODO register all handlers automatically, with the help of reflection
-            var route = GetRoute(handler);
-            endpoints[route.Method].Add(new EndPoint(route.Method, route.Pattern, handler));
+            foreach (var route in GetRoutes(handler))
+            {
+                endpoints[route.Method].Add(new EndPoint(route.Method, route.Pattern, handler));
+            }
         }
 
-        private RouteAttribute GetRoute(object handler) {
+        private List<RouteAttribute> GetRoutes(object handler) {
+            var routes = new List<RouteAttribute>();
+
             Attribute[] attributes = Attribute.GetCustomAttributes(handler.GetType());
             foreach (var attr in attributes) {
                 if (attr is RouteAttribute)
-                    return (RouteAttribute)attr;
+                {
+                    routes.Add((RouteAttribute)attr);
+                }
             }
 
-            return null; // TODO throw exception (programming error)
+            return routes; // TODO throw exception (programming error)
         }
 
         public object Handle(string method, string path, string body, out Session session) {
