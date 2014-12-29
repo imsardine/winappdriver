@@ -1,14 +1,11 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Windows.Automation;
-
-namespace WinAppDriver
+﻿namespace WinAppDriver
 {
+    using System.Collections.Generic;
+    using System.Windows.Automation;
 
     [Route("GET", "/session/:sessionId/element/:id/text")]
-    class GetElementTextHandler : IHandler
+    internal class GetElementTextHandler : IHandler
     {
-
         public object Handle(Dictionary<string, string> urlParams, string body, ref Session session)
         {
             var element = session.GetUIElement(int.Parse(urlParams["id"]));
@@ -18,6 +15,7 @@ namespace WinAppDriver
             {
                 return ((TextPattern)objPattern).DocumentRange.GetText(-1);
             }
+
             return element.Current.Name;
         }
     }

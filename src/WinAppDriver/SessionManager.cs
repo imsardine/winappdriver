@@ -1,28 +1,28 @@
-using System;
-using System.Collections.Generic;
+namespace WinAppDriver
+{
+    using System;
+    using System.Collections.Generic;
 
-namespace WinAppDriver {
-
-    class SessionManager {
-
+    internal class SessionManager
+    {
         private Dictionary<string, Session> sessions;
 
-        public SessionManager() {
-            sessions = new Dictionary<string, Session>();
+        public SessionManager()
+        {
+            this.sessions = new Dictionary<string, Session>();
         }
-        
-        public Session CreateSession(Capabilities capabilities) {
+
+        public Session this[string id]
+        {
+            get { return this.sessions[id]; }
+        }
+
+        public Session CreateSession(Capabilities capabilities)
+        {
             var id = Guid.NewGuid().ToString();
             var session = new Session(id, capabilities);
-            sessions[id] = session;
+            this.sessions[id] = session;
             return session;
         }
-        
-        public Session this[string id] {
-            get { return sessions[id]; }
-        }
-        
     }
-
 }
-

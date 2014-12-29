@@ -1,12 +1,9 @@
-using System.Collections.Generic;
+namespace WinAppDriver
+{
+    using System.Collections.Generic;
 
-namespace WinAppDriver {
-
-    interface IHandler {
-
+    internal interface IHandler
+    {
         object Handle(Dictionary<string, string> urlParams, string json, ref Session session);
-
     }
-
 }
-
