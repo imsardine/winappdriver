@@ -17,6 +17,7 @@ namespace WinAppDriver {
             manager.AddHandler(new ClickElementHandler());
             manager.AddHandler(new ScreenshotHandler());
             manager.AddHandler(new SetElementValueHandler());
+            manager.AddHandler(new FindElementsHandler());
 
             return manager;
         }
