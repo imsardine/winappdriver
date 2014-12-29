@@ -29,13 +29,12 @@ namespace WinAppDriver
             var elements = root.FindAll(TreeScope.Descendants, new PropertyCondition(
                 property, request.locator));
   
-            var returnList = new List<Dictionary<string, string>>();
-            foreach (AutomationElement element in elements) {
+            var list = new List<Dictionary<string, string>>();
+            foreach(AutomationElement element in elements) {
                 int id = session.AddUIElement(element);
-                var newDictionary = new Dictionary<string, string> {{ "ELEMENT", id.ToString() }};
-                returnList.Add(newDictionary);
+                list.Add(new Dictionary<string, string> { {"ELEMENT", id.ToString()} });
             }
-            return returnList;
+            return list;
         }
 
         private class FindElementRequest {
