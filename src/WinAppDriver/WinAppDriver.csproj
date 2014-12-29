@@ -76,6 +76,7 @@
     <Compile Include="FailedCommandException.cs" />
     <Compile Include="FindElementHandler.cs" />
     <Compile Include="FindElementsHandler.cs" />
+    <Compile Include="GetElementTextHandler.cs" />
     <Compile Include="IHandler.cs" />
     <Compile Include="NewSessionHandler.cs" />
     <Compile Include="NoSuchElementException.cs" />
