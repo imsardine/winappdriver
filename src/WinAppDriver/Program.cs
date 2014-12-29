@@ -12,12 +12,13 @@ namespace WinAppDriver {
 
         private static RequestManager InitRequestManager(SessionManager sessionManager) {
             var manager = new RequestManager(sessionManager);
-            manager.AddHandler(new NewSessionHandler(sessionManager));
-            manager.AddHandler(new FindElementHandler());
             manager.AddHandler(new ClickElementHandler());
+            manager.AddHandler(new FindElementHandler());
+            manager.AddHandler(new FindElementsHandler());
+            manager.AddHandler(new GetElementTextHandler());
+            manager.AddHandler(new NewSessionHandler(sessionManager));
             manager.AddHandler(new ScreenshotHandler());
             manager.AddHandler(new SetElementValueHandler());
-            manager.AddHandler(new GetElementTextHandler());
 
             return manager;
         }
