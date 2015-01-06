@@ -78,6 +78,7 @@
     <Compile Include="DeleteSessionHandler.cs" />
     <Compile Include="FindElementHandler.cs" />
     <Compile Include="FindElementsHandler.cs" />
+    <Compile Include="IApplication.cs" />
     <Compile Include="IHandler.cs" />
     <Compile Include="NewSessionHandler.cs" />
     <Compile Include="NoSuchElementException.cs" />
@@ -89,6 +90,8 @@
     <Compile Include="Session.cs" />
     <Compile Include="SessionManager.cs" />
     <Compile Include="SetElementValueHandler.cs" />
+    <Compile Include="StoreApplication.cs" />
+    <Compile Include="WinAppDriverException.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="WinAppDriver.exe.manifest" />

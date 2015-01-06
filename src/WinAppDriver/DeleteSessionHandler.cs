@@ -27,12 +27,12 @@ namespace WinAppDriver
         }
 
         public object Handle(Dictionary<string, string> urlParams, string body, ref Session session) {
-            var appUserModelId = session.Capabilities.AppUserModelId;
-            var app = session.Capabilities.App;
+            var app = (IStoreApplication)session.Application;
 
             // Exit Application 
-            Process[] processes = Process.GetProcessesByName("KKBOX.Windows");
-            processes[0].Kill();
+            //Process[] processes = Process.GetProcessesByName("KKBOX.Windows");
+            //processes[0].Kill();
+            app.Terminate();
 
             // Remove Session from session manager
             sessionManager.DeleteSession(session.ID);
@@ -42,7 +42,7 @@ namespace WinAppDriver
             Console.WriteLine("Delete origin and copy dest to origin begin");
 
             string localAppDataLocation = Environment.ExpandEnvironmentVariables("%LOCALAPPDATA%");
-            string packageFamilyName = appUserModelId.Split(new char[] { '!' })[0];
+            string packageFamilyName = app.PackageFamilyName;
             string originSettings = localAppDataLocation + "\\Packages\\" + packageFamilyName + @"\Settings\";
             string destSettings = localAppDataLocation + "\\WinAppDriver\\InitialStates\\" + packageFamilyName + @"\Settings\";
             string originLocalState = localAppDataLocation + "\\Packages\\" + packageFamilyName + @"\LocalState\";

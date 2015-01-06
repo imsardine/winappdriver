@@ -42,8 +42,9 @@ namespace WinAppDriver {
                 DirectoryCopyHelper.Copy(originLocalState, destLocalState, true, true);
             }
 
-            Process.Start("ActivateStoreApp", caps.AppUserModelId);
-            session = sessionManager.CreateSession(caps);
+            var app = new StoreApplication(caps.AppUserModelId);
+            app.Activate();
+            session = sessionManager.CreateSession(app, caps);
 
             return null; // TODO capabilities
         }
@@ -61,4 +62,3 @@ namespace WinAppDriver {
     }
 
 }
-
