@@ -11,6 +11,7 @@
     <AssemblyName>WinAppDriver</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -23,7 +24,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -72,8 +72,10 @@
   <ItemGroup>
     <Compile Include="Capabilities.cs" />
     <Compile Include="ClickElementHandler.cs" />
+    <Compile Include="DirectoryCopyHelper.cs" />
     <Compile Include="EndPoint.cs" />
     <Compile Include="FailedCommandException.cs" />
+    <Compile Include="DeleteSessionHandler.cs" />
     <Compile Include="FindElementHandler.cs" />
     <Compile Include="FindElementsHandler.cs" />
     <Compile Include="IHandler.cs" />

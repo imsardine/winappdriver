@@ -21,6 +21,10 @@ namespace WinAppDriver {
         public Session this[string id] {
             get { return sessions[id]; }
         }
+
+        public void DeleteSession(string id) {
+            sessions.Remove(id);
+        }
         
     }
 
