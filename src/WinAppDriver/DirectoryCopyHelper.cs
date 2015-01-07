@@ -27,22 +27,10 @@ namespace WinAppDriver
 
                 if(Directory.Exists(destinationPath))
                 {
-                    
-                        Console.WriteLine("DCH: Directory Delete Begin");
-                        Directory.Delete(destinationPath, true);
-                        Console.WriteLine("DCH: Directory Delete Complete");
-                   
-                        //Console.WriteLine("DCH: Caught Exception");
-             
+                    Directory.Delete(destinationPath, true);
                 }
-
-                if (!Directory.Exists(destinationPath))
-                {
-                    Console.WriteLine("DCH: Directory Create Begin");
-                    Directory.CreateDirectory(destinationPath);
-                    Console.WriteLine("DCH: Directory Create Complete");
-                }
-
+                Directory.CreateDirectory(destinationPath);
+ 
                 // Copy directory security
                 if (preservePermissions)
                 {

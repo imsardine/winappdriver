@@ -26,23 +26,13 @@ namespace WinAppDriver {
                 App = (string)request.DesiredCapabilities["app"]
             };
 
-            string localAppDataLocation = Environment.ExpandEnvironmentVariables("%LOCALAPPDATA%");
-            string packageFamilyName = caps.AppUserModelId.Split(new char[] { '!' })[0];
-            string originSettings = localAppDataLocation + "\\Packages\\" + packageFamilyName + @"\Settings\";
-            string destSettings = localAppDataLocation + "\\WinAppDriver\\InitialStates\\" + packageFamilyName + @"\Settings\";
-            string originLocalState = localAppDataLocation + "\\Packages\\" + packageFamilyName + @"\LocalState\";
-            string destLocalState = localAppDataLocation + "\\WinAppDriver\\InitialStates\\" + packageFamilyName + @"\LocalState\";
-  
-            if (!Directory.Exists(destSettings))
-            {
-                DirectoryCopyHelper.Copy(originSettings, destSettings, true, true);
-            }
-            if (!Directory.Exists(destLocalState))
-            {
-                DirectoryCopyHelper.Copy(originLocalState, destLocalState, true, true);
-            }
-
             var app = new StoreApplication(caps.AppUserModelId);
+
+            if (!app.IsInstalled())
+            {
+                app.BackUp();
+            }
+  
             app.Activate();
             session = sessionManager.CreateSession(app, caps);
 

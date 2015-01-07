@@ -46,7 +46,7 @@
                         throw new WinAppDriverException(msg);
                     }
 
-                    this.packageFamilyNameCache = this.AppUserModelId.Substring(0, index - 1);
+                    this.packageFamilyNameCache = this.AppUserModelId.Substring(0, index);
                 }
 
                 return this.packageFamilyNameCache;
@@ -78,6 +78,57 @@
         public void Reset()
         {
             throw new NotImplementedException();
+        }
+
+        private string LocalAppDataPath
+        {
+            get{
+                return Environment.ExpandEnvironmentVariables("%LOCALAPPDATA%");
+            }
+        }
+
+        private string OriginLocalStatePath
+        {
+            get
+            {
+                return LocalAppDataPath + @"\Packages\" + PackageFamilyName + @"\LocalState\";
+            }
+        }
+
+        private string InitialLocalStatePath
+        {
+            get
+            {
+                return LocalAppDataPath + @"\WinAppDriver\InitialStates\" + PackageFamilyName + @"\LocalState\";
+            }
+        }
+
+        private string OriginSettingsPath
+        {
+            get
+            {
+                return LocalAppDataPath + @"\Packages\" + PackageFamilyName + @"\Settings\";
+            }
+        }
+
+        private string InitialSettingsPath
+        {
+            get
+            {
+                return LocalAppDataPath + @"\WinAppDriver\InitialStates\" + PackageFamilyName + @"\Settings\";
+            }
+        }
+
+        public void BackUp()
+        {
+            DirectoryCopyHelper.Copy(OriginSettingsPath, InitialSettingsPath, true, true);
+            DirectoryCopyHelper.Copy(OriginLocalStatePath, InitialLocalStatePath, true, true);
+        }
+
+        public void Restore()
+        {
+            DirectoryCopyHelper.Copy(InitialSettingsPath, OriginSettingsPath, true, true);
+            DirectoryCopyHelper.Copy(InitialLocalStatePath, OriginLocalStatePath, true, true);
         }
 
         [ComImport, Guid("B1AEC16F-2383-4852-B0E9-8F0B1DC66B4D")]
