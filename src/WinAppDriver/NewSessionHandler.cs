@@ -4,6 +4,7 @@ using System.Diagnostics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net;
+using System.IO;
 using System.IO.Compression;
 using System.Management.Automation;
 
@@ -28,20 +29,24 @@ namespace WinAppDriver {
                 App = (string)request.DesiredCapabilities["app"]
             };
 
-            if (caps.App.StartsWith("http"))
-            {
-                caps.App = GetAppFileFromWeb(caps.App);
-            }
-
-            Console.WriteLine("\nApp file:\n\t" + caps.App);
-
             if (caps.App.EndsWith(".zip"))
             {
+                if (caps.App.StartsWith("http"))
+                {
+                    caps.App = GetAppFileFromWeb(caps.App);
+                }
+                Console.WriteLine("\nApp file:\n\t" + caps.App);
+
                 ZipFile.ExtractToDirectory(caps.App, caps.App.Remove(caps.App.Length - 4));
                 Console.WriteLine("\nZip file extract to:\n\t" + caps.App.Remove(caps.App.Length - 4));
-            }
 
-            UninstallApp(caps.AppUserModelId.Remove(caps.AppUserModelId.Length - 4));
+                UninstallApp(caps.AppUserModelId.Remove(caps.AppUserModelId.Length - 4));
+                InstallApp(caps.App.Remove(caps.App.Length - 4));
+            }
+            else
+            {
+                throw new FailedCommandException("Your app file is \"" + caps.App + "\". App file is not a .zip file.", 13);
+            }
 
 
             Process.Start("ActivateStoreApp", caps.AppUserModelId);
@@ -83,16 +88,33 @@ namespace WinAppDriver {
             PowerShell ps = PowerShell.Create();
             ps.AddCommand("Get-AppxPackage");
             ps.AddParameter("Name", packageFamilyName.Remove(packageFamilyName.IndexOf("_")));
-            Console.WriteLine(packageFamilyName.Remove(packageFamilyName.IndexOf("_")));
             System.Collections.ObjectModel.Collection<PSObject> package = ps.Invoke();
             if (package.Count > 0)
             {
+                Console.WriteLine("\nUninstalling Windows Store App. \n");
                 string packageFullName = package[0].Members["PackageFullName"].Value.ToString();
-                Console.WriteLine("\n" + packageFullName);
                 ps = PowerShell.Create();
                 ps.AddCommand("Remove-AppxPackage");
                 ps.AddArgument(packageFullName);
                 ps.Invoke();
+            }
+        }
+
+        private void InstallApp(string fileFolder)
+        {
+            DirectoryInfo dir = new DirectoryInfo(fileFolder);
+            FileInfo[] files = dir.GetFiles("*.ps1", SearchOption.AllDirectories);
+            if (files.Length > 0)
+            {
+                Console.WriteLine("\nInstalling Windows Store App. \n");
+                string dirs = files[0].DirectoryName;
+                PowerShell ps = PowerShell.Create();
+                ps.AddScript(@"Powershell.exe -executionpolicy remotesigned -NonInteractive -File " + files[0].FullName);
+                ps.Invoke();
+            }
+            else
+            {
+                throw new FailedCommandException("Cannot find .ps1 file in \"" + fileFolder + "\".", 13);
             }
         }
 
