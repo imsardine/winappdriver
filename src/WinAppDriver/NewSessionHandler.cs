@@ -4,6 +4,7 @@ using System.Diagnostics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net;
+using System.IO.Compression;
 
 namespace WinAppDriver {
 
@@ -29,6 +30,14 @@ namespace WinAppDriver {
             if (caps.App.StartsWith("http"))
             {
                 caps.App = GetAppFileFromWeb(caps.App);
+            }
+
+            Console.WriteLine("\nApp file:\n\t" + caps.App);
+
+            if (caps.App.EndsWith(".zip"))
+            {
+                ZipFile.ExtractToDirectory(caps.App, caps.App.Remove(caps.App.Length - 4));
+                Console.WriteLine("\nZip file extract to:\n\t" + caps.App.Remove(caps.App.Length - 4));
             }
 
             Process.Start("ActivateStoreApp", caps.AppUserModelId);
