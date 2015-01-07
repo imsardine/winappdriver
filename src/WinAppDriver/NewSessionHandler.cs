@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Net;
 
 namespace WinAppDriver {
 
@@ -25,6 +26,11 @@ namespace WinAppDriver {
                 App = (string)request.DesiredCapabilities["app"]
             };
 
+            if (caps.App.StartsWith("http"))
+            {
+                caps.App = GetAppFileFromWeb(caps.App);
+            }
+
             Process.Start("ActivateStoreApp", caps.AppUserModelId);
             session = sessionManager.CreateSession(caps);
 
@@ -45,6 +51,19 @@ namespace WinAppDriver {
 
         }
 
+        private string GetAppFileFromWeb(string webResource)
+        {
+            string storeFileName = Environment.GetEnvironmentVariable("TEMP") + @"\StoreApp_" + DateTime.Now.ToString("yyyyMMddHHmmss") + webResource.Substring(webResource.LastIndexOf("."));
+            // Create a new WebClient instance.
+            WebClient myWebClient = new WebClient();
+
+            Console.WriteLine("Downloading File \"{0}\" .......\n\n", webResource);
+            // Download the Web resource and save it into temp folder.
+            myWebClient.DownloadFile(webResource, storeFileName);
+            Console.WriteLine("Successfully Downloaded File \"{0}\"", webResource);
+            Console.WriteLine("\nDownloaded file saved in the following file system folder:\n\t" + storeFileName);
+            return storeFileName;
+        }
     }
 
 }
