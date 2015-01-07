@@ -27,7 +27,7 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <NuGetPackageImportStamp>ac483f38</NuGetPackageImportStamp>
-	<StyleCopTreatErrorsAsWarnings>false</StyleCopTreatErrorsAsWarnings>
+    <StyleCopTreatErrorsAsWarnings>false</StyleCopTreatErrorsAsWarnings>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -64,10 +64,12 @@
     <Reference Include="StyleCop, Version=4.7.1000.0, Culture=neutral, PublicKeyToken=f904653c63bc2738, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\StyleCop.4.7.49.0\lib\net35\StyleCop.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="StyleCop.CSharp, Version=4.7.1000.0, Culture=neutral, PublicKeyToken=f904653c63bc2738, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\StyleCop.4.7.49.0\lib\net35\StyleCop.CSharp.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
@@ -126,24 +128,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent Condition=" '$(OS)' == 'Unix' ">
-echo "WinAppDriver" | signcode -spc $(ProjectDir)WinAppDriver.spc -v $(ProjectDir)WinAppDriver.pvk -a sha1 -$ commercial $(TargetPath)
-    </PostBuildEvent>
-    <PostBuildEvent Condition=" '$(OS)' != 'Unix' ">
-signtool.exe sign /f $(ProjectDir)WinAppDriver.pfx /p WinAppDriver $(TargetPath)
-
-md "c:\Program Files (x86)\WinAppDriver"
-copy /y $(TargetPath) "c:\Program Files (x86)\WinAppDriver"
-copy /y $(ProjectDir)Newtonsoft.Json.dll "c:\Program Files (x86)\WinAppDriver"
-    </PostBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup>
     <PostBuildEvent>
 signtool.exe sign /f "$(ProjectDir)WinAppDriver.pfx" /p WinAppDriver "$(TargetPath)"
-
-md "c:\Program Files (x86)\WinAppDriver"
-copy /y "$(TargetPath)" "c:\Program Files (x86)\WinAppDriver"
-copy /y "$(ProjectDir)Newtonsoft.Json.dll" "c:\Program Files (x86)\WinAppDriver"
+mkdir "$(ProgramFiles)\WinAppDriver"
+copy /y "$(TargetDir)*" "$(ProgramFiles)\WinAppDriver"
 </PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets" Condition="Exists('..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets')" />
