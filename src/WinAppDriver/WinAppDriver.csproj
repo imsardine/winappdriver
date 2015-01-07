@@ -90,7 +90,7 @@
     <Compile Include="Session.cs" />
     <Compile Include="SessionManager.cs" />
     <Compile Include="SetElementValueHandler.cs" />
-    <Compile Include="StoreApplication.cs" />
+    <Compile Include="IStoreApplication.cs" />
     <Compile Include="WinAppDriverException.cs" />
   </ItemGroup>
   <ItemGroup>
