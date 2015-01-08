@@ -11,6 +11,8 @@
 
         string PackageFamilyName { get; }
 
+        string PackageFolderDir { get; }
+
         string GetPackageFullName();
     }
 
@@ -19,9 +21,16 @@
     {
         private string packageFamilyNameCache = null;
 
-        public StoreApplication(string appUserModelId)
+        private string packageFolderDirCache = null;
+
+        private string initialStatesDirCache = null;
+
+        private IUtils utils;
+
+        public StoreApplication(string appUserModelId, IUtils utils)
         {
             this.AppUserModelId = appUserModelId;
+            this.utils = utils;
         }
 
         public string AppUserModelId
@@ -53,6 +62,20 @@
             }
         }
 
+        public string PackageFolderDir
+        {
+            get
+            {
+                if (this.packageFolderDirCache == null)
+                {
+                    this.packageFolderDirCache = this.utils.ExpandEnvironmentVariables(
+                        @"%LOCALAPPDATA%\Packages\" + this.PackageFamilyName);
+                }
+
+                return this.packageFolderDirCache;
+            }
+        }
+
         public bool IsInstalled()
         {
             return true; // TODO
@@ -75,61 +98,30 @@
             api.TerminateAllProcesses(this.GetPackageFullName());
         }
 
-        public void Reset()
+        public void BackupInitialStates()
         {
-            throw new NotImplementedException();
+            this.utils.CopyDirectory(this.PackageFolderDir + @"\Settings", this.InitialStatesDir + @"\Settings");
+            this.utils.CopyDirectory(this.PackageFolderDir + @"\LocalState", this.InitialStatesDir + @"\LocalState");
         }
 
-        private string LocalAppDataPath
+        public void RestoreInitialStates()
+        {
+            this.utils.CopyDirectory(this.InitialStatesDir + @"\Settings", this.PackageFolderDir + @"\Settings");
+            this.utils.CopyDirectory(this.InitialStatesDir + @"\LocalState", this.PackageFolderDir + @"\LocalState");
+        }
+
+        private string InitialStatesDir
         {
             get
             {
-                return Environment.ExpandEnvironmentVariables("%LOCALAPPDATA%");
+                if (this.initialStatesDirCache == null)
+                {
+                    this.initialStatesDirCache = this.utils.ExpandEnvironmentVariables(
+                        @"%LOCALAPPDATA%\WinAppDriver\Packages\" + this.PackageFamilyName);
+                }
+
+                return this.initialStatesDirCache;
             }
-        }
-
-        private string OriginLocalStatePath
-        {
-            get
-            {
-                return this.LocalAppDataPath + @"\Packages\" + this.PackageFamilyName + @"\LocalState\";
-            }
-        }
-
-        private string InitialLocalStatePath
-        {
-            get
-            {
-                return this.LocalAppDataPath + @"\WinAppDriver\InitialStates\" + this.PackageFamilyName + @"\LocalState\";
-            }
-        }
-
-        private string OriginSettingsPath
-        {
-            get
-            {
-                return this.LocalAppDataPath + @"\Packages\" + this.PackageFamilyName + @"\Settings\";
-            }
-        }
-
-        private string InitialSettingsPath
-        {
-            get
-            {
-                return this.LocalAppDataPath + @"\WinAppDriver\InitialStates\" + this.PackageFamilyName + @"\Settings\";
-            }
-        }
-
-        public void BackUp()
-        {
-            DirectoryCopyHelper.Copy(this.OriginSettingsPath, this.InitialSettingsPath, true, true);
-            DirectoryCopyHelper.Copy(this.OriginLocalStatePath, this.InitialLocalStatePath, true, true);
-        }
-
-        public void Restore()
-        {
-            DirectoryCopyHelper.Copy(this.InitialSettingsPath, this.OriginSettingsPath, true, true);
-            DirectoryCopyHelper.Copy(this.InitialLocalStatePath, this.OriginLocalStatePath, true, true);
         }
 
         [ComImport, Guid("B1AEC16F-2383-4852-B0E9-8F0B1DC66B4D")]

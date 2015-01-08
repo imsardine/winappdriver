@@ -3,9 +3,21 @@
     using System;
     using System.IO;
 
-    internal class DirectoryCopyHelper
+    internal interface IUtils
     {
-        public static void Copy(string sourcePath, string destinationPath, bool recursive, bool preservePermissions)
+        string ExpandEnvironmentVariables(string input);
+
+        void CopyDirectory(string source, string destination);
+    }
+
+    internal class Utils : IUtils
+    {
+        public string ExpandEnvironmentVariables(string input)
+        {
+            return Environment.ExpandEnvironmentVariables(input);
+        }
+
+        public void CopyDirectory(string sourcePath, string destinationPath)
         {
             if (Directory.Exists(sourcePath))
             {
@@ -29,7 +41,6 @@
                 Directory.CreateDirectory(destinationPath);
 
                 // Copy directory security
-                if (preservePermissions)
                 {
                     var security = sourceInfo.GetAccessControl();
                     security.SetAccessRuleProtection(true, true);
@@ -43,21 +54,15 @@
                     sourceFile.CopyTo(destinationFilePath, false);
 
                     // Copy file security
-                    if (preservePermissions)
-                    {
-                        var security = sourceFile.GetAccessControl();
-                        security.SetAccessRuleProtection(true, true);
-                        File.SetAccessControl(destinationFilePath, security);
-                    }
+                    var security = sourceFile.GetAccessControl();
+                    security.SetAccessRuleProtection(true, true);
+                    File.SetAccessControl(destinationFilePath, security);
                 }
 
-                if (recursive)
+                foreach (DirectoryInfo soiurceSubDirectory in sourceSubFolders)
                 {
-                    foreach (DirectoryInfo soiurceSubDirectory in sourceSubFolders)
-                    {
-                        string temppath = Path.Combine(destinationPath, soiurceSubDirectory.Name);
-                        Copy(soiurceSubDirectory.FullName, temppath, recursive, preservePermissions);
-                    }
+                    string temppath = Path.Combine(destinationPath, soiurceSubDirectory.Name);
+                    this.CopyDirectory(soiurceSubDirectory.FullName, temppath);
                 }
             }
         }

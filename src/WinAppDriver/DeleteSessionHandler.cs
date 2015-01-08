@@ -14,10 +14,10 @@
 
         public object Handle(Dictionary<string, string> urlParams, string body, ref Session session)
         {
-            var app = new StoreApplication(session.Capabilities.AppUserModelId);
-            app.Terminate();
+            var app = (IStoreApplication)session.Application;
             this.sessionManager.DeleteSession(session.ID);
-            app.Restore();
+            app.Terminate();
+            app.RestoreInitialStates();
 
             return null;
         }

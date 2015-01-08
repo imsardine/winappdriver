@@ -8,6 +8,8 @@
 
         void Terminate();
 
-        void Reset();
+        void BackupInitialStates();
+
+        void RestoreInitialStates();
     }
 }
