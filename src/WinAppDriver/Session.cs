@@ -1,19 +1,19 @@
-using System;
-using System.Collections.Generic;
-using System.Windows.Automation;
-
 namespace WinAppDriver
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Windows.Automation;
+
     internal class Session
     {
         private List<AutomationElement> uiElements;
 
         public Session(string id, IApplication application, Capabilities capabilities)
         {
-            ID = id;
-            Application = application;
-            Capabilities = capabilities;
-            uiElements = new List<AutomationElement>();
+            this.ID = id;
+            this.Application = application;
+            this.Capabilities = capabilities;
+            this.uiElements = new List<AutomationElement>();
         }
 
         public string ID { get; private set; }
@@ -24,15 +24,15 @@ namespace WinAppDriver
 
         public int AddUIElement(AutomationElement element)
         {
-            int id = uiElements.Count;
-            uiElements.Add(element);
+            int id = this.uiElements.Count;
+            this.uiElements.Add(element);
             Console.WriteLine("UI element ({0})) added.", id);
             return id;
         }
 
         public AutomationElement GetUIElement(int id)
         {
-            return uiElements[id];
+            return this.uiElements[id];
         }
     }
 }

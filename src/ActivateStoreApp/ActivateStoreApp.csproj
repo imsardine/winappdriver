@@ -11,6 +11,7 @@
     <AssemblyName>ActivateStoreApp</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>62d1ff26</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -48,8 +49,8 @@ copy /y $(TargetPath) "c:\Program Files (x86)\WinAppDriver"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>
-md "c:\Program Files (x86)\WinAppDriver"
-copy /y "$(TargetPath)" "c:\Program Files (x86)\WinAppDriver"</PostBuildEvent>
+mkdir "$(ProgramFiles)\WinAppDriver"
+copy /y "$(TargetPath)*" "$(ProgramFiles)\WinAppDriver"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

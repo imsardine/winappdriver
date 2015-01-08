@@ -82,7 +82,8 @@
 
         private string LocalAppDataPath
         {
-            get{
+            get
+            {
                 return Environment.ExpandEnvironmentVariables("%LOCALAPPDATA%");
             }
         }
@@ -91,7 +92,7 @@
         {
             get
             {
-                return LocalAppDataPath + @"\Packages\" + PackageFamilyName + @"\LocalState\";
+                return this.LocalAppDataPath + @"\Packages\" + this.PackageFamilyName + @"\LocalState\";
             }
         }
 
@@ -99,7 +100,7 @@
         {
             get
             {
-                return LocalAppDataPath + @"\WinAppDriver\InitialStates\" + PackageFamilyName + @"\LocalState\";
+                return this.LocalAppDataPath + @"\WinAppDriver\InitialStates\" + this.PackageFamilyName + @"\LocalState\";
             }
         }
 
@@ -107,7 +108,7 @@
         {
             get
             {
-                return LocalAppDataPath + @"\Packages\" + PackageFamilyName + @"\Settings\";
+                return this.LocalAppDataPath + @"\Packages\" + this.PackageFamilyName + @"\Settings\";
             }
         }
 
@@ -115,20 +116,20 @@
         {
             get
             {
-                return LocalAppDataPath + @"\WinAppDriver\InitialStates\" + PackageFamilyName + @"\Settings\";
+                return this.LocalAppDataPath + @"\WinAppDriver\InitialStates\" + this.PackageFamilyName + @"\Settings\";
             }
         }
 
         public void BackUp()
         {
-            DirectoryCopyHelper.Copy(OriginSettingsPath, InitialSettingsPath, true, true);
-            DirectoryCopyHelper.Copy(OriginLocalStatePath, InitialLocalStatePath, true, true);
+            DirectoryCopyHelper.Copy(this.OriginSettingsPath, this.InitialSettingsPath, true, true);
+            DirectoryCopyHelper.Copy(this.OriginLocalStatePath, this.InitialLocalStatePath, true, true);
         }
 
         public void Restore()
         {
-            DirectoryCopyHelper.Copy(InitialSettingsPath, OriginSettingsPath, true, true);
-            DirectoryCopyHelper.Copy(InitialLocalStatePath, OriginLocalStatePath, true, true);
+            DirectoryCopyHelper.Copy(this.InitialSettingsPath, this.OriginSettingsPath, true, true);
+            DirectoryCopyHelper.Copy(this.InitialLocalStatePath, this.OriginLocalStatePath, true, true);
         }
 
         [ComImport, Guid("B1AEC16F-2383-4852-B0E9-8F0B1DC66B4D")]

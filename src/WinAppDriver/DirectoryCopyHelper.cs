@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-
-namespace WinAppDriver
+﻿namespace WinAppDriver
 {
-    class DirectoryCopyHelper
+    using System;
+    using System.IO;
+
+    internal class DirectoryCopyHelper
     {
         public static void Copy(string sourcePath, string destinationPath, bool recursive, bool preservePermissions)
         {
@@ -25,12 +21,13 @@ namespace WinAppDriver
                         + sourcePath);
                 }
 
-                if(Directory.Exists(destinationPath))
+                if (Directory.Exists(destinationPath))
                 {
                     Directory.Delete(destinationPath, true);
                 }
+
                 Directory.CreateDirectory(destinationPath);
- 
+
                 // Copy directory security
                 if (preservePermissions)
                 {
@@ -52,7 +49,6 @@ namespace WinAppDriver
                         security.SetAccessRuleProtection(true, true);
                         File.SetAccessControl(destinationFilePath, security);
                     }
-
                 }
 
                 if (recursive)

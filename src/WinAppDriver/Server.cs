@@ -1,64 +1,58 @@
-using System;
-using System.IO;
-using System.Net;
-using System.Text;
-using System.Collections.Generic;
-using Newtonsoft.Json;
+namespace WinAppDriver
+{
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Net;
+    using System.Text;
+    using Newtonsoft.Json;
 
-namespace WinAppDriver {
-
-    class Server {
-
+    internal class Server
+    {
         private RequestManager requestManager;
 
-        public Server(RequestManager requestManager) {
+        public Server(RequestManager requestManager)
+        {
             this.requestManager = requestManager;
         }
 
-        public void Start() {
+        public void Start()
+        {
             var listener = new HttpListener();
             listener.Prefixes.Add("http://+:4444/wd/hub/");
             listener.Start();
 
             Console.WriteLine("Listening...");
-            while (true) {
+            while (true)
+            {
                 var context = listener.GetContext();
                 var request = context.Request;
                 var response = context.Response;
-                HandleRequest(request, response);
+                this.HandleRequest(request, response);
             }
         }
 
-        private void HandleRequest(HttpListenerRequest request, HttpListenerResponse response) {
+        private void HandleRequest(HttpListenerRequest request, HttpListenerResponse response)
+        {
             string method = request.HttpMethod;
             string path = request.Url.AbsolutePath;
             string body = new StreamReader(request.InputStream, request.ContentEncoding).ReadToEnd();
             Console.WriteLine("Request: {0} {1}\n{2}", method, path, body);
 
             Session session = null;
-            try {
-                object result = requestManager.Handle(method, path, body, out session);
-                ResponseResult(method, path, result, session, response);
-            } catch (Exception ex) {
-                ResponseException(method, path, ex, session, response);
+            try
+            {
+                object result = this.requestManager.Handle(method, path, body, out session);
+                this.ResponseResult(method, path, result, session, response);
+            }
+            catch (Exception ex)
+            {
+                this.ResponseException(method, path, ex, session, response);
             }
         }
 
-        private void ResponseResult(string method, string path, object result,
-            Session session, HttpListenerResponse response)
-        {
-            var message = new Dictionary<string, object> {
-                { "sessionId", (session != null ? session.ID : null) },
-                { "status", 0 },
-                { "value", result }
-            };
-
-            string json = JsonConvert.SerializeObject(message);
-            WriteResponse(response, HttpStatusCode.OK, "application/json", json);
-        }
-
-        private void ResponseException(string method, string path, Exception ex,
-            Session session, HttpListenerResponse response)
+        private void ResponseException(
+            string method, string path, Exception ex, Session session, HttpListenerResponse response)
         {
             string body = null;
             var httpStatus = HttpStatusCode.InternalServerError;
@@ -86,15 +80,29 @@ namespace WinAppDriver {
                 body = ex.ToString();
             }
 
-            WriteResponse(response, httpStatus, contentType, body);
+            this.WriteResponse(response, httpStatus, contentType, body);
         }
 
-        private void WriteResponse(HttpListenerResponse response, HttpStatusCode httpStatus,
-            string contentType, string body)
+        private void ResponseResult(
+            string method, string path, object result, Session session, HttpListenerResponse response)
+        {
+            var message = new Dictionary<string, object>
+            {
+                { "sessionId", (session != null ? session.ID : null) },
+                { "status", 0 },
+                { "value", result }
+            };
+
+            string json = JsonConvert.SerializeObject(message);
+            this.WriteResponse(response, HttpStatusCode.OK, "application/json", json);
+        }
+
+        private void WriteResponse(
+            HttpListenerResponse response, HttpStatusCode httpStatus, string contentType, string body)
         {
             string bodyHead = body.Length > 200 ? body.Substring(0, 200) : body;
-            Console.WriteLine("Response (Status: {0}, ContentType: {1}):\n{2}",
-                              httpStatus, contentType, bodyHead);
+            Console.WriteLine(
+                "Response (Status: {0}, ContentType: {1}):\n{2}", httpStatus, contentType, bodyHead);
 
             response.StatusCode = (int)httpStatus;
             response.ContentType = contentType;
@@ -106,6 +114,4 @@ namespace WinAppDriver {
             output.Close();
         }
     }
-
 }
-

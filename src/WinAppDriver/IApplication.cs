@@ -1,6 +1,6 @@
 ﻿namespace WinAppDriver
 {
-    interface IApplication
+    internal interface IApplication
     {
         bool IsInstalled();
 
