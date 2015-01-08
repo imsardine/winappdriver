@@ -1,30 +1,34 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Net;
-using System.IO;
-using System.IO.Compression;
-using System.Management.Automation;
-
-namespace WinAppDriver {
+namespace WinAppDriver
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.IO;
+    using System.IO.Compression;
+    using System.Management.Automation;
+    using System.Net;
+    using Newtonsoft.Json;
 
     [Route("POST", "/session")]
-    class NewSessionHandler : IHandler {
-
+    internal class NewSessionHandler : IHandler
+    {
         private SessionManager sessionManager;
 
-        public NewSessionHandler(SessionManager sessionManager) {
+        public NewSessionHandler(SessionManager sessionManager)
+        {
             this.sessionManager = sessionManager;
         }
 
-        public object Handle(Dictionary<string, string> urlParams, string body, ref Session session) {
+        public object Handle(Dictionary<string, string> urlParams, string body, ref Session session)
+        {
             NewSessionRequest request = JsonConvert.DeserializeObject<NewSessionRequest>(body);
             foreach (var kvp in request.DesiredCapabilities)
+            {
                 Console.WriteLine("{0} = {1} ({2})", kvp.Key, kvp.Value, kvp.Value.GetType());
+            }
 
-            var caps = new Capabilities() {
+            var caps = new Capabilities()
+            {
                 AppUserModelId = (string)request.DesiredCapabilities["appUserModelId"],
                 App = (string)request.DesiredCapabilities["app"]
             };
@@ -33,49 +37,37 @@ namespace WinAppDriver {
             {
                 if (caps.App.StartsWith("http"))
                 {
-                    caps.App = GetAppFileFromWeb(caps.App);
+                    caps.App = this.GetAppFileFromWeb(caps.App);
                 }
+
                 Console.WriteLine("\nApp file:\n\t" + caps.App);
 
                 ZipFile.ExtractToDirectory(caps.App, caps.App.Remove(caps.App.Length - 4));
                 Console.WriteLine("\nZip file extract to:\n\t" + caps.App.Remove(caps.App.Length - 4));
 
-                UninstallApp(caps.AppUserModelId.Remove(caps.AppUserModelId.Length - 4));
-                InstallApp(caps.App.Remove(caps.App.Length - 4));
+                this.UninstallApp(caps.AppUserModelId.Remove(caps.AppUserModelId.Length - 4));
+                this.InstallApp(caps.App.Remove(caps.App.Length - 4));
             }
             else
             {
                 throw new FailedCommandException("Your app file is \"" + caps.App + "\". App file is not a .zip file.", 13);
             }
 
-
             Process.Start("ActivateStoreApp", caps.AppUserModelId);
-            session = sessionManager.CreateSession(caps);
+            session = this.sessionManager.CreateSession(caps);
 
-            // TODO formal capabilities
-            return new Dictionary<string, string>
-            {
-                { "platformName", "WinApp" }
-            };
-        }
-
-        private class NewSessionRequest {
-
-            [JsonProperty("desiredCapabilities")]
-            internal Dictionary<string, object> DesiredCapabilities { get; set; }
-
-            [JsonProperty("requiredCapabilities")]
-            internal Dictionary<string, object> RequiredCapabilities { get; set; }
-
+            return null; // TODO capabilities
         }
 
         private string GetAppFileFromWeb(string webResource)
         {
             string storeFileName = Environment.GetEnvironmentVariable("TEMP") + @"\StoreApp_" + DateTime.Now.ToString("yyyyMMddHHmmss") + webResource.Substring(webResource.LastIndexOf("."));
+
             // Create a new WebClient instance.
             WebClient myWebClient = new WebClient();
 
             Console.WriteLine("Downloading File \"{0}\" .......\n\n", webResource);
+
             // Download the Web resource and save it into temp folder.
             myWebClient.DownloadFile(webResource, storeFileName);
             Console.WriteLine("Successfully Downloaded File \"{0}\"", webResource);
@@ -118,7 +110,13 @@ namespace WinAppDriver {
             }
         }
 
+        private class NewSessionRequest
+        {
+            [JsonProperty("desiredCapabilities")]
+            internal Dictionary<string, object> DesiredCapabilities { get; set; }
+
+            [JsonProperty("requiredCapabilities")]
+            internal Dictionary<string, object> RequiredCapabilities { get; set; }
+        }
     }
-
 }
-

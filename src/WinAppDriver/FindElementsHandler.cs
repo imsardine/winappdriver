@@ -1,12 +1,12 @@
-namespace WinAppDriver
+﻿namespace WinAppDriver
 {
     using System.Collections.Generic;
     using System.Windows.Automation;
     using Newtonsoft.Json;
 
-    [Route("POST", "/session/:sessionId/element")]
-    [Route("POST", "/session/:sessionId/element/:id/element")]
-    internal class FindElementHandler : IHandler
+    [Route("POST", "/session/:sessionId/elements")]
+    [Route("POST", "/session/:sessionId/element/:id/elements")]
+    internal class FindElementsHandler : IHandler
     {
         public object Handle(Dictionary<string, string> urlParams, string body, ref Session session)
         {
@@ -18,23 +18,24 @@ namespace WinAppDriver
                 root = session.GetUIElement(int.Parse(urlParams["id"]));
             }
 
-            // TODO throw exceptions to indicate other strategies are not supported.
             var property = AutomationElement.AutomationIdProperty;
             if (request.Strategy == "name")
             {
                 property = AutomationElement.NameProperty;
             }
 
-            var element = root.FindFirst(
+            var elements = root.FindAll(
                 TreeScope.Descendants,
                 new PropertyCondition(property, request.Locator));
-            if (element == null)
+
+            var list = new List<Dictionary<string, string>>();
+            foreach (AutomationElement element in elements)
             {
-                throw new NoSuchElementException(request.Strategy, request.Locator);
+                int id = session.AddUIElement(element);
+                list.Add(new Dictionary<string, string> { { "ELEMENT", id.ToString() } });
             }
 
-            int id = session.AddUIElement(element);
-            return new Dictionary<string, int> { { "ELEMENT", id } };
+            return list;
         }
 
         private class FindElementRequest

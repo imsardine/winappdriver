@@ -1,8 +1,9 @@
-namespace WinAppDriver {
-
-    class Program {
-
-        static void Main(string[] args) {
+namespace WinAppDriver
+{
+    internal class Program
+    {
+        private static void Main(string[] args)
+        {
             var sessionMgr = new SessionManager();
             var requestMgr = InitRequestManager(sessionMgr);
 
@@ -10,18 +11,18 @@ namespace WinAppDriver {
             driver.Start();
         }
 
-        private static RequestManager InitRequestManager(SessionManager sessionManager) {
+        private static RequestManager InitRequestManager(SessionManager sessionManager)
+        {
             var manager = new RequestManager(sessionManager);
-            manager.AddHandler(new NewSessionHandler(sessionManager));
-            manager.AddHandler(new FindElementHandler());
             manager.AddHandler(new ClickElementHandler());
+            manager.AddHandler(new FindElementHandler());
+            manager.AddHandler(new FindElementsHandler());
+            manager.AddHandler(new GetElementTextHandler());
+            manager.AddHandler(new NewSessionHandler(sessionManager));
             manager.AddHandler(new ScreenshotHandler());
             manager.AddHandler(new SetElementValueHandler());
 
             return manager;
         }
-
     }
-
 }
-
