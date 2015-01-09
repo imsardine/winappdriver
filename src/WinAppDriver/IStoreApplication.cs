@@ -50,7 +50,7 @@
                     if (index == -1)
                     {
                         string msg = string.Format(
-                            "Invalid Application User Model ID: {0)",
+                            "Invalid Application User Model ID: {0}",
                             this.AppUserModelId);
                         throw new WinAppDriverException(msg);
                     }
