@@ -2,7 +2,6 @@ namespace WinAppDriver
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using Newtonsoft.Json;
 
     [Route("POST", "/session")]
@@ -10,9 +9,12 @@ namespace WinAppDriver
     {
         private SessionManager sessionManager;
 
-        public NewSessionHandler(SessionManager sessionManager)
+        private IUtils utils;
+
+        public NewSessionHandler(SessionManager sessionManager, IUtils utils)
         {
             this.sessionManager = sessionManager;
+            this.utils = utils;
         }
 
         public object Handle(Dictionary<string, string> urlParams, string body, ref Session session)
@@ -29,8 +31,10 @@ namespace WinAppDriver
                 App = (string)request.DesiredCapabilities["app"]
             };
 
-            Process.Start("ActivateStoreApp", caps.AppUserModelId);
-            session = this.sessionManager.CreateSession(caps);
+            IStoreApplication app = new StoreApplication(caps.AppUserModelId, this.utils);
+            app.BackupInitialStates(); // TODO only when newly installed
+            app.Activate();
+            session = this.sessionManager.CreateSession(app, caps);
 
             return null; // TODO capabilities
         }

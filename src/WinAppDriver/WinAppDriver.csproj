@@ -11,6 +11,7 @@
     <AssemblyName>WinAppDriver</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -23,7 +24,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <NuGetPackageImportStamp>ac483f38</NuGetPackageImportStamp>
@@ -86,10 +86,14 @@
     <Compile Include="ClickElementHandler.cs" />
     <Compile Include="EndPoint.cs" />
     <Compile Include="FailedCommandException.cs" />
+    <Compile Include="DeleteSessionHandler.cs" />
     <Compile Include="FindElementHandler.cs" />
     <Compile Include="FindElementsHandler.cs" />
     <Compile Include="GetElementTextHandler.cs" />
+    <Compile Include="IApplication.cs" />
     <Compile Include="IHandler.cs" />
+    <Compile Include="IStoreApplication.cs" />
+    <Compile Include="IUtils.cs" />
     <Compile Include="NewSessionHandler.cs" />
     <Compile Include="NoSuchElementException.cs" />
     <Compile Include="Program.cs" />
@@ -100,6 +104,7 @@
     <Compile Include="Session.cs" />
     <Compile Include="SessionManager.cs" />
     <Compile Include="SetElementValueHandler.cs" />
+    <Compile Include="WinAppDriverException.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

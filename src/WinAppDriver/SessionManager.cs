@@ -17,12 +17,17 @@ namespace WinAppDriver
             get { return this.sessions[id]; }
         }
 
-        public Session CreateSession(Capabilities capabilities)
+        public Session CreateSession(IApplication application, Capabilities capabilities)
         {
             var id = Guid.NewGuid().ToString();
-            var session = new Session(id, capabilities);
+            var session = new Session(id, application, capabilities);
             this.sessions[id] = session;
             return session;
+        }
+
+        public void DeleteSession(string id)
+        {
+            this.sessions.Remove(id);
         }
     }
 }

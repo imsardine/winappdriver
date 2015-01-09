@@ -2,7 +2,7 @@ namespace WinAppDriver
 {
     using System;
 
-    public class FailedCommandException : Exception
+    public class FailedCommandException : WinAppDriverException
     {
         public FailedCommandException()
             : base()
