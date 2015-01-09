@@ -59,10 +59,10 @@
                     File.SetAccessControl(destinationFilePath, security);
                 }
 
-                foreach (DirectoryInfo soiurceSubDirectory in sourceSubFolders)
+                foreach (DirectoryInfo sourceSubFolder in sourceSubFolders)
                 {
-                    string temppath = Path.Combine(destinationPath, soiurceSubDirectory.Name);
-                    this.CopyDirectory(soiurceSubDirectory.FullName, temppath);
+                    string temppath = Path.Combine(destinationPath, sourceSubFolder.Name);
+                    this.CopyDirectory(sourceSubFolder.FullName, temppath);
                 }
             }
         }
