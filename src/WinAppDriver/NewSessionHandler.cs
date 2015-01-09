@@ -32,6 +32,7 @@ namespace WinAppDriver
 
             var caps = new Capabilities()
             {
+                PlatformName = (string)request.DesiredCapabilities["appUserModelId"],
                 AppUserModelId = (string)request.DesiredCapabilities["appUserModelId"],
                 App = (string)request.DesiredCapabilities["app"]
             };
@@ -61,7 +62,7 @@ namespace WinAppDriver
             app.Activate();
             session = this.sessionManager.CreateSession(app, caps);
 
-            return null; // TODO capabilities
+            return caps; // TODO capabilities
         }
 
         private string GetAppFileFromWeb(string webResource)
