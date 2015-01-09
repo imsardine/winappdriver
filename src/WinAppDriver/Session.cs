@@ -8,16 +8,19 @@ namespace WinAppDriver
     {
         private List<AutomationElement> uiElements;
 
-        public Session(string id, Capabilities capabilities)
+        public Session(string id, IApplication application, Capabilities capabilities)
         {
             this.ID = id;
+            this.Application = application;
             this.Capabilities = capabilities;
             this.uiElements = new List<AutomationElement>();
         }
 
-        public string ID { get; set; }
+        public string ID { get; private set; }
 
-        public Capabilities Capabilities { get; set; }
+        public IApplication Application { get; private set; }
+
+        public Capabilities Capabilities { get; private set; }
 
         public int AddUIElement(AutomationElement element)
         {
