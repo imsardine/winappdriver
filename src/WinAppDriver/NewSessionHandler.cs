@@ -37,6 +37,7 @@ namespace WinAppDriver
                 App = (string)request.DesiredCapabilities["app"]
             };
 
+            IStoreApplication app = new StoreApplication(caps.AppUserModelId, this.utils);
             if (caps.App.EndsWith(".zip"))
             {
                 if (caps.App.StartsWith("http"))
@@ -49,7 +50,11 @@ namespace WinAppDriver
                 ZipFile.ExtractToDirectory(caps.App, caps.App.Remove(caps.App.Length - 4));
                 Console.WriteLine("\nZip file extract to:\n\t" + caps.App.Remove(caps.App.Length - 4));
 
-                this.UninstallApp(caps.AppUserModelId.Remove(caps.AppUserModelId.Length - 4));
+                if (app.IsInstalled())
+                {
+                    this.UninstallApp(app.PackageFullName);
+                }
+
                 this.InstallApp(caps.App.Remove(caps.App.Length - 4));
             }
             else
@@ -57,7 +62,6 @@ namespace WinAppDriver
                 throw new FailedCommandException("Your app file is \"" + caps.App + "\". App file is not a .zip file.", 13);
             }
 
-            IStoreApplication app = new StoreApplication(caps.AppUserModelId, this.utils);
             app.BackupInitialStates(); // TODO only when newly installed
             app.Activate();
             session = this.sessionManager.CreateSession(app, caps);
@@ -81,21 +85,12 @@ namespace WinAppDriver
             return storeFileName;
         }
 
-        private void UninstallApp(string packageFamilyName)
+        private void UninstallApp(string packageFullName)
         {
             PowerShell ps = PowerShell.Create();
-            ps.AddCommand("Get-AppxPackage");
-            ps.AddParameter("Name", packageFamilyName.Remove(packageFamilyName.IndexOf("_")));
-            System.Collections.ObjectModel.Collection<PSObject> package = ps.Invoke();
-            if (package.Count > 0)
-            {
-                Console.WriteLine("\nUninstalling Windows Store App. \n");
-                string packageFullName = package[0].Members["PackageFullName"].Value.ToString();
-                ps = PowerShell.Create();
-                ps.AddCommand("Remove-AppxPackage");
-                ps.AddArgument(packageFullName);
-                ps.Invoke();
-            }
+            ps.AddCommand("Remove-AppxPackage");
+            ps.AddArgument(packageFullName);
+            ps.Invoke();
         }
 
         private void InstallApp(string fileFolder)

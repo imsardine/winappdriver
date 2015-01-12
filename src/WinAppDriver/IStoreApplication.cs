@@ -3,6 +3,7 @@
     using System;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
+    using System.Management.Automation;
     using System.Runtime.InteropServices;
 
     internal interface IStoreApplication : IApplication
@@ -11,15 +12,19 @@
 
         string PackageFamilyName { get; }
 
-        string PackageFolderDir { get; }
+        string PackageFullName { get; }
 
-        string GetPackageFullName();
+        string PackageFolderDir { get; }
     }
 
     [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder", Justification = "Reviewed.")]
     internal class StoreApplication : IStoreApplication
     {
+        private string packageNameCache = null;
+
         private string packageFamilyNameCache = null;
+
+        private string packageFullNameCache = null;
 
         private string packageFolderDirCache = null;
 
@@ -62,6 +67,33 @@
             }
         }
 
+        public string PackageFullName
+        {
+            get
+            {
+                if (this.packageFullNameCache == null)
+                {
+                    if (this.IsInstalled())
+                    {
+                        // PackageFamilyName = {Name}_{PublisherHash}!{AppId}
+                        PowerShell ps = PowerShell.Create();
+                        ps.AddCommand("Get-AppxPackage");
+                        ps.AddParameter("Name", this.PackageName);
+                        System.Collections.ObjectModel.Collection<PSObject> package = ps.Invoke();
+
+                        this.packageFullNameCache = package[0].Members["PackageFullName"].Value.ToString();
+                    }
+                    else
+                    {
+                        string msg = string.Format("Application is not installed, cannot find PackageFullName.");
+                        throw new WinAppDriverException(msg);
+                    }
+                }
+
+                return this.packageFullNameCache;
+            }
+        }
+
         public string PackageFolderDir
         {
             get
@@ -78,12 +110,18 @@
 
         public bool IsInstalled()
         {
-            return true; // TODO
-        }
-
-        public string GetPackageFullName()
-        {
-            return "2DE213C9.KKBOX_1.0.0.16_x64__wttxem0f9q9s0"; // TODO Get name from PS output
+            PowerShell ps = PowerShell.Create();
+            ps.AddCommand("Get-AppxPackage");
+            ps.AddParameter("Name", this.PackageName);
+            System.Collections.ObjectModel.Collection<PSObject> package = ps.Invoke();
+            if (package.Count > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public void Activate()
@@ -95,7 +133,7 @@
         public void Terminate()
         {
             var api = (IPackageDebugSettings)new PackageDebugSettings();
-            api.TerminateAllProcesses(this.GetPackageFullName());
+            api.TerminateAllProcesses(this.PackageFullName);
         }
 
         public void BackupInitialStates()
@@ -108,6 +146,20 @@
         {
             this.utils.CopyDirectory(this.InitialStatesDir + @"\Settings", this.PackageFolderDir + @"\Settings");
             this.utils.CopyDirectory(this.InitialStatesDir + @"\LocalState", this.PackageFolderDir + @"\LocalState");
+        }
+
+        private string PackageName
+        {
+            get
+            {
+                if (this.packageNameCache == null)
+                {
+                    // PackageFamilyName = {Name}_{PublisherHash}!{AppId}
+                    this.packageNameCache = this.PackageFamilyName.Remove(this.PackageFamilyName.IndexOf("_"));
+                }
+
+                return this.packageNameCache;
+            }
         }
 
         private string InitialStatesDir
