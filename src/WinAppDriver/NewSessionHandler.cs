@@ -32,7 +32,7 @@ namespace WinAppDriver
 
             var caps = new Capabilities()
             {
-                PlatformName = (string)request.DesiredCapabilities["appUserModelId"],
+                PlatformName = (string)request.DesiredCapabilities["platformName"],
                 AppUserModelId = (string)request.DesiredCapabilities["appUserModelId"],
                 App = (string)request.DesiredCapabilities["app"]
             };
@@ -104,6 +104,7 @@ namespace WinAppDriver
                 PowerShell ps = PowerShell.Create();
                 ps.AddScript(@"Powershell.exe -executionpolicy remotesigned -NonInteractive -File " + files[0].FullName);
                 ps.Invoke();
+                System.Threading.Thread.Sleep(1000); // Waiting activity done.
             }
             else
             {
