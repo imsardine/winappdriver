@@ -47,15 +47,12 @@ namespace WinAppDriver
 
                 Console.WriteLine("\nApp file:\n\t" + caps.App);
 
-                ZipFile.ExtractToDirectory(caps.App, caps.App.Remove(caps.App.Length - 4));
-                Console.WriteLine("\nZip file extract to:\n\t" + caps.App.Remove(caps.App.Length - 4));
-
                 if (app.IsInstalled())
                 {
                     this.UninstallApp(app.PackageFullName);
                 }
 
-                this.InstallApp(caps.App.Remove(caps.App.Length - 4));
+                this.InstallApp(caps.App);
             }
             else
             {
@@ -93,8 +90,12 @@ namespace WinAppDriver
             ps.Invoke();
         }
 
-        private void InstallApp(string fileFolder)
+        private void InstallApp(string zipFile)
         {
+            string fileFolder = zipFile.Remove(zipFile.Length - 4);
+            ZipFile.ExtractToDirectory(zipFile, fileFolder);
+            Console.WriteLine("\nZip file extract to:\n\t" + fileFolder);
+
             DirectoryInfo dir = new DirectoryInfo(fileFolder);
             FileInfo[] files = dir.GetFiles("*.ps1", SearchOption.AllDirectories);
             if (files.Length > 0)
