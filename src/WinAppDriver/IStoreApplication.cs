@@ -12,9 +12,9 @@
 
         string PackageFamilyName { get; }
 
-        string PackageFullName { get; }
-
         string PackageFolderDir { get; }
+
+        string GetPackageFullName();
     }
 
     [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder", Justification = "Reviewed.")]
@@ -23,8 +23,6 @@
         private string packageNameCache = null;
 
         private string packageFamilyNameCache = null;
-
-        private string packageFullNameCache = null;
 
         private string packageFolderDirCache = null;
 
@@ -67,33 +65,6 @@
             }
         }
 
-        public string PackageFullName
-        {
-            get
-            {
-                if (this.packageFullNameCache == null)
-                {
-                    if (this.IsInstalled())
-                    {
-                        // PackageFamilyName = {Name}_{PublisherHash}!{AppId}
-                        PowerShell ps = PowerShell.Create();
-                        ps.AddCommand("Get-AppxPackage");
-                        ps.AddParameter("Name", this.PackageName);
-                        System.Collections.ObjectModel.Collection<PSObject> package = ps.Invoke();
-
-                        this.packageFullNameCache = package[0].Members["PackageFullName"].Value.ToString();
-                    }
-                    else
-                    {
-                        string msg = string.Format("Application is not installed, cannot find PackageFullName.");
-                        throw new WinAppDriverException(msg);
-                    }
-                }
-
-                return this.packageFullNameCache;
-            }
-        }
-
         public string PackageFolderDir
         {
             get
@@ -105,6 +76,25 @@
                 }
 
                 return this.packageFolderDirCache;
+            }
+        }
+
+        public string GetPackageFullName()
+        {
+            if (this.IsInstalled())
+            {
+                // PackageFamilyName = {Name}_{PublisherHash}!{AppId}
+                PowerShell ps = PowerShell.Create();
+                ps.AddCommand("Get-AppxPackage");
+                ps.AddParameter("Name", this.PackageName);
+                System.Collections.ObjectModel.Collection<PSObject> package = ps.Invoke();
+
+                return package[0].Members["PackageFullName"].Value.ToString();
+            }
+            else
+            {
+                string msg = string.Format("Application is not installed, cannot find PackageFullName.");
+                throw new InvalidOperationException(msg);
             }
         }
 
@@ -133,7 +123,7 @@
         public void Terminate()
         {
             var api = (IPackageDebugSettings)new PackageDebugSettings();
-            api.TerminateAllProcesses(this.PackageFullName);
+            api.TerminateAllProcesses(this.GetPackageFullName());
         }
 
         public void BackupInitialStates()

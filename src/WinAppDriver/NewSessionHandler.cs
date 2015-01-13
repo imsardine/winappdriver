@@ -49,7 +49,7 @@ namespace WinAppDriver
 
                 if (app.IsInstalled())
                 {
-                    this.UninstallApp(app.PackageFullName);
+                    this.UninstallApp(app.GetPackageFullName());
                 }
 
                 this.InstallApp(caps.App);
