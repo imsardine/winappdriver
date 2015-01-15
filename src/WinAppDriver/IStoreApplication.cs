@@ -4,7 +4,9 @@
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
+    using System.IO.Compression;
     using System.Management.Automation;
+    using System.Net;
     using System.Runtime.InteropServices;
     using System.Security.Cryptography;
 
@@ -22,7 +24,11 @@
 
         string GetFileMD5(string filePath);
 
-        void StoreMD5(string fileName);
+        string GetAppFileFromWeb(string webResource, string expectFileMD5);
+
+        void UninstallApp(string packageFullName);
+
+        void InstallApp(string zipFile);
     }
 
     [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder", Justification = "Reviewed.")]
@@ -131,17 +137,61 @@
             return BitConverter.ToString(bytes).Replace("-", string.Empty).ToLower();
         }
 
-        public void StoreMD5(string fileMD5)
+        public string GetAppFileFromWeb(string webResource, string expectFileMD5)
         {
-            string md5FileName = System.IO.Path.Combine(this.PackageFolderDir, "MD5.txt");
-            using (System.IO.FileStream fs = System.IO.File.Create(md5FileName))
+            string storeFileName = Environment.GetEnvironmentVariable("TEMP") + @"\StoreApp_" + DateTime.Now.ToString("yyyyMMddHHmmss") + webResource.Substring(webResource.LastIndexOf("."));
+
+            // Create a new WebClient instance.
+            WebClient myWebClient = new WebClient();
+
+            Console.WriteLine("Downloading File \"{0}\" .......\n\n", webResource);
+
+            // Download the Web resource and save it into temp folder.
+            myWebClient.DownloadFile(webResource, storeFileName);
+            Console.WriteLine("Successfully Downloaded File \"{0}\"", webResource);
+            Console.WriteLine("\nDownloaded file saved in the following file system folder:\n\t" + storeFileName);
+
+            string fileMD5 = this.GetFileMD5(storeFileName);
+            if (expectFileMD5 != null && expectFileMD5 != this.GetFileMD5(storeFileName))
             {
-                Console.Out.WriteLine("Writing MD5 to file: \"{0}\"", md5FileName);
-                byte[] byteMD5 = System.Text.Encoding.Default.GetBytes(fileMD5);
-                for (int i = 0; i < byteMD5.Length; i++)
-                {
-                    fs.WriteByte(byteMD5[i]);
-                }
+                string msg = "You got a wrong file. ExpectMD5 is \"" + expectFileMD5 + "\", but download file MD5 is \"" + fileMD5 + "\".";
+                throw new WinAppDriverException(msg);
+            }
+
+            return storeFileName;
+        }
+
+        public void UninstallApp(string packageFullName)
+        {
+            PowerShell ps = PowerShell.Create();
+            ps.AddCommand("Remove-AppxPackage");
+            ps.AddArgument(packageFullName);
+            ps.Invoke();
+        }
+
+        public void InstallApp(string zipFile)
+        {
+            string fileFolder = zipFile.Remove(zipFile.Length - 4);
+            ZipFile.ExtractToDirectory(zipFile, fileFolder);
+            Console.WriteLine("\nZip file extract to:\n\t" + fileFolder);
+
+            DirectoryInfo dir = new DirectoryInfo(fileFolder);
+            FileInfo[] files = dir.GetFiles("*.ps1", SearchOption.AllDirectories);
+            if (files.Length > 0)
+            {
+                Console.WriteLine("\nInstalling Windows Store App. \n");
+                string dirs = files[0].DirectoryName;
+                PowerShell ps = PowerShell.Create();
+                ps.AddScript(@"Powershell.exe -executionpolicy remotesigned -NonInteractive -File " + files[0].FullName);
+                ps.Invoke();
+                System.Threading.Thread.Sleep(1000); // Waiting activity done.
+
+                this.StoreMD5(this.GetFileMD5(zipFile));
+                this.BackupInitialStates();
+            }
+            else
+            {
+                throw new FailedCommandException("Cannot find .ps1 file in \"" + fileFolder + "\".", 13);
             }
         }
 
@@ -185,7 +235,21 @@
             this.utils.CopyDirectory(this.InitialStatesDir + @"\LocalState", this.PackageFolderDir + @"\LocalState");
         }
 
-        public string InitialStatesDir
+        private string PackageName
+        {
+            get
+            {
+                if (this.packageNameCache == null)
+                {
+                    // PackageFamilyName = {Name}_{PublisherHash}!{AppId}
+                    this.packageNameCache = this.PackageFamilyName.Remove(this.PackageFamilyName.IndexOf("_"));
+                }
+
+                return this.packageNameCache;
+            }
+        }
+
+        private string InitialStatesDir
         {
             get
             {
@@ -199,17 +263,17 @@
             }
         }
 
-        private string PackageName
+        private void StoreMD5(string fileMD5)
         {
-            get
+            string md5FileName = System.IO.Path.Combine(this.PackageFolderDir, "MD5.txt");
+            using (System.IO.FileStream fs = System.IO.File.Create(md5FileName))
             {
-                if (this.packageNameCache == null)
+                Console.Out.WriteLine("Writing MD5 to file: \"{0}\"", md5FileName);
+                byte[] byteMD5 = System.Text.Encoding.Default.GetBytes(fileMD5);
+                for (int i = 0; i < byteMD5.Length; i++)
                 {
-                    // PackageFamilyName = {Name}_{PublisherHash}!{AppId}
-                    this.packageNameCache = this.PackageFamilyName.Remove(this.PackageFamilyName.IndexOf("_"));
+                    fs.WriteByte(byteMD5[i]);
                 }
-
-                return this.packageNameCache;
             }
         }
 
