@@ -10,5 +10,7 @@ namespace WinAppDriver
         public string AppUserModelId { get; set; }
 
         public string App { get; set; }
+
+        public string MD5 { get; set; }
     }
 }

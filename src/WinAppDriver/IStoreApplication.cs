@@ -3,8 +3,10 @@
     using System;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
+    using System.IO;
     using System.Management.Automation;
     using System.Runtime.InteropServices;
+    using System.Security.Cryptography;
 
     internal interface IStoreApplication : IApplication
     {
@@ -15,6 +17,12 @@
         string PackageFolderDir { get; }
 
         string GetPackageFullName();
+
+        string GetLocalMD5();
+
+        string GetFileMD5(string filePath);
+
+        void StoreMD5(string fileName);
     }
 
     [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder", Justification = "Reviewed.")]
@@ -98,6 +106,45 @@
             }
         }
 
+        public string GetLocalMD5()
+        {
+            string md5FileName = System.IO.Path.Combine(this.PackageFolderDir, "MD5.txt");
+            if (System.IO.File.Exists(md5FileName))
+            {
+                System.IO.StreamReader fileReader = System.IO.File.OpenText(md5FileName);
+                Console.Out.WriteLine("Getting MD5 from file: \"{0}\".", md5FileName);
+
+                return fileReader.ReadLine().ToString();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public string GetFileMD5(string filePath)
+        {
+            MD5 md5 = new MD5CryptoServiceProvider();
+            FileStream zipFile = new FileStream(filePath, FileMode.Open);
+            byte[] bytes = md5.ComputeHash(zipFile);
+            zipFile.Close();
+            return BitConverter.ToString(bytes).Replace("-", string.Empty).ToLower();
+        }
+
+        public void StoreMD5(string fileMD5)
+        {
+            string md5FileName = System.IO.Path.Combine(this.PackageFolderDir, "MD5.txt");
+            using (System.IO.FileStream fs = System.IO.File.Create(md5FileName))
+            {
+                Console.Out.WriteLine("Writing MD5 to file: \"{0}\"", md5FileName);
+                byte[] byteMD5 = System.Text.Encoding.Default.GetBytes(fileMD5);
+                for (int i = 0; i < byteMD5.Length; i++)
+                {
+                    fs.WriteByte(byteMD5[i]);
+                }
+            }
+        }
+
         public bool IsInstalled()
         {
             PowerShell ps = PowerShell.Create();
@@ -138,6 +185,20 @@
             this.utils.CopyDirectory(this.InitialStatesDir + @"\LocalState", this.PackageFolderDir + @"\LocalState");
         }
 
+        public string InitialStatesDir
+        {
+            get
+            {
+                if (this.initialStatesDirCache == null)
+                {
+                    this.initialStatesDirCache = this.utils.ExpandEnvironmentVariables(
+                        @"%LOCALAPPDATA%\WinAppDriver\Packages\" + this.PackageFamilyName);
+                }
+
+                return this.initialStatesDirCache;
+            }
+        }
+
         private string PackageName
         {
             get
@@ -149,20 +210,6 @@
                 }
 
                 return this.packageNameCache;
-            }
-        }
-
-        private string InitialStatesDir
-        {
-            get
-            {
-                if (this.initialStatesDirCache == null)
-                {
-                    this.initialStatesDirCache = this.utils.ExpandEnvironmentVariables(
-                        @"%LOCALAPPDATA%\WinAppDriver\Packages\" + this.PackageFamilyName);
-                }
-
-                return this.initialStatesDirCache;
             }
         }
 

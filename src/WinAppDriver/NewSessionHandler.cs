@@ -34,31 +34,49 @@ namespace WinAppDriver
             {
                 PlatformName = (string)request.DesiredCapabilities["platformName"],
                 AppUserModelId = (string)request.DesiredCapabilities["appUserModelId"],
-                App = (string)request.DesiredCapabilities["app"]
+                App = (string)request.DesiredCapabilities["app"],
+                MD5 = request.DesiredCapabilities.ContainsKey("MD5") ? (string)request.DesiredCapabilities["MD5"] : null
             };
 
             IStoreApplication app = new StoreApplication(caps.AppUserModelId, this.utils);
-            if (caps.App.EndsWith(".zip"))
+
+            if (caps.MD5 != null && caps.MD5 == app.GetLocalMD5())
             {
-                if (caps.App.StartsWith("http"))
-                {
-                    caps.App = this.GetAppFileFromWeb(caps.App);
-                }
-
-                Console.WriteLine("\nApp file:\n\t" + caps.App);
-
-                if (app.IsInstalled())
-                {
-                    this.UninstallApp(app.GetPackageFullName());
-                }
-
-                this.InstallApp(caps.App);
+                Console.Out.WriteLine("\nThe current installed version and the assigned version are the same ,so skip installing.\n");
             }
             else
             {
-                throw new FailedCommandException("Your app file is \"" + caps.App + "\". App file is not a .zip file.", 13);
+                if (caps.App.EndsWith(".zip"))
+                {
+                    if (caps.App.StartsWith("http"))
+                    {
+                        caps.App = this.GetAppFileFromWeb(caps.App);
+                    }
+
+                    Console.WriteLine("\nApp file:\n\t" + caps.App);
+
+                    if (app.GetLocalMD5() == app.GetFileMD5(caps.App))
+                    {
+                        Console.Out.WriteLine("\nThe current installed version and the download version are the same ,so skip installing.\n");
+                    }
+                    else
+                    {
+                        if (app.IsInstalled())
+                        {
+                            this.UninstallApp(app.GetPackageFullName());
+                        }
+
+                        this.InstallApp(caps.App);
+                        app.StoreMD5(app.GetFileMD5(caps.App));
+                    }
+                }
+                else
+                {
+                    throw new FailedCommandException("Your app file is \"" + caps.App + "\". App file is not a .zip file.", 13);
+                }
             }
 
+            app.Terminate();
             app.BackupInitialStates(); // TODO only when newly installed
             app.Activate();
             session = this.sessionManager.CreateSession(app, caps);
