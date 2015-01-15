@@ -9,16 +9,19 @@
     using System.Net;
     using System.Runtime.InteropServices;
     using System.Security.Cryptography;
+    using System.Xml;
 
     internal interface IStoreApplication : IApplication
     {
+        string PackageName { get; }
+
         string AppUserModelId { get; }
 
         string PackageFamilyName { get; }
 
-        string PackageFolderDir { get; }
+        string PackageFullName { get; }
 
-        string GetPackageFullName();
+        string PackageFolderDir { get; }
 
         string GetLocalMD5();
 
@@ -34,81 +37,42 @@
     [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder", Justification = "Reviewed.")]
     internal class StoreApplication : IStoreApplication
     {
-        private string packageNameCache = null;
-
-        private string packageFamilyNameCache = null;
-
-        private string packageFolderDirCache = null;
-
-        private string initialStatesDirCache = null;
+        private AppInfo infoCache;
 
         private IUtils utils;
 
-        public StoreApplication(string appUserModelId, IUtils utils)
+        public StoreApplication(string packageName, IUtils utils)
         {
-            this.AppUserModelId = appUserModelId;
+            this.PackageName = packageName;
             this.utils = utils;
         }
 
-        public string AppUserModelId
+        public string PackageName
         {
             get;
             private set;
         }
 
+        public string AppUserModelId
+        {
+            get { return this.GetInstalledAppInfo().AppUserModelId; }
+        }
+
         public string PackageFamilyName
         {
-            get
-            {
-                if (this.packageFamilyNameCache == null)
-                {
-                    // AppUserModelId = {PackageFamilyName}!{AppId}
-                    int index = this.AppUserModelId.IndexOf('!');
-                    if (index == -1)
-                    {
-                        string msg = string.Format(
-                            "Invalid Application User Model ID: {0}",
-                            this.AppUserModelId);
-                        throw new WinAppDriverException(msg);
-                    }
+            get { return this.GetInstalledAppInfo().PackageFamilyName; }
+        }
 
-                    this.packageFamilyNameCache = this.AppUserModelId.Substring(0, index);
-                }
-
-                return this.packageFamilyNameCache;
-            }
+        public string PackageFullName
+        {
+            get { return this.GetInstalledAppInfo().PackageFamilyName; }
         }
 
         public string PackageFolderDir
         {
             get
             {
-                if (this.packageFolderDirCache == null)
-                {
-                    this.packageFolderDirCache = this.utils.ExpandEnvironmentVariables(
-                        @"%LOCALAPPDATA%\Packages\" + this.PackageFamilyName);
-                }
-
-                return this.packageFolderDirCache;
-            }
-        }
-
-        public string GetPackageFullName()
-        {
-            if (this.IsInstalled())
-            {
-                // PackageFamilyName = {Name}_{PublisherHash}!{AppId}
-                PowerShell ps = PowerShell.Create();
-                ps.AddCommand("Get-AppxPackage");
-                ps.AddParameter("Name", this.PackageName);
-                System.Collections.ObjectModel.Collection<PSObject> package = ps.Invoke();
-
-                return package[0].Members["PackageFullName"].Value.ToString();
-            }
-            else
-            {
-                string msg = string.Format("Application is not installed, cannot find PackageFullName.");
-                throw new InvalidOperationException(msg);
+                return this.utils.ExpandEnvironmentVariables(@"%LOCALAPPDATA%\Packages\" + this.PackageFamilyName);
             }
         }
 
@@ -197,17 +161,13 @@
 
         public bool IsInstalled()
         {
-            PowerShell ps = PowerShell.Create();
-            ps.AddCommand("Get-AppxPackage");
-            ps.AddParameter("Name", this.PackageName);
-            System.Collections.ObjectModel.Collection<PSObject> package = ps.Invoke();
-            if (package.Count > 0)
+            if (this.infoCache != null)
             {
                 return true;
             }
             else
             {
-                return false;
+                return this.TryGetInstalledAppInfo(out this.infoCache);
             }
         }
 
@@ -220,7 +180,7 @@
         public void Terminate()
         {
             var api = (IPackageDebugSettings)new PackageDebugSettings();
-            api.TerminateAllProcesses(this.GetPackageFullName());
+            api.TerminateAllProcesses(this.PackageFullName);
         }
 
         public void BackupInitialStates()
@@ -235,32 +195,84 @@
             this.utils.CopyDirectory(this.InitialStatesDir + @"\LocalState", this.PackageFolderDir + @"\LocalState");
         }
 
-        private string PackageName
-        {
-            get
-            {
-                if (this.packageNameCache == null)
-                {
-                    // PackageFamilyName = {Name}_{PublisherHash}!{AppId}
-                    this.packageNameCache = this.PackageFamilyName.Remove(this.PackageFamilyName.IndexOf("_"));
-                }
-
-                return this.packageNameCache;
-            }
-        }
-
         private string InitialStatesDir
         {
             get
             {
-                if (this.initialStatesDirCache == null)
+                return this.utils.ExpandEnvironmentVariables(@"%LOCALAPPDATA%\WinAppDriver\Packages\" + this.PackageFamilyName);
+            }
+        }
+
+        private AppInfo GetInstalledAppInfo()
+        {
+            if (this.infoCache != null)
+            {
+                return this.infoCache;
+            }
+
+            if (this.TryGetInstalledAppInfo(out this.infoCache))
+            {
+                return this.infoCache;
+            }
+            else
+            {
+                throw new InvalidOperationException(string.Format(
+                    "The package '{0}' is not installed yet.",
+                    this.PackageName));
+            }
+        }
+
+        private bool TryGetInstalledAppInfo(out AppInfo info)
+        {
+            string packageName, version, packageFamilyName, packageFullName, appUserModelId;
+
+            using (var ps = PowerShell.Create())
+            {
+                var results = ps.AddCommand("Get-AppxPackage").AddParameter("Name", this.PackageName).Invoke();
+                if (results.Count == 0)
                 {
-                    this.initialStatesDirCache = this.utils.ExpandEnvironmentVariables(
-                        @"%LOCALAPPDATA%\WinAppDriver\Packages\" + this.PackageFamilyName);
+                    info = null;
+                    return false;
                 }
 
-                return this.initialStatesDirCache;
+                var properties = results[0].Properties;
+                packageName = (string)properties["Name"].Value; // normal
+                version = (string)properties["Version"].Value;
+                packageFamilyName = (string)properties["PackageFamilyName"].Value;
+                packageFullName = (string)properties["PackageFullName"].Value;
             }
+
+            using (var ps = PowerShell.Create())
+            {
+                var manifest = ps.AddCommand("Get-AppxPackageManifest").AddParameter("Package", packageFullName).Invoke()[0];
+                var root = (XmlElement)manifest.Properties["Package"].Value;
+                string appID = root["Applications"]["Application"].GetAttribute("Id");
+                appUserModelId = packageFamilyName + "!" + appID;
+            }
+
+            info = new AppInfo
+            {
+                PackageName = packageName,
+                Version = version,
+                PackageFamilyName = packageFamilyName,
+                PackageFullName = packageFullName,
+                AppUserModelId = appUserModelId
+            };
+
+            return true;
+        }
+
+        private class AppInfo
+        {
+            public string PackageName { get; set; }
+
+            public string Version { get; set; }
+
+            public string PackageFamilyName { get; set; }
+
+            public string PackageFullName { get; set; }
+
+            public string AppUserModelId { get; set; }
         }
 
         private void StoreMD5(string fileMD5)

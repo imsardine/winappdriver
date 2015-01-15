@@ -2,7 +2,6 @@ namespace WinAppDriver
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using Newtonsoft.Json;
 
     [Route("POST", "/session")]
@@ -29,12 +28,12 @@ namespace WinAppDriver
             var caps = new Capabilities()
             {
                 PlatformName = (string)request.DesiredCapabilities["platformName"],
-                AppUserModelId = (string)request.DesiredCapabilities["appUserModelId"],
+                PackageName = (string)request.DesiredCapabilities["packageName"],
                 App = (string)request.DesiredCapabilities["app"],
                 MD5 = request.DesiredCapabilities.ContainsKey("MD5") ? (string)request.DesiredCapabilities["MD5"] : null
             };
 
-            IStoreApplication app = new StoreApplication(caps.AppUserModelId, this.utils);
+            IStoreApplication app = new StoreApplication(caps.PackageName, this.utils);
 
             if (caps.MD5 != null && caps.MD5 == app.GetLocalMD5())
             {
@@ -59,7 +58,7 @@ namespace WinAppDriver
                     {
                         if (app.IsInstalled())
                         {
-                            app.UninstallApp(app.GetPackageFullName());
+                            app.UninstallApp(app.PackageFullName);
                         }
 
                         app.InstallApp(caps.App);

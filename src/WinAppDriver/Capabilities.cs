@@ -7,7 +7,7 @@ namespace WinAppDriver
         [JsonProperty("platformName")]
         public string PlatformName { get; set; }
 
-        public string AppUserModelId { get; set; }
+        public string PackageName { get; set; }
 
         public string App { get; set; }
 
