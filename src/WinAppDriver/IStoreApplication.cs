@@ -65,7 +65,7 @@
 
         public string PackageFullName
         {
-            get { return this.GetInstalledAppInfo().PackageFamilyName; }
+            get { return this.GetInstalledAppInfo().PackageFullName; }
         }
 
         public string PackageFolderDir
