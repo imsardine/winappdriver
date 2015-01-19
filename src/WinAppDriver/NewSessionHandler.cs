@@ -45,12 +45,12 @@ namespace WinAppDriver
                 {
                     if (caps.App.StartsWith("http"))
                     {
-                        caps.App = app.GetAppFileFromWeb(caps.App, caps.MD5);
+                        caps.App = this.utils.GetAppFileFromWeb(caps.App, caps.MD5);
                     }
 
                     Console.WriteLine("\nApp file:\n\t" + caps.App);
 
-                    if (app.GetLocalMD5() == app.GetFileMD5(caps.App))
+                    if (app.GetLocalMD5() == this.utils.GetFileMD5(caps.App))
                     {
                         Console.Out.WriteLine("\nThe current installed version and the download version are the same ,so skip installing.\n");
                     }
@@ -58,10 +58,10 @@ namespace WinAppDriver
                     {
                         if (app.IsInstalled())
                         {
-                            app.UninstallApp(app.PackageFullName);
+                            app.Uninstall();
                         }
 
-                        app.InstallApp(caps.App);
+                        app.Install(caps.App);
                     }
                 }
                 else

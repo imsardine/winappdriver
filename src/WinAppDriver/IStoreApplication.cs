@@ -6,9 +6,7 @@
     using System.IO;
     using System.IO.Compression;
     using System.Management.Automation;
-    using System.Net;
     using System.Runtime.InteropServices;
-    using System.Security.Cryptography;
     using System.Xml;
 
     internal interface IStoreApplication : IApplication
@@ -24,14 +22,6 @@
         string PackageFolderDir { get; }
 
         string GetLocalMD5();
-
-        string GetFileMD5(string filePath);
-
-        string GetAppFileFromWeb(string webResource, string expectFileMD5);
-
-        void UninstallApp(string packageFullName);
-
-        void InstallApp(string zipFile);
     }
 
     [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder", Justification = "Reviewed.")]
@@ -92,48 +82,15 @@
             }
         }
 
-        public string GetFileMD5(string filePath)
-        {
-            MD5 md5 = new MD5CryptoServiceProvider();
-            FileStream zipFile = new FileStream(filePath, FileMode.Open);
-            byte[] bytes = md5.ComputeHash(zipFile);
-            zipFile.Close();
-            return BitConverter.ToString(bytes).Replace("-", string.Empty).ToLower();
-        }
-
-        public string GetAppFileFromWeb(string webResource, string expectFileMD5)
-        {
-            string storeFileName = Environment.GetEnvironmentVariable("TEMP") + @"\StoreApp_" + DateTime.Now.ToString("yyyyMMddHHmmss") + webResource.Substring(webResource.LastIndexOf("."));
-
-            // Create a new WebClient instance.
-            WebClient myWebClient = new WebClient();
-
-            Console.WriteLine("Downloading File \"{0}\" .......\n\n", webResource);
-
-            // Download the Web resource and save it into temp folder.
-            myWebClient.DownloadFile(webResource, storeFileName);
-            Console.WriteLine("Successfully Downloaded File \"{0}\"", webResource);
-            Console.WriteLine("\nDownloaded file saved in the following file system folder:\n\t" + storeFileName);
-
-            string fileMD5 = this.GetFileMD5(storeFileName);
-            if (expectFileMD5 != null && expectFileMD5 != this.GetFileMD5(storeFileName))
-            {
-                string msg = "You got a wrong file. ExpectMD5 is \"" + expectFileMD5 + "\", but download file MD5 is \"" + fileMD5 + "\".";
-                throw new WinAppDriverException(msg);
-            }
-
-            return storeFileName;
-        }
-
-        public void UninstallApp(string packageFullName)
+        public void Uninstall()
         {
             PowerShell ps = PowerShell.Create();
             ps.AddCommand("Remove-AppxPackage");
-            ps.AddArgument(packageFullName);
+            ps.AddArgument(this.PackageFullName);
             ps.Invoke();
         }
 
-        public void InstallApp(string zipFile)
+        public void Install(string zipFile)
         {
             string fileFolder = zipFile.Remove(zipFile.Length - 4);
             ZipFile.ExtractToDirectory(zipFile, fileFolder);
@@ -150,7 +107,7 @@
                 ps.Invoke();
                 System.Threading.Thread.Sleep(1000); // Waiting activity done.
 
-                this.StoreMD5(this.GetFileMD5(zipFile));
+                this.StoreMD5(this.utils.GetFileMD5(zipFile));
                 this.BackupInitialStates();
             }
             else
