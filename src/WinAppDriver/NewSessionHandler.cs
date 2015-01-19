@@ -29,48 +29,78 @@ namespace WinAppDriver
             {
                 PlatformName = (string)request.DesiredCapabilities["platformName"],
                 PackageName = (string)request.DesiredCapabilities["packageName"],
-                App = (string)request.DesiredCapabilities["app"],
+                App = request.DesiredCapabilities.ContainsKey("app") ? (string)request.DesiredCapabilities["app"] : null,
                 MD5 = request.DesiredCapabilities.ContainsKey("MD5") ? (string)request.DesiredCapabilities["MD5"] : null
             };
 
             IStoreApplication app = new StoreApplication(caps.PackageName, this.utils);
 
-            if (caps.MD5 != null && caps.MD5 == app.GetLocalMD5())
+            if (app.IsInstalled())
             {
-                Console.Out.WriteLine("\nThe current installed version and the assigned version are the same ,so skip installing.\n");
-            }
-            else
-            {
-                if (caps.App.EndsWith(".zip"))
+                app.Terminate();
+                if (caps.App != null)
                 {
-                    if (caps.App.StartsWith("http"))
+                    if (caps.App.EndsWith(".zip"))
                     {
-                        caps.App = this.utils.GetAppFileFromWeb(caps.App, caps.MD5);
-                    }
-
-                    Console.WriteLine("\nApp file:\n\t" + caps.App);
-
-                    if (app.GetLocalMD5() == this.utils.GetFileMD5(caps.App))
-                    {
-                        Console.Out.WriteLine("\nThe current installed version and the download version are the same ,so skip installing.\n");
+                        string downloadedFile = caps.App;
+                        string downloadedFileMD5 = null;
+                        string localMd5 = app.GetLocalMD5();
+                        if (caps.MD5 != null)
+                        {
+                            if (localMd5 != caps.MD5)
+                            {
+                                downloadedFile = this.utils.GetAppFileFromWeb(caps.App, caps.MD5);
+                                downloadedFileMD5 = this.utils.GetFileMD5(downloadedFile);
+                                app.Uninstall();
+                                app.Install(downloadedFile);
+                            }
+                            else
+                            {
+                                Console.Out.WriteLine("\nThe current installed version and the assigned version are the same ,so skip installing.\n");
+                            }
+                        }
+                        else
+                        {
+                            downloadedFile = this.utils.GetAppFileFromWeb(caps.App, caps.MD5);
+                            downloadedFileMD5 = this.utils.GetFileMD5(downloadedFile);
+                            if (localMd5 != downloadedFileMD5)
+                            {
+                                app.Uninstall();
+                                app.Install(downloadedFile);
+                            }
+                            else
+                            {
+                                Console.Out.WriteLine("\nThe current installed version and the download version are the same ,so skip installing.\n");
+                            }
+                        }
                     }
                     else
                     {
-                        if (app.IsInstalled())
-                        {
-                            app.Uninstall();
-                        }
-
-                        app.Install(caps.App);
+                        throw new FailedCommandException("Your app file is \"" + caps.App + "\". App file is not a .zip file.", 13);
+                    }
+                }
+            }
+            else
+            {
+                if (caps.App != null)
+                {
+                    if (caps.App.EndsWith(".zip"))
+                    {
+                        string downloadedFile = this.utils.GetAppFileFromWeb(caps.App, caps.MD5);
+                        app.Install(downloadedFile);
+                    }
+                    else
+                    {
+                        throw new FailedCommandException("Your app file is \"" + caps.App + "\". App file is not a .zip file.", 13);
                     }
                 }
                 else
                 {
-                    throw new FailedCommandException("Your app file is \"" + caps.App + "\". App file is not a .zip file.", 13);
+                    string msg = "There is no installed App neither install file.";
+                    throw new WinAppDriverException(msg);
                 }
             }
 
-            app.Terminate();
             app.Activate();
             session = this.sessionManager.CreateSession(app, caps);
 
