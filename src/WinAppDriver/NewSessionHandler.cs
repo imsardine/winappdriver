@@ -27,16 +27,54 @@ namespace WinAppDriver
 
             var caps = new Capabilities()
             {
-                AppUserModelId = (string)request.DesiredCapabilities["appUserModelId"],
-                App = (string)request.DesiredCapabilities["app"]
+                PlatformName = (string)request.DesiredCapabilities["platformName"],
+                PackageName = (string)request.DesiredCapabilities["packageName"],
+                App = (string)request.DesiredCapabilities["app"],
+                MD5 = request.DesiredCapabilities.ContainsKey("MD5") ? (string)request.DesiredCapabilities["MD5"] : null
             };
 
-            IStoreApplication app = new StoreApplication(caps.AppUserModelId, this.utils);
-            app.BackupInitialStates(); // TODO only when newly installed
+            IStoreApplication app = new StoreApplication(caps.PackageName, this.utils);
+
+            if (caps.MD5 != null && caps.MD5 == app.GetLocalMD5())
+            {
+                Console.Out.WriteLine("\nThe current installed version and the assigned version are the same ,so skip installing.\n");
+            }
+            else
+            {
+                if (caps.App.EndsWith(".zip"))
+                {
+                    if (caps.App.StartsWith("http"))
+                    {
+                        caps.App = app.GetAppFileFromWeb(caps.App, caps.MD5);
+                    }
+
+                    Console.WriteLine("\nApp file:\n\t" + caps.App);
+
+                    if (app.GetLocalMD5() == app.GetFileMD5(caps.App))
+                    {
+                        Console.Out.WriteLine("\nThe current installed version and the download version are the same ,so skip installing.\n");
+                    }
+                    else
+                    {
+                        if (app.IsInstalled())
+                        {
+                            app.UninstallApp(app.PackageFullName);
+                        }
+
+                        app.InstallApp(caps.App);
+                    }
+                }
+                else
+                {
+                    throw new FailedCommandException("Your app file is \"" + caps.App + "\". App file is not a .zip file.", 13);
+                }
+            }
+
+            app.Terminate();
             app.Activate();
             session = this.sessionManager.CreateSession(app, caps);
 
-            return null; // TODO capabilities
+            return caps; // TODO capabilities
         }
 
         private class NewSessionRequest
