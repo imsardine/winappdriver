@@ -9,6 +9,8 @@ namespace WinAppDriver
 
     internal class Server
     {
+        private static ILogger logger = Logger.GetLogger("WinAppDriver");
+
         private RequestManager requestManager;
 
         public Server(RequestManager requestManager)
@@ -22,7 +24,7 @@ namespace WinAppDriver
             listener.Prefixes.Add("http://+:4444/wd/hub/");
             listener.Start();
 
-            Console.WriteLine("Listening...");
+            logger.Info("WinAppDriver started on 0.0.0.0:4444 ");
             while (true)
             {
                 var context = listener.GetContext();
@@ -37,7 +39,7 @@ namespace WinAppDriver
             string method = request.HttpMethod;
             string path = request.Url.AbsolutePath;
             string body = new StreamReader(request.InputStream, request.ContentEncoding).ReadToEnd();
-            Console.WriteLine("Request: {0} {1}\n{2}", method, path, body);
+            logger.Debug("Request: {0} {1}\n{2}", method, path, body);
 
             Session session = null;
             try
@@ -47,6 +49,7 @@ namespace WinAppDriver
             }
             catch (Exception ex)
             {
+                logger.Error("Error occurred.", ex);
                 this.ResponseException(method, path, ex, session, response);
             }
         }
@@ -101,8 +104,7 @@ namespace WinAppDriver
             HttpListenerResponse response, HttpStatusCode httpStatus, string contentType, string body)
         {
             string bodyHead = body.Length > 200 ? body.Substring(0, 200) : body;
-            Console.WriteLine(
-                "Response (Status: {0}, ContentType: {1}):\n{2}", httpStatus, contentType, bodyHead);
+            logger.Debug("Response (Status: {0}, ContentType: {1}):\n{2}", httpStatus, contentType, bodyHead);
 
             response.StatusCode = (int)httpStatus;
             response.ContentType = contentType;

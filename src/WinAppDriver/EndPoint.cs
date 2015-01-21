@@ -6,6 +6,8 @@ namespace WinAppDriver
 
     internal class EndPoint
     {
+        private static ILogger logger = Logger.GetLogger("WinAppDriver");
+
         private static Regex paramRegex = new Regex("/:([^/]+)");
 
         private string method;
@@ -52,7 +54,7 @@ namespace WinAppDriver
             string pattern_converted = string.Format(
                 "^/wd/hub{0}$",
                 paramRegex.Replace(pattern, "/(?<${1}>[^/]+)"));
-            Console.WriteLine("Pattern conversion; {0} => {1}", pattern, pattern_converted);
+            logger.Debug("Pattern conversion; {0} => {1}", pattern, pattern_converted);
             return new Regex(pattern_converted);
         }
     }
