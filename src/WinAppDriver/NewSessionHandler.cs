@@ -101,7 +101,7 @@ namespace WinAppDriver
                 }
             }
 
-            app.Activate();
+            app.Launch();
             session = this.sessionManager.CreateSession(app, caps);
 
             return caps; // TODO capabilities

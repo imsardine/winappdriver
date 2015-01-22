@@ -88,6 +88,7 @@
             ps.AddCommand("Remove-AppxPackage");
             ps.AddArgument(this.PackageFullName);
             ps.Invoke();
+            this.utils.DeleteDirectory(this.InitialStatesDir);
         }
 
         public void Install(string zipFile)
@@ -108,7 +109,6 @@
                 System.Threading.Thread.Sleep(1000); // Waiting activity done.
 
                 this.StoreMD5(this.utils.GetFileMD5(zipFile));
-                this.BackupInitialStates();
             }
             else
             {
@@ -126,6 +126,20 @@
             {
                 return this.TryGetInstalledAppInfo(out this.infoCache);
             }
+        }
+
+        public void Launch()
+        {
+            if (Directory.Exists(this.InitialStatesDir))
+            {
+                this.RestoreInitialStates();
+            }
+            else
+            {
+                this.BackupInitialStates();
+            }
+
+            this.Activate();
         }
 
         public void Activate()

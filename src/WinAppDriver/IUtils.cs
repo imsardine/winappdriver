@@ -11,6 +11,8 @@
 
         void CopyDirectory(string source, string destination);
 
+        void DeleteDirectory(string source);
+
         string GetFileMD5(string filePath);
 
         string GetAppFileFromWeb(string webResource, string expectFileMD5);
@@ -70,6 +72,15 @@
                     string temppath = Path.Combine(destinationPath, sourceSubFolder.Name);
                     this.CopyDirectory(sourceSubFolder.FullName, temppath);
                 }
+            }
+        }
+
+        public void DeleteDirectory(string sourcePath)
+        {
+            if (Directory.Exists(sourcePath))
+            {
+                DirectoryInfo sourceInfo = new DirectoryInfo(sourcePath);
+                sourceInfo.Delete(true);
             }
         }
 
