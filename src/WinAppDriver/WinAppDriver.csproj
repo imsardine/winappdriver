@@ -58,6 +58,9 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Essential.Diagnostics">
+      <HintPath>..\packages\Essential.Diagnostics.1.2.501.0\lib\Essential.Diagnostics.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>.\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -95,6 +98,7 @@
     <Compile Include="GetElementTextHandler.cs" />
     <Compile Include="IApplication.cs" />
     <Compile Include="IHandler.cs" />
+    <Compile Include="ILogger.cs" />
     <Compile Include="IStoreApplication.cs" />
     <Compile Include="IUtils.cs" />
     <Compile Include="NewSessionHandler.cs" />
@@ -110,6 +114,7 @@
     <Compile Include="WinAppDriverException.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="packages.config" />
     <None Include="WinAppDriver.exe.manifest" />
     <None Include="WinAppDriver.pfx" />

@@ -34,7 +34,7 @@ namespace WinAppDriver
             }
 
             int id = session.AddUIElement(element);
-            return new Dictionary<string, int> { { "ELEMENT", id } };
+            return new Dictionary<string, string> { { "ELEMENT", id.ToString() } };
         }
 
         private class FindElementRequest

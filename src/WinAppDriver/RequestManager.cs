@@ -5,6 +5,8 @@ namespace WinAppDriver
 
     internal class RequestManager
     {
+        private static ILogger logger = Logger.GetLogger("WinAppDriver");
+
         private SessionManager sessionManager;
 
         private Dictionary<string, List<EndPoint>> endpoints;
@@ -39,7 +41,7 @@ namespace WinAppDriver
                 if (endpoint.IsMatch(method, path, out urlParams))
                 {
                     var handler = endpoint.Handler;
-                    Console.WriteLine("A corresponding endpoint found: {0}", handler.GetType().FullName);
+                    logger.Debug("A corresponding endpoint found: {0}", handler.GetType().FullName);
 
                     if (urlParams.ContainsKey("sessionId"))
                     {
