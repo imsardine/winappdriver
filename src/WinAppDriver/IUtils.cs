@@ -101,17 +101,34 @@
             WebClient myWebClient = new WebClient();
 
             Console.WriteLine("Downloading File \"{0}\" .......\n\n", webResource);
-
-            // Download the Web resource and save it into temp folder.
-            myWebClient.DownloadFile(webResource, storeFileName);
-            Console.WriteLine("Successfully Downloaded File \"{0}\"", webResource);
-            Console.WriteLine("\nDownloaded file saved in the following file system folder:\n\t" + storeFileName);
-
-            string fileMD5 = this.GetFileMD5(storeFileName);
-            if (expectFileMD5 != null && expectFileMD5 != this.GetFileMD5(storeFileName))
+            int retryCounter = 3;
+            while (retryCounter > 0)
             {
-                string msg = "You got a wrong file. ExpectMD5 is \"" + expectFileMD5 + "\", but download file MD5 is \"" + fileMD5 + "\".";
-                throw new WinAppDriverException(msg);
+                retryCounter--;
+                
+                // Download the Web resource and save it into temp folder.
+                myWebClient.DownloadFile(webResource, storeFileName);
+ 
+                string fileMD5 = this.GetFileMD5(storeFileName);
+                if (expectFileMD5 != null && expectFileMD5 != this.GetFileMD5(storeFileName))
+                {
+                    if (retryCounter == 0)
+                    {
+                        string msg = "You got a wrong file. ExpectMD5 is \"" + expectFileMD5 + "\", but download file MD5 is \"" + fileMD5 + "\".";
+                        throw new WinAppDriverException(msg);
+                    }
+                    else
+                    {
+                        Console.WriteLine("ExpectMD5 is \"" + expectFileMD5 + "\", but download file MD5 is \"" + fileMD5 + "\".");
+                        Console.WriteLine("Retry downloading File \"{0}\" .......\n\n", webResource);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Successfully Downloaded File \"{0}\"", webResource);
+                    Console.WriteLine("\nDownloaded file saved in the following file system folder:\n\t" + storeFileName);
+                    break;
+                }
             }
 
             return storeFileName;
