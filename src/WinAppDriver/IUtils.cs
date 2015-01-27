@@ -20,6 +20,8 @@
 
     internal class Utils : IUtils
     {
+        private static ILogger logger = Logger.GetLogger("WinAppDriver");
+
         public string ExpandEnvironmentVariables(string input)
         {
             return Environment.ExpandEnvironmentVariables(input);
@@ -55,7 +57,7 @@
                     destinationInfo.SetAccessControl(security);
                 }
 
-                Console.WriteLine("DCH: Directory Copy Begin");
+                logger.Debug("DCH: Directory Copy Begin");
                 foreach (FileInfo sourceFile in sourceFiles)
                 {
                     string destinationFilePath = Path.Combine(destinationPath, sourceFile.Name);
@@ -100,7 +102,7 @@
             // Create a new WebClient instance.
             WebClient myWebClient = new WebClient();
 
-            Console.WriteLine("Downloading File \"{0}\" .......\n\n", webResource);
+            logger.Info("Downloading File \"{0}\" .......", webResource);
             int retryCounter = 3;
             while (retryCounter > 0)
             {
@@ -119,14 +121,14 @@
                     }
                     else
                     {
-                        Console.WriteLine("ExpectMD5 is \"" + expectFileMD5 + "\", but download file MD5 is \"" + fileMD5 + "\".");
-                        Console.WriteLine("Retry downloading File \"{0}\" .......\n\n", webResource);
+                        logger.Debug("ExpectMD5 is \"{0}\", but download file MD5 is \"{1}\".", expectFileMD5, fileMD5);
+                        logger.Debug("Retry downloading File \"{0}\" .......", webResource);
                     }
                 }
                 else
                 {
-                    Console.WriteLine("Successfully Downloaded File \"{0}\"", webResource);
-                    Console.WriteLine("\nDownloaded file saved in the following file system folder:\n\t" + storeFileName);
+                    logger.Debug("Successfully Downloaded File \"{0}\"", webResource);
+                    logger.Debug("\nDownloaded file saved in the following file system folder:\n\t\"{0}\"", storeFileName);
                     break;
                 }
             }

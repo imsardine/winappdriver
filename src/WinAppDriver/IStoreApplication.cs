@@ -27,6 +27,8 @@
     [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder", Justification = "Reviewed.")]
     internal class StoreApplication : IStoreApplication
     {
+        private static ILogger logger = Logger.GetLogger("WinAppDriver");
+
         private AppInfo infoCache;
 
         private IUtils utils;
@@ -72,7 +74,7 @@
             if (System.IO.File.Exists(md5FileName))
             {
                 System.IO.StreamReader fileReader = System.IO.File.OpenText(md5FileName);
-                Console.Out.WriteLine("Getting MD5 from file: \"{0}\".", md5FileName);
+                logger.Debug("Getting MD5 from file: \"{0}\".", md5FileName);
 
                 return fileReader.ReadLine().ToString();
             }
@@ -95,13 +97,13 @@
         {
             string fileFolder = zipFile.Remove(zipFile.Length - 4);
             ZipFile.ExtractToDirectory(zipFile, fileFolder);
-            Console.WriteLine("\nZip file extract to:\n\t" + fileFolder);
+            logger.Debug("Zip file extract to:\t\"{0}\"", fileFolder);
 
             DirectoryInfo dir = new DirectoryInfo(fileFolder);
             FileInfo[] files = dir.GetFiles("*.ps1", SearchOption.AllDirectories);
             if (files.Length > 0)
             {
-                Console.WriteLine("\nInstalling Windows Store App. \n");
+                logger.Info("Installing Windows Store App.");
                 string dirs = files[0].DirectoryName;
                 PowerShell ps = PowerShell.Create();
                 ps.AddScript(@"Powershell.exe -executionpolicy remotesigned -NonInteractive -File " + files[0].FullName);
@@ -251,7 +253,7 @@
             string md5FileName = System.IO.Path.Combine(this.PackageFolderDir, "MD5.txt");
             using (System.IO.FileStream fs = System.IO.File.Create(md5FileName))
             {
-                Console.Out.WriteLine("Writing MD5 to file: \"{0}\"", md5FileName);
+                logger.Debug("Writing MD5 to file: \"{0}\"", md5FileName);
                 byte[] byteMD5 = System.Text.Encoding.Default.GetBytes(fileMD5);
                 for (int i = 0; i < byteMD5.Length; i++)
                 {

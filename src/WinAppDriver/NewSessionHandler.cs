@@ -7,6 +7,8 @@ namespace WinAppDriver
     [Route("POST", "/session")]
     internal class NewSessionHandler : IHandler
     {
+        private static ILogger logger = Logger.GetLogger("WinAppDriver");
+
         private SessionManager sessionManager;
 
         private IUtils utils;
@@ -22,7 +24,7 @@ namespace WinAppDriver
             NewSessionRequest request = JsonConvert.DeserializeObject<NewSessionRequest>(body);
             foreach (var kvp in request.DesiredCapabilities)
             {
-                Console.WriteLine("{0} = {1} ({2})", kvp.Key, kvp.Value, kvp.Value.GetType());
+                logger.Info("{0} = {1} ({2})", kvp.Key, kvp.Value, kvp.Value.GetType());
             }
 
             var caps = new Capabilities()
@@ -56,7 +58,7 @@ namespace WinAppDriver
                             }
                             else
                             {
-                                Console.Out.WriteLine("\nThe current installed version and the assigned version are the same ,so skip installing.\n");
+                                logger.Info("The current installed version and the assigned version are the same ,so skip installing.");
                             }
                         }
                         else
@@ -70,7 +72,7 @@ namespace WinAppDriver
                             }
                             else
                             {
-                                Console.Out.WriteLine("\nThe current installed version and the download version are the same ,so skip installing.\n");
+                                logger.Info("The current installed version and the download version are the same ,so skip installing.");
                             }
                         }
                     }
