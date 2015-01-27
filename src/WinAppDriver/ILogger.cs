@@ -92,13 +92,19 @@
 
         public void Fatal(string message, params object[] args)
         {
-            this.Fatal(string.Format(message, args));
+            if (this.IsFatalEnabled())
+            {
+                this.Fatal(string.Format(message, args));
+            }
         }
 
         public void Fatal(string message, Exception exception)
         {
-            message += "\n" + exception.ToString();
-            this.Fatal(message);
+            if (this.IsFatalEnabled())
+            {
+                message += "\n" + exception.ToString();
+                this.Fatal(message);
+            }
         }
 
         public void Error(string message)
@@ -108,13 +114,19 @@
 
         public void Error(string message, params object[] args)
         {
-            this.Error(string.Format(message, args));
+            if (this.IsErrorEnabled())
+            {
+                this.Error(string.Format(message, args));
+            }
         }
 
         public void Error(string message, Exception exception)
         {
-            message += "\n" + exception.ToString();
-            this.Error(message);
+            if (this.IsErrorEnabled())
+            {
+                message += "\n" + exception.ToString();
+                this.Error(message);
+            }
         }
 
         public void Warn(string message)
@@ -124,13 +136,19 @@
 
         public void Warn(string message, params object[] args)
         {
-            this.Warn(string.Format(message, args));
+            if (this.IsWarnEnabled())
+            {
+                this.Warn(string.Format(message, args));
+            }
         }
 
         public void Warn(string message, Exception exception)
         {
-            message += "\n" + exception.ToString();
-            this.Warn(message);
+            if (this.IsWarnEnabled())
+            {
+                message += "\n" + exception.ToString();
+                this.Warn(message);
+            }
         }
 
         public void Info(string message)
@@ -140,13 +158,19 @@
 
         public void Info(string message, params object[] args)
         {
-            this.Info(string.Format(message, args));
+            if (this.IsInfoEnabled())
+            {
+                this.Info(string.Format(message, args));
+            }
         }
 
         public void Info(string message, Exception exception)
         {
-            message += "\n" + exception.ToString();
-            this.Info(message);
+            if (this.IsInfoEnabled())
+            {
+                message += "\n" + exception.ToString();
+                this.Info(message);
+            }
         }
 
         public void Debug(string message)
@@ -156,13 +180,19 @@
 
         public void Debug(string message, params object[] args)
         {
-            this.Debug(string.Format(message, args));
+            if (this.IsDebugEnabled())
+            {
+                this.Debug(string.Format(message, args));
+            }
         }
 
         public void Debug(string message, Exception exception)
         {
-            message += "\n" + exception.ToString();
-            this.Debug(message);
+            if (this.IsDebugEnabled())
+            {
+                message += "\n" + exception.ToString();
+                this.Debug(message);
+            }
         }
     }
 }
