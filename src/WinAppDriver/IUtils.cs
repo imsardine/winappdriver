@@ -102,7 +102,7 @@
             // Create a new WebClient instance.
             WebClient myWebClient = new WebClient();
 
-            logger.Info("Downloading File \"{0}\" .......", webResource);
+            logger.Info("Downloading file \"{0}\" .......", webResource);
             int retryCounter = 3;
             while (retryCounter > 0)
             {
@@ -116,19 +116,19 @@
                 {
                     if (retryCounter == 0)
                     {
-                        string msg = "You got a wrong file. ExpectMD5 is \"" + expectFileMD5 + "\", but download file MD5 is \"" + fileMD5 + "\".";
+                        string msg = "You got a wrong file. ExpectMD5 is \"" + expectFileMD5 + "\", but downloaded file MD5 is \"" + fileMD5 + "\".";
                         throw new WinAppDriverException(msg);
                     }
                     else
                     {
-                        logger.Debug("ExpectMD5 is \"{0}\", but download file MD5 is \"{1}\".", expectFileMD5, fileMD5);
-                        logger.Debug("Retry downloading File \"{0}\" .......", webResource);
+                        logger.Debug("ExpectMD5 is \"{0}\", but downloaded file MD5 is \"{1}\".", expectFileMD5, fileMD5);
+                        logger.Debug("Retry downloading file \"{0}\" .......", webResource);
                     }
                 }
                 else
                 {
-                    logger.Debug("Successfully Downloaded File \"{0}\"", webResource);
-                    logger.Debug("\nDownloaded file saved in the following file system folder:\n\t\"{0}\"", storeFileName);
+                    logger.Debug("Successfully downloaded file from \"{0}\"", webResource);
+                    logger.Debug("Downloaded file saved in the following file system folder: \"{0}\"", storeFileName);
                     break;
                 }
             }

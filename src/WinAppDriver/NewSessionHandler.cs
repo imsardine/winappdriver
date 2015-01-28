@@ -36,69 +36,32 @@ namespace WinAppDriver
             };
 
             IStoreApplication app = new StoreApplication(caps.PackageName, this.utils);
+            IPackageInstaller installer = new PackageInstaller(app, this.utils, caps.App, caps.MD5);
 
             if (app.IsInstalled())
             {
                 app.Terminate();
                 if (caps.App != null)
                 {
-                    if (caps.App.EndsWith(".zip"))
+                    if (installer.IsBuildChanged)
                     {
-                        string downloadedFile = caps.App;
-                        string downloadedFileMD5 = null;
-                        string localMd5 = app.GetLocalMD5();
-                        if (caps.MD5 != null)
-                        {
-                            if (localMd5 != caps.MD5)
-                            {
-                                downloadedFile = this.utils.GetAppFileFromWeb(caps.App, caps.MD5);
-                                downloadedFileMD5 = this.utils.GetFileMD5(downloadedFile);
-                                app.Uninstall();
-                                app.Install(downloadedFile);
-                            }
-                            else
-                            {
-                                logger.Info("The current installed version and the assigned version are the same ,so skip installing.");
-                            }
-                        }
-                        else
-                        {
-                            downloadedFile = this.utils.GetAppFileFromWeb(caps.App, caps.MD5);
-                            downloadedFileMD5 = this.utils.GetFileMD5(downloadedFile);
-                            if (localMd5 != downloadedFileMD5)
-                            {
-                                app.Uninstall();
-                                app.Install(downloadedFile);
-                            }
-                            else
-                            {
-                                logger.Info("The current installed version and the download version are the same ,so skip installing.");
-                            }
-                        }
+                        installer.Install();
                     }
-                    else
-                    {
-                        throw new FailedCommandException("Your app file is \"" + caps.App + "\". App file is not a .zip file.", 13);
-                    }
+                }
+                else
+                {
+                    logger.Info("Store App is already installed and the capability of App is empty, so skip installing.");
                 }
             }
             else
             {
                 if (caps.App != null)
                 {
-                    if (caps.App.EndsWith(".zip"))
-                    {
-                        string downloadedFile = this.utils.GetAppFileFromWeb(caps.App, caps.MD5);
-                        app.Install(downloadedFile);
-                    }
-                    else
-                    {
-                        throw new FailedCommandException("Your app file is \"" + caps.App + "\". App file is not a .zip file.", 13);
-                    }
+                    installer.Install();
                 }
                 else
                 {
-                    string msg = "There is no installed App neither install file.";
+                    string msg = "The source should be provided if Store App isn't installed.";
                     throw new WinAppDriverException(msg);
                 }
             }

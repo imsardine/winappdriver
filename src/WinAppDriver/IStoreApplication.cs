@@ -4,7 +4,6 @@
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
-    using System.IO.Compression;
     using System.Management.Automation;
     using System.Runtime.InteropServices;
     using System.Xml;
@@ -20,8 +19,6 @@
         string PackageFullName { get; }
 
         string PackageFolderDir { get; }
-
-        string GetLocalMD5();
     }
 
     [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder", Justification = "Reviewed.")]
@@ -68,22 +65,6 @@
             }
         }
 
-        public string GetLocalMD5()
-        {
-            string md5FileName = System.IO.Path.Combine(this.PackageFolderDir, "MD5.txt");
-            if (System.IO.File.Exists(md5FileName))
-            {
-                System.IO.StreamReader fileReader = System.IO.File.OpenText(md5FileName);
-                logger.Debug("Getting MD5 from file: \"{0}\".", md5FileName);
-
-                return fileReader.ReadLine().ToString();
-            }
-            else
-            {
-                return null;
-            }
-        }
-
         public void Uninstall()
         {
             PowerShell ps = PowerShell.Create();
@@ -91,31 +72,6 @@
             ps.AddArgument(this.PackageFullName);
             ps.Invoke();
             this.utils.DeleteDirectory(this.InitialStatesDir);
-        }
-
-        public void Install(string zipFile)
-        {
-            string fileFolder = zipFile.Remove(zipFile.Length - 4);
-            ZipFile.ExtractToDirectory(zipFile, fileFolder);
-            logger.Debug("Zip file extract to:\t\"{0}\"", fileFolder);
-
-            DirectoryInfo dir = new DirectoryInfo(fileFolder);
-            FileInfo[] files = dir.GetFiles("*.ps1", SearchOption.AllDirectories);
-            if (files.Length > 0)
-            {
-                logger.Info("Installing Windows Store App.");
-                string dirs = files[0].DirectoryName;
-                PowerShell ps = PowerShell.Create();
-                ps.AddScript(@"Powershell.exe -executionpolicy remotesigned -NonInteractive -File " + files[0].FullName);
-                ps.Invoke();
-                System.Threading.Thread.Sleep(1000); // Waiting activity done.
-
-                this.StoreMD5(this.utils.GetFileMD5(zipFile));
-            }
-            else
-            {
-                throw new FailedCommandException("Cannot find .ps1 file in \"" + fileFolder + "\".", 13);
-            }
         }
 
         public bool IsInstalled()
@@ -246,20 +202,6 @@
             public string PackageFullName { get; set; }
 
             public string AppUserModelId { get; set; }
-        }
-
-        private void StoreMD5(string fileMD5)
-        {
-            string md5FileName = System.IO.Path.Combine(this.PackageFolderDir, "MD5.txt");
-            using (System.IO.FileStream fs = System.IO.File.Create(md5FileName))
-            {
-                logger.Debug("Writing MD5 to file: \"{0}\"", md5FileName);
-                byte[] byteMD5 = System.Text.Encoding.Default.GetBytes(fileMD5);
-                for (int i = 0; i < byteMD5.Length; i++)
-                {
-                    fs.WriteByte(byteMD5[i]);
-                }
-            }
         }
 
         [ComImport, Guid("B1AEC16F-2383-4852-B0E9-8F0B1DC66B4D")]

@@ -15,7 +15,5 @@
         void RestoreInitialStates();
 
         void Uninstall();
-
-        void Install(string zipFile);
     }
 }
