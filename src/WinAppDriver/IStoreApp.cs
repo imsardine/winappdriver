@@ -8,7 +8,7 @@
     using System.Runtime.InteropServices;
     using System.Xml;
 
-    internal interface IStoreApplication : IApplication
+    internal interface IStoreApp : IApplication
     {
         string PackageName { get; }
 
@@ -22,7 +22,7 @@
     }
 
     [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder", Justification = "Reviewed.")]
-    internal class StoreApplication : IStoreApplication
+    internal class StoreApp : IStoreApp
     {
         private static ILogger logger = Logger.GetLogger("WinAppDriver");
 
@@ -30,7 +30,7 @@
 
         private IUtils utils;
 
-        public StoreApplication(string packageName, IUtils utils)
+        public StoreApp(string packageName, IUtils utils)
         {
             this.PackageName = packageName;
             this.utils = utils;

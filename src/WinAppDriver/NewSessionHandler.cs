@@ -35,15 +35,15 @@ namespace WinAppDriver
                 MD5 = request.DesiredCapabilities.ContainsKey("MD5") ? (string)request.DesiredCapabilities["MD5"] : null
             };
 
-            IStoreApplication app = new StoreApplication(caps.PackageName, this.utils);
-            IPackageInstaller installer = new PackageInstaller(app, this.utils, caps.App, caps.MD5);
+            IStoreApp app = new StoreApp(caps.PackageName, this.utils);
+            IPackageInstaller installer = new StoreAppPackageInstaller(app, this.utils, caps.App, caps.MD5);
 
             if (app.IsInstalled())
             {
                 app.Terminate();
                 if (caps.App != null)
                 {
-                    if (installer.IsBuildChanged)
+                    if (installer.IsBuildChanged())
                     {
                         installer.Install();
                     }
