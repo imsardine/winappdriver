@@ -7,6 +7,8 @@ namespace WinAppDriver
     [Route("POST", "/session")]
     internal class NewSessionHandler : IHandler
     {
+        private static ILogger logger = Logger.GetLogger("WinAppDriver");
+
         private SessionManager sessionManager;
 
         private IUtils utils;
@@ -22,56 +24,49 @@ namespace WinAppDriver
             NewSessionRequest request = JsonConvert.DeserializeObject<NewSessionRequest>(body);
             foreach (var kvp in request.DesiredCapabilities)
             {
-                Console.WriteLine("{0} = {1} ({2})", kvp.Key, kvp.Value, kvp.Value.GetType());
+                logger.Info("{0} = {1} ({2})", kvp.Key, kvp.Value, kvp.Value.GetType());
             }
 
             var caps = new Capabilities()
             {
                 PlatformName = (string)request.DesiredCapabilities["platformName"],
                 PackageName = (string)request.DesiredCapabilities["packageName"],
-                App = (string)request.DesiredCapabilities["app"],
+                App = request.DesiredCapabilities.ContainsKey("app") ? (string)request.DesiredCapabilities["app"] : null,
                 MD5 = request.DesiredCapabilities.ContainsKey("MD5") ? (string)request.DesiredCapabilities["MD5"] : null
             };
 
-            IStoreApplication app = new StoreApplication(caps.PackageName, this.utils);
+            IStoreApp app = new StoreApp(caps.PackageName, this.utils);
+            IPackageInstaller installer = new StoreAppPackageInstaller(app, this.utils, caps.App, caps.MD5);
 
-            if (caps.MD5 != null && caps.MD5 == app.GetLocalMD5())
+            if (app.IsInstalled())
             {
-                Console.Out.WriteLine("\nThe current installed version and the assigned version are the same ,so skip installing.\n");
-            }
-            else
-            {
-                if (caps.App.EndsWith(".zip"))
+                app.Terminate();
+                if (caps.App != null)
                 {
-                    if (caps.App.StartsWith("http"))
+                    if (installer.IsBuildChanged())
                     {
-                        caps.App = app.GetAppFileFromWeb(caps.App, caps.MD5);
-                    }
-
-                    Console.WriteLine("\nApp file:\n\t" + caps.App);
-
-                    if (app.GetLocalMD5() == app.GetFileMD5(caps.App))
-                    {
-                        Console.Out.WriteLine("\nThe current installed version and the download version are the same ,so skip installing.\n");
-                    }
-                    else
-                    {
-                        if (app.IsInstalled())
-                        {
-                            app.UninstallApp(app.PackageFullName);
-                        }
-
-                        app.InstallApp(caps.App);
+                        installer.Install();
                     }
                 }
                 else
                 {
-                    throw new FailedCommandException("Your app file is \"" + caps.App + "\". App file is not a .zip file.", 13);
+                    logger.Info("Store App is already installed and the capability of App is empty, so skip installing.");
+                }
+            }
+            else
+            {
+                if (caps.App != null)
+                {
+                    installer.Install();
+                }
+                else
+                {
+                    string msg = "The source should be provided if Store App isn't installed.";
+                    throw new WinAppDriverException(msg);
                 }
             }
 
-            app.Terminate();
-            app.Activate();
+            app.Launch();
             session = this.sessionManager.CreateSession(app, caps);
 
             return caps; // TODO capabilities

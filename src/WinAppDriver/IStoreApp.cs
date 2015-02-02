@@ -4,14 +4,11 @@
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
-    using System.IO.Compression;
     using System.Management.Automation;
-    using System.Net;
     using System.Runtime.InteropServices;
-    using System.Security.Cryptography;
     using System.Xml;
 
-    internal interface IStoreApplication : IApplication
+    internal interface IStoreApp : IApplication
     {
         string PackageName { get; }
 
@@ -22,26 +19,18 @@
         string PackageFullName { get; }
 
         string PackageFolderDir { get; }
-
-        string GetLocalMD5();
-
-        string GetFileMD5(string filePath);
-
-        string GetAppFileFromWeb(string webResource, string expectFileMD5);
-
-        void UninstallApp(string packageFullName);
-
-        void InstallApp(string zipFile);
     }
 
     [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder", Justification = "Reviewed.")]
-    internal class StoreApplication : IStoreApplication
+    internal class StoreApp : IStoreApp
     {
+        private static ILogger logger = Logger.GetLogger("WinAppDriver");
+
         private AppInfo infoCache;
 
         private IUtils utils;
 
-        public StoreApplication(string packageName, IUtils utils)
+        public StoreApp(string packageName, IUtils utils)
         {
             this.PackageName = packageName;
             this.utils = utils;
@@ -76,87 +65,13 @@
             }
         }
 
-        public string GetLocalMD5()
-        {
-            string md5FileName = System.IO.Path.Combine(this.PackageFolderDir, "MD5.txt");
-            if (System.IO.File.Exists(md5FileName))
-            {
-                System.IO.StreamReader fileReader = System.IO.File.OpenText(md5FileName);
-                Console.Out.WriteLine("Getting MD5 from file: \"{0}\".", md5FileName);
-
-                return fileReader.ReadLine().ToString();
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public string GetFileMD5(string filePath)
-        {
-            MD5 md5 = new MD5CryptoServiceProvider();
-            FileStream zipFile = new FileStream(filePath, FileMode.Open);
-            byte[] bytes = md5.ComputeHash(zipFile);
-            zipFile.Close();
-            return BitConverter.ToString(bytes).Replace("-", string.Empty).ToLower();
-        }
-
-        public string GetAppFileFromWeb(string webResource, string expectFileMD5)
-        {
-            string storeFileName = Environment.GetEnvironmentVariable("TEMP") + @"\StoreApp_" + DateTime.Now.ToString("yyyyMMddHHmmss") + webResource.Substring(webResource.LastIndexOf("."));
-
-            // Create a new WebClient instance.
-            WebClient myWebClient = new WebClient();
-
-            Console.WriteLine("Downloading File \"{0}\" .......\n\n", webResource);
-
-            // Download the Web resource and save it into temp folder.
-            myWebClient.DownloadFile(webResource, storeFileName);
-            Console.WriteLine("Successfully Downloaded File \"{0}\"", webResource);
-            Console.WriteLine("\nDownloaded file saved in the following file system folder:\n\t" + storeFileName);
-
-            string fileMD5 = this.GetFileMD5(storeFileName);
-            if (expectFileMD5 != null && expectFileMD5 != this.GetFileMD5(storeFileName))
-            {
-                string msg = "You got a wrong file. ExpectMD5 is \"" + expectFileMD5 + "\", but download file MD5 is \"" + fileMD5 + "\".";
-                throw new WinAppDriverException(msg);
-            }
-
-            return storeFileName;
-        }
-
-        public void UninstallApp(string packageFullName)
+        public void Uninstall()
         {
             PowerShell ps = PowerShell.Create();
             ps.AddCommand("Remove-AppxPackage");
-            ps.AddArgument(packageFullName);
+            ps.AddArgument(this.PackageFullName);
             ps.Invoke();
-        }
-
-        public void InstallApp(string zipFile)
-        {
-            string fileFolder = zipFile.Remove(zipFile.Length - 4);
-            ZipFile.ExtractToDirectory(zipFile, fileFolder);
-            Console.WriteLine("\nZip file extract to:\n\t" + fileFolder);
-
-            DirectoryInfo dir = new DirectoryInfo(fileFolder);
-            FileInfo[] files = dir.GetFiles("*.ps1", SearchOption.AllDirectories);
-            if (files.Length > 0)
-            {
-                Console.WriteLine("\nInstalling Windows Store App. \n");
-                string dirs = files[0].DirectoryName;
-                PowerShell ps = PowerShell.Create();
-                ps.AddScript(@"Powershell.exe -executionpolicy remotesigned -NonInteractive -File " + files[0].FullName);
-                ps.Invoke();
-                System.Threading.Thread.Sleep(1000); // Waiting activity done.
-
-                this.StoreMD5(this.GetFileMD5(zipFile));
-                this.BackupInitialStates();
-            }
-            else
-            {
-                throw new FailedCommandException("Cannot find .ps1 file in \"" + fileFolder + "\".", 13);
-            }
+            this.utils.DeleteDirectory(this.InitialStatesDir);
         }
 
         public bool IsInstalled()
@@ -169,6 +84,20 @@
             {
                 return this.TryGetInstalledAppInfo(out this.infoCache);
             }
+        }
+
+        public void Launch()
+        {
+            if (Directory.Exists(this.InitialStatesDir))
+            {
+                this.RestoreInitialStates();
+            }
+            else
+            {
+                this.BackupInitialStates();
+            }
+
+            this.Activate();
         }
 
         public void Activate()
@@ -273,20 +202,6 @@
             public string PackageFullName { get; set; }
 
             public string AppUserModelId { get; set; }
-        }
-
-        private void StoreMD5(string fileMD5)
-        {
-            string md5FileName = System.IO.Path.Combine(this.PackageFolderDir, "MD5.txt");
-            using (System.IO.FileStream fs = System.IO.File.Create(md5FileName))
-            {
-                Console.Out.WriteLine("Writing MD5 to file: \"{0}\"", md5FileName);
-                byte[] byteMD5 = System.Text.Encoding.Default.GetBytes(fileMD5);
-                for (int i = 0; i < byteMD5.Length; i++)
-                {
-                    fs.WriteByte(byteMD5[i]);
-                }
-            }
         }
 
         [ComImport, Guid("B1AEC16F-2383-4852-B0E9-8F0B1DC66B4D")]

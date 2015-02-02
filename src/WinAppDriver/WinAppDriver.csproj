@@ -99,7 +99,8 @@
     <Compile Include="IApplication.cs" />
     <Compile Include="IHandler.cs" />
     <Compile Include="ILogger.cs" />
-    <Compile Include="IStoreApplication.cs" />
+    <Compile Include="IPackageInstaller.cs" />
+    <Compile Include="IStoreApp.cs" />
     <Compile Include="IUtils.cs" />
     <Compile Include="NewSessionHandler.cs" />
     <Compile Include="NoSuchElementException.cs" />
@@ -111,6 +112,7 @@
     <Compile Include="Session.cs" />
     <Compile Include="SessionManager.cs" />
     <Compile Include="SetElementValueHandler.cs" />
+    <Compile Include="StoreAppPackageInstaller.cs" />
     <Compile Include="WinAppDriverException.cs" />
   </ItemGroup>
   <ItemGroup>

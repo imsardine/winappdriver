@@ -4,6 +4,8 @@
     {
         bool IsInstalled();
 
+        void Launch();
+
         void Activate();
 
         void Terminate();
@@ -11,5 +13,7 @@
         void BackupInitialStates();
 
         void RestoreInitialStates();
+
+        void Uninstall();
     }
 }
