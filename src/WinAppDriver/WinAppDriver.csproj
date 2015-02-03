@@ -99,6 +99,7 @@
     <Compile Include="IApplication.cs" />
     <Compile Include="IHandler.cs" />
     <Compile Include="ILogger.cs" />
+    <Compile Include="IKeyboard.cs" />
     <Compile Include="IPackageInstaller.cs" />
     <Compile Include="IStoreApp.cs" />
     <Compile Include="IUtils.cs" />
