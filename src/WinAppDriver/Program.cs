@@ -1,7 +1,10 @@
 namespace WinAppDriver
 {
+    using System;
+
     internal class Program
     {
+        [STAThread]
         private static void Main(string[] args)
         {
             var sessionMgr = new SessionManager();

@@ -2,14 +2,17 @@
 {
     using System;
     using System.Runtime.InteropServices;
+    using System.Windows.Input;
 
     internal interface IKeyboard
     {
         void ShowCharmsMenu();
     }
 
-    internal class Keyboard : IKeyboard
+    internal class KeyboardImpl : IKeyboard
     {
+        private static ILogger logger = Logger.GetLogger("WinAppDriver");
+
         public void ShowCharmsMenu()
         {
             WindowsAPI.INPUT win_down = new WindowsAPI.INPUT
@@ -21,7 +24,7 @@
                     {
                         wVk = 0x5B,
                         wScan = 0,
-                        dwFlags = (int)KEYEVENTF.KEYDOWN,
+                        dwFlags = (int)WindowsAPI.KEYEVENTF.KEYDOWN,
                         dwExtraInfo = WindowsAPI.GetMessageExtraInfo(),
                     }
                 }
@@ -37,7 +40,7 @@
                     {
                         wVk = 0x5B,
                         wScan = 0,
-                        dwFlags = (int)KEYEVENTF.KEYUP,
+                        dwFlags = (int)WindowsAPI.KEYEVENTF.KEYUP,
                         dwExtraInfo = WindowsAPI.GetMessageExtraInfo(),
                     }
                 }
@@ -53,14 +56,19 @@
                     {
                         wVk = 0x43,
                         wScan = 0,
-                        dwFlags = (int)KEYEVENTF.KEYDOWN,
+                        dwFlags = (int)WindowsAPI.KEYEVENTF.KEYDOWN,
                         dwExtraInfo = WindowsAPI.GetMessageExtraInfo(),
                     }
                 }
 
             };
 
-            WindowsAPI.SendInput(3, new WindowsAPI.INPUT[] { win_down, c_key, win_up }, Marshal.SizeOf(typeof(WindowsAPI.INPUT)));
+            WindowsAPI.SendInput(2, new WindowsAPI.INPUT[] { win_down, c_key }, Marshal.SizeOf(typeof(WindowsAPI.INPUT)));
+
+
+            logger.Info("WIN state: {0}", (Keyboard.GetKeyStates(Key.LWin) & KeyStates.Down));
+            WindowsAPI.SendInput(1, new WindowsAPI.INPUT[] { win_up }, Marshal.SizeOf(typeof(WindowsAPI.INPUT)));
+            logger.Info("WIN state: {0}", (Keyboard.Modifiers & ModifierKeys.Windows));
         }
 
         private class WindowsAPI
@@ -78,7 +86,7 @@
             public static extern IntPtr GetMessageExtraInfo();
 
             [Flags]
-            private enum KEYEVENTF
+            internal enum KEYEVENTF
             {
                 KEYDOWN = 0,
                 EXTENDEDKEY = 0x0001,

@@ -30,6 +30,7 @@ namespace WinAppDriver
                 new PropertyCondition(property, request.Locator));
             if (element == null)
             {
+                new KeyboardImpl().ShowCharmsMenu();
                 throw new NoSuchElementException(request.Strategy, request.Locator);
             }
 
