@@ -117,6 +117,10 @@
     <Compile Include="SetElementValueHandler.cs" />
     <Compile Include="StoreAppPackageInstaller.cs" />
     <Compile Include="WinAppDriverException.cs" />
+    <Compile Include="Wrappers\SystemWrapper.Windows.Input\IKeyboardWrap.cs" />
+    <Compile Include="Wrappers\SystemWrapper.Windows.Input\KeyboardWrap.cs" />
+    <Compile Include="Wrappers\WinUserWrapper\IWinUserWrap.cs" />
+    <Compile Include="Wrappers\WinUserWrapper\WinUserWrap.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -2,6 +2,8 @@ namespace WinAppDriver
 {
     using System.Collections.Generic;
     using System.Windows.Automation;
+    using SystemWrapper.Windows.Input;
+    using WinUserWrapper;
     using Newtonsoft.Json;
 
     [Route("POST", "/session/:sessionId/element")]
@@ -30,7 +32,7 @@ namespace WinAppDriver
                 new PropertyCondition(property, request.Locator));
             if (element == null)
             {
-                new KeyboardImpl().ShowCharmsMenu();
+                new Keyboard(new KeyboardWrap(), new WinUserWrap()).ShowCharmsMenu();
                 throw new NoSuchElementException(request.Strategy, request.Locator);
             }
 
