@@ -28,6 +28,10 @@ namespace WinAppDriver
             var element = root.FindFirst(
                 TreeScope.Descendants,
                 new PropertyCondition(property, request.Locator));
+            if (element == null)
+            {
+                throw new NoSuchElementException(request.Strategy, request.Locator);
+            }
 
             int id = session.AddUIElement(element);
             return new Dictionary<string, string> { { "ELEMENT", id.ToString() } };
