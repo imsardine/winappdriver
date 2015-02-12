@@ -2,8 +2,6 @@ namespace WinAppDriver
 {
     using System.Collections.Generic;
     using System.Windows.Automation;
-    using SystemWrapper.Windows.Input;
-    using WinUserWrapper;
     using Newtonsoft.Json;
 
     [Route("POST", "/session/:sessionId/element")]
@@ -30,11 +28,6 @@ namespace WinAppDriver
             var element = root.FindFirst(
                 TreeScope.Descendants,
                 new PropertyCondition(property, request.Locator));
-            if (element == null)
-            {
-                new Keyboard(new KeyboardWrap(), new WinUserWrap()).ShowCharmsMenu();
-                throw new NoSuchElementException(request.Strategy, request.Locator);
-            }
 
             int id = session.AddUIElement(element);
             return new Dictionary<string, string> { { "ELEMENT", id.ToString() } };

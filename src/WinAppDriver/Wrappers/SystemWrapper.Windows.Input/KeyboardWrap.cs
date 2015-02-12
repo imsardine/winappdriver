@@ -6,7 +6,15 @@
     {
         public KeyStates GetKeyStates(Key key)
         {
-            return System.Windows.Input.Keyboard.GetKeyStates(key);
+            return Keyboard.GetKeyStates(key);
+        }
+
+        public ModifierKeys Modifiers
+        {
+            get
+            {
+                return Keyboard.Modifiers;
+            }
         }
     }
 }

@@ -8,6 +8,17 @@
         uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);
 
         IntPtr GetMessageExtraInfo();
+
+        short VkKeyScan(char ch);
+    }
+
+    internal static class WinUserConstants
+    {
+        public const int INPUT_MOUSE = 0;
+
+        public const int INPUT_KEYBOARD = 1;
+
+        public const int INPUT_HARDWARE = 2; 
     }
 
     [StructLayout(LayoutKind.Explicit)]
@@ -34,7 +45,7 @@
     }
 
     [Flags]
-    internal enum KEYEVENTF
+    internal enum KEYEVENTF : uint
     {
         KEYDOWN = 0,
         EXTENDEDKEY = 0x0001,
