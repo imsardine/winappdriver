@@ -45,6 +45,7 @@ namespace WinAppDriver
                 {
                     if (installer.IsBuildChanged())
                     {
+                        app.Uninstall();
                         installer.Install();
                     }
                 }
