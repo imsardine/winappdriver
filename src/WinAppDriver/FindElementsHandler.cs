@@ -23,6 +23,10 @@
             {
                 property = AutomationElement.NameProperty;
             }
+            else if (request.Strategy == "class name")
+            {
+                property = AutomationElement.ClassNameProperty;
+            }
 
             var elements = root.FindAll(
                 TreeScope.Descendants,
