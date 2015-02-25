@@ -24,6 +24,10 @@ namespace WinAppDriver
             {
                 property = AutomationElement.NameProperty;
             }
+            else if (request.Strategy == "class name")
+            {
+                property = AutomationElement.ClassNameProperty;
+            }
 
             var element = root.FindFirst(
                 TreeScope.Descendants,
