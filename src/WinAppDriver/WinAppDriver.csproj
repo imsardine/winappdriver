@@ -87,6 +87,7 @@
     <Reference Include="UIAutomationTypes">
       <HintPath>.\UIAutomationTypes.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Capabilities.cs" />
