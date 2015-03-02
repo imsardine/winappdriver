@@ -23,10 +23,12 @@ namespace WinAppDriver
             var keyboard = new Keyboard(new KeyboardWrap(), new KeyInteropWrap(), new WinUserWrap());
 
             manager.AddHandler(new ClickElementHandler());
+            manager.AddHandler(new ClickHandler());
             manager.AddHandler(new DeleteSessionHandler(sessionManager));
             manager.AddHandler(new FindElementHandler());
             manager.AddHandler(new FindElementsHandler());
             manager.AddHandler(new GetElementTextHandler());
+            manager.AddHandler(new MoveToHandler());
             manager.AddHandler(new NewSessionHandler(sessionManager, utils));
             manager.AddHandler(new ScreenshotHandler());
             manager.AddHandler(new SendKeysHandler(keyboard));

@@ -93,6 +93,7 @@
   <ItemGroup>
     <Compile Include="Capabilities.cs" />
     <Compile Include="ClickElementHandler.cs" />
+    <Compile Include="ClickHandler.cs" />
     <Compile Include="EndPoint.cs" />
     <Compile Include="FailedCommandException.cs" />
     <Compile Include="DeleteSessionHandler.cs" />
@@ -107,6 +108,7 @@
     <Compile Include="IPackageInstaller.cs" />
     <Compile Include="IStoreApp.cs" />
     <Compile Include="IUtils.cs" />
+    <Compile Include="MoveToHandler.cs" />
     <Compile Include="NewSessionHandler.cs" />
     <Compile Include="NoSuchElementException.cs" />
     <Compile Include="Program.cs" />
