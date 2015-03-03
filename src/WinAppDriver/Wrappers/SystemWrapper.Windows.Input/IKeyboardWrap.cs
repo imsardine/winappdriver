@@ -4,8 +4,8 @@
 
     internal interface IKeyboardWrap
     {
-        KeyStates GetKeyStates(Key key);
-
         ModifierKeys Modifiers { get; }
+
+        KeyStates GetKeyStates(Key key);
     }
 }

@@ -1,6 +1,7 @@
 ﻿namespace WinAppDriver
 {
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Runtime.InteropServices;
     using System.Windows.Input;
     using SystemWrapper.Windows.Input;
@@ -8,9 +9,11 @@
 
     internal class Keyboard : IKeyboard
     {
+        [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1214:StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements", Justification = "Reviewed.")]
         private static ILogger logger = Logger.GetLogger("WinAppDriver");
 
-        private static readonly List<Key> ModifierKeys = new List<Key> {
+        private static readonly List<Key> ModifierKeys = new List<Key>
+        {
             Key.LeftCtrl, Key.RightCtrl,
             Key.LeftAlt, Key.RightAlt,
             Key.LeftShift, Key.RightShift,
@@ -44,7 +47,7 @@
         {
             foreach (var key in ModifierKeys)
             {
-                if ((keyboard.GetKeyStates(key) & KeyStates.Down) > 0)
+                if ((this.keyboard.GetKeyStates(key) & KeyStates.Down) > 0)
                 {
                     this.SendKeyboardInput(key, KEYEVENTF.KEYUP);
                 }
@@ -53,7 +56,7 @@
 
         public void KeyUpOrDown(Key key)
         {
-            bool down = (keyboard.GetKeyStates(key) & KeyStates.Down) > 0;
+            bool down = (this.keyboard.GetKeyStates(key) & KeyStates.Down) > 0;
             logger.Debug("Toggle the (modifier) key ({0}), currently pressed? {1}", key, down);
 
             KEYEVENTF type = down ? KEYEVENTF.KEYUP : KEYEVENTF.KEYDOWN;
@@ -68,7 +71,7 @@
 
         public void Type(char key)
         {
-            short vkeyModifiers = winUser.VkKeyScan(key);
+            short vkeyModifiers = this.winUser.VkKeyScan(key);
             if (vkeyModifiers != -1)
             {
                 var vkey = vkeyModifiers & 0xff;
@@ -98,7 +101,7 @@
 
         private void SendKeyboardInput(Key key, KEYEVENTF type)
         {
-            this.SendKeyboardInput(keyInterop.VirtualKeyFromKey(key), type);
+            this.SendKeyboardInput(this.keyInterop.VirtualKeyFromKey(key), type);
         }
 
         private void SendKeyboardInput(int vkey, KEYEVENTF type)
@@ -111,11 +114,11 @@
                     wVk = (ushort)vkey,
                     wScan = 0,
                     dwFlags = (uint)type,
-                    dwExtraInfo = winUser.GetMessageExtraInfo(),
+                    dwExtraInfo = this.winUser.GetMessageExtraInfo(),
                 }
             };
 
-            winUser.SendInput(1, new INPUT[] { input }, Marshal.SizeOf(typeof(INPUT)));
+            this.winUser.SendInput(1, new INPUT[] { input }, Marshal.SizeOf(typeof(INPUT)));
         }
     }
 }

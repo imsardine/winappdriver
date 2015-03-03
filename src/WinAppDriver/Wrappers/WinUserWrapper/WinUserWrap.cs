@@ -1,10 +1,12 @@
 ﻿namespace WinAppDriver.WinUserWrapper
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Runtime.InteropServices;
 
     internal class WinUserWrap : IWinUserWrap
     {
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed.")]
         public uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize)
         {
             return WinUserExtern.SendInput(nInputs, pInputs, cbSize);
@@ -22,6 +24,7 @@
 
         private class WinUserExtern
         {
+            [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed.")]
             [DllImport("user32.dll", SetLastError = true)]
             public static extern uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);
 
