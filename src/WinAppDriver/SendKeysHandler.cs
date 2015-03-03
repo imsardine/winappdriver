@@ -1,12 +1,14 @@
 namespace WinAppDriver
 {
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Windows.Input;
     using Newtonsoft.Json;
 
     [Route("POST", "/session/:sessionId/keys")]
     internal class SendKeysHandler : IHandler
     {
+        [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1214:StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements", Justification = "Reviewed.")]
         private static ILogger logger = Logger.GetLogger("WinAppDriver");
 
         private static readonly Dictionary<char, Key> SpecialKeys = new Dictionary<char, Key>
@@ -83,23 +85,24 @@ namespace WinAppDriver
 
             foreach (var keyChar in keys)
             {
-                if (keyChar >= '\uE000' && keyChar <= '\uF8FF') // Private Use Area
+                if (keyChar >= '\uE000' && keyChar <= '\uF8FF')
                 {
+                    // Private Use Area
                     logger.Debug("Special key: U+{0}", ((int)keyChar).ToString("X"));
                     Key key = SendKeysHandler.SpecialKeys[keyChar];
-                    if (keyboard.IsModifierKey(key))
+                    if (this.keyboard.IsModifierKey(key))
                     {
-                        keyboard.KeyUpOrDown(key);
+                        this.keyboard.KeyUpOrDown(key);
                     }
                     else
                     {
-                        keyboard.KeyPress(key);
+                        this.keyboard.KeyPress(key);
                     }
                 }
                 else
                 {
                     logger.Debug("General key/char: {0}", keyChar);
-                    keyboard.Type(keyChar);
+                    this.keyboard.Type(keyChar);
                 }
             }
 

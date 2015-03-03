@@ -1,8 +1,7 @@
 ﻿namespace WinAppDriver
 {
-    using Newtonsoft.Json;
     using System.Collections.Generic;
-    using System.Windows;
+    using Newtonsoft.Json;
     using WinUserWrapper;
 
     [Route("POST", "/session/:sessionId/click")]
@@ -22,19 +21,23 @@
                     this.winUser.mouse_event((int)MOUSEEVENTF.LEFTDOWN, 0, 0, 0, 0);
                     this.winUser.mouse_event((int)MOUSEEVENTF.LEFTUP, 0, 0, 0, 0);
                     break;
+
                 case "1":
                     this.winUser.mouse_event((int)MOUSEEVENTF.MIDDLEDOWN, 0, 0, 0, 0);
                     this.winUser.mouse_event((int)MOUSEEVENTF.MIDDLEUP, 0, 0, 0, 0);
                     break;
+
                 case "2":
                     this.winUser.mouse_event((int)MOUSEEVENTF.RIGHTDOWN, 0, 0, 0, 0);
                     this.winUser.mouse_event((int)MOUSEEVENTF.RIGHTUP, 0, 0, 0, 0);
                     break;
+
                 default:
                     this.winUser.mouse_event((int)MOUSEEVENTF.LEFTDOWN, 0, 0, 0, 0);
                     this.winUser.mouse_event((int)MOUSEEVENTF.LEFTUP, 0, 0, 0, 0);
                     break;
             }
+
             return null;
         }
 

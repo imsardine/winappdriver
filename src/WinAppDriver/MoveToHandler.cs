@@ -1,17 +1,17 @@
 ﻿namespace WinAppDriver
 {
-    using Newtonsoft.Json;
     using System.Collections.Generic;
     using System.Windows;
+    using Newtonsoft.Json;
     using WinUserWrapper;
 
     [Route("POST", "/session/:sessionId/moveto")]
-    class MoveToHandler : IHandler
+    internal class MoveToHandler : IHandler
     {
         private static ILogger logger = Logger.GetLogger("WinAppDriver");
-        
+
         private IWinUserWrap winUser = new WinUserWrap();
-        
+
         public object Handle(Dictionary<string, string> urlParams, string body, ref Session session)
         {
             ElementRequest request = JsonConvert.DeserializeObject<ElementRequest>(body);
