@@ -98,6 +98,7 @@
     <Compile Include="DeleteSessionHandler.cs" />
     <Compile Include="FindElementHandler.cs" />
     <Compile Include="FindElementsHandler.cs" />
+    <Compile Include="GetSourceHandler.cs" />
     <Compile Include="GetElementTextHandler.cs" />
     <Compile Include="IApplication.cs" />
     <Compile Include="IHandler.cs" />
