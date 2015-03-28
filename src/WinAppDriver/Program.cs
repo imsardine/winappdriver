@@ -1,6 +1,7 @@
 namespace WinAppDriver
 {
     using System;
+    using System.ServiceProcess;
     using SystemWrapper.Windows.Input;
     using WinUserWrapper;
 
@@ -8,6 +9,11 @@ namespace WinAppDriver
     {
         [STAThread]
         private static void Main(string[] args)
+        {
+            ServiceBase.Run(new ServiceBase[] { new Service() });
+        }
+
+        public static void Start()
         {
             var sessionMgr = new SessionManager();
             var requestMgr = InitRequestManager(sessionMgr);

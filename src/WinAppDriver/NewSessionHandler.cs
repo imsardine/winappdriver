@@ -36,6 +36,7 @@ namespace WinAppDriver
             };
 
             IStoreApp app = new StoreApp(caps.PackageName, this.utils);
+            /**
             IPackageInstaller installer = new StoreAppPackageInstaller(app, this.utils, caps.App, caps.MD5);
 
             if (app.IsInstalled())
@@ -68,6 +69,7 @@ namespace WinAppDriver
             }
 
             app.Launch();
+            **/
             session = this.sessionManager.CreateSession(app, caps);
 
             return caps; // TODO capabilities

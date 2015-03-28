@@ -77,9 +77,12 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Management.Automation" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.XML" />
     <Reference Include="UIAutomationClient">
@@ -104,13 +107,26 @@
     <Compile Include="IHandler.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="IKeyboard.cs" />
+    <Compile Include="IUIAutomation.cs" />
     <Compile Include="Keyboard.cs" />
     <Compile Include="IPackageInstaller.cs" />
     <Compile Include="IStoreApp.cs" />
     <Compile Include="IUtils.cs" />
+    <Compile Include="Service.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Service.Designer.cs">
+      <DependentUpon>Service.cs</DependentUpon>
+    </Compile>
     <Compile Include="NewSessionHandler.cs" />
     <Compile Include="NoSuchElementException.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="ServiceInstaller.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ServiceInstaller.Designer.cs">
+      <DependentUpon>ServiceInstaller.cs</DependentUpon>
+    </Compile>
     <Compile Include="RequestManager.cs" />
     <Compile Include="RouteAttribute.cs" />
     <Compile Include="ScreenshotHandler.cs" />
@@ -120,7 +136,13 @@
     <Compile Include="SendKeysHandler.cs" />
     <Compile Include="SetElementValueHandler.cs" />
     <Compile Include="StoreAppPackageInstaller.cs" />
+    <Compile Include="UIAutomation.cs" />
     <Compile Include="WinAppDriverException.cs" />
+    <Compile Include="Wrappers\SystemWrapper.Windows.Automation\AutomationElementWrap.cs" />
+    <Compile Include="Wrappers\SystemWrapper.Windows.Automation\IAutomationElement.cs" />
+    <Compile Include="Wrappers\SystemWrapper.Windows.Automation\IAutomationUtil.cs" />
+    <Compile Include="Wrappers\SystemWrapper.Windows.Automation\ITreeWalker.cs" />
+    <Compile Include="Wrappers\SystemWrapper.Windows.Automation\TreeWalkerWrap.cs" />
     <Compile Include="Wrappers\SystemWrapper.Windows.Input\IKeyboardWrap.cs" />
     <Compile Include="Wrappers\SystemWrapper.Windows.Input\IKeyInteropWrap.cs" />
     <Compile Include="Wrappers\SystemWrapper.Windows.Input\KeyboardWrap.cs" />
@@ -129,9 +151,13 @@
     <Compile Include="Wrappers\WinUserWrapper\WinUserWrap.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
-    <None Include="WinAppDriver.exe.manifest" />
+    <None Include="WinAppDriver.exe.manifest">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="WinAppDriver.pfx" />
   </ItemGroup>
   <ItemGroup>
@@ -153,6 +179,14 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Service.resx">
+      <DependentUpon>Service.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ServiceInstaller.resx">
+      <DependentUpon>ServiceInstaller.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
