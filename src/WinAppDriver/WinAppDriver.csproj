@@ -104,6 +104,7 @@
     <Compile Include="IHandler.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="IKeyboard.cs" />
+    <Compile Include="IUIAutomation.cs" />
     <Compile Include="Keyboard.cs" />
     <Compile Include="IPackageInstaller.cs" />
     <Compile Include="IStoreApp.cs" />
@@ -120,6 +121,7 @@
     <Compile Include="SendKeysHandler.cs" />
     <Compile Include="SetElementValueHandler.cs" />
     <Compile Include="StoreAppPackageInstaller.cs" />
+    <Compile Include="UIAutomation.cs" />
     <Compile Include="WinAppDriverException.cs" />
     <Compile Include="Wrappers\SystemWrapper.Windows.Input\IKeyboardWrap.cs" />
     <Compile Include="Wrappers\SystemWrapper.Windows.Input\IKeyInteropWrap.cs" />
