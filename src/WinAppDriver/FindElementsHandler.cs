@@ -29,7 +29,7 @@
             IEnumerable elements = null;
             if (request.Strategy == "xpath")
             {
-                elements = uiAutomation.FindAllByXPath(root, request.Locator);
+                elements = this.uiAutomation.FindAllByXPath(root, request.Locator);
             }
             else
             {

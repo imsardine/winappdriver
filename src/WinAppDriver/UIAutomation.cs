@@ -32,7 +32,7 @@ namespace WinAppDriver
             }
             else
             {
-                var index = int.Parse(node.GetAttribute("_index_", ""));
+                var index = int.Parse(node.GetAttribute("_index_", string.Empty));
                 return nodes[index];
             }
         }
@@ -48,7 +48,7 @@ namespace WinAppDriver
             var results = new List<AutomationElement>();
             foreach (XPathNavigator node in nodes)
             {
-                var index = int.Parse(node.GetAttribute("_index_", ""));
+                var index = int.Parse(node.GetAttribute("_index_", string.Empty));
                 results.Add(elements[index]);
             }
 

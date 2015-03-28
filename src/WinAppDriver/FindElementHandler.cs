@@ -28,7 +28,7 @@ namespace WinAppDriver
             AutomationElement element = null;
             if (request.Strategy == "xpath")
             {
-                element = uiAutomation.FindFirstByXPath(root, request.Locator);
+                element = this.uiAutomation.FindFirstByXPath(root, request.Locator);
             }
             else
             {

@@ -15,7 +15,7 @@
 
         public object Handle(Dictionary<string, string> urlParams, string body, ref Session session)
         {
-            return uiAutomation.DumpXml(AutomationElement.RootElement);
+            return this.uiAutomation.DumpXml(AutomationElement.RootElement);
         }
     }
 }
