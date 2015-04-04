@@ -26,20 +26,45 @@
     {
         private static ILogger logger = Logger.GetLogger("WinAppDriver");
 
+        private Capabilities capabilities;
+
         private AppInfo infoCache;
+
+        private IPackageInstaller installerCache;
 
         private IUtils utils;
 
-        public StoreApp(string packageName, IUtils utils)
+        public StoreApp(Capabilities capabilities, IUtils utils)
         {
-            this.PackageName = packageName;
+            // TODO verify capabilities
+            this.capabilities = capabilities;
             this.utils = utils;
+        }
+
+        public Capabilities Capabilities
+        {
+            get { return this.capabilities; }
+        }
+
+        public IPackageInstaller Installer
+        {
+            get
+            {
+                if (this.installerCache == null)
+                {
+                    this.installerCache = new StoreAppPackageInstaller(this, this.utils, this.capabilities.App, this.capabilities.MD5);
+                }
+
+                return this.installerCache;
+            }
         }
 
         public string PackageName
         {
-            get;
-            private set;
+            get
+            {
+                return this.capabilities.PackageName;
+            }
         }
 
         public string AppUserModelId

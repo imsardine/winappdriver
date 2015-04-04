@@ -1,6 +1,5 @@
 namespace WinAppDriver
 {
-    using System;
     using System.Collections.Generic;
     using Newtonsoft.Json;
 
@@ -27,26 +26,39 @@ namespace WinAppDriver
                 logger.Info("{0} = {1} ({2})", kvp.Key, kvp.Value, kvp.Value.GetType());
             }
 
-            var caps = new Capabilities()
+            var caps = new Capabilities(request.DesiredCapabilities);
+            if (caps.PlatformName == null)
             {
-                PlatformName = (string)request.DesiredCapabilities["platformName"],
-                PackageName = (string)request.DesiredCapabilities["packageName"],
-                App = request.DesiredCapabilities.ContainsKey("app") ? (string)request.DesiredCapabilities["app"] : null,
-                MD5 = request.DesiredCapabilities.ContainsKey("MD5") ? (string)request.DesiredCapabilities["MD5"] : null
-            };
+                throw new FailedCommandException("The 'platformName' desired capability is mandatory in any cases. It can be 'Windows', 'WindowsModern' or 'WindowsPhone'.", 33); // TODO define enumeration
+            }
 
-            IStoreApp app = new StoreApp(caps.PackageName, this.utils);
-            IPackageInstaller installer = new StoreAppPackageInstaller(app, this.utils, caps.App, caps.MD5);
+            // valid platform names: Windows, WindowModern, WindowPhone
+            IApplication app;
+            switch (caps.PlatformName)
+            {
+                case "Windows":
+                    app = null; // TODO
+                    break;
+
+                case "WindowsModern":
+                    app = new StoreApp(caps, this.utils);
+                    break;
+
+                case "WindowsPhone":
+                    throw new FailedCommandException("Windows Phone is not supported yet.", 33);
+                default:
+                    throw new FailedCommandException("The platform name '{0}' is invalid.", 33);
+            }
 
             if (app.IsInstalled())
             {
                 app.Terminate();
                 if (caps.App != null)
                 {
-                    if (installer.IsBuildChanged())
+                    if (app.Installer.IsBuildChanged())
                     {
                         app.Uninstall();
-                        installer.Install();
+                        app.Installer.Install();
                     }
                 }
                 else
@@ -58,7 +70,7 @@ namespace WinAppDriver
             {
                 if (caps.App != null)
                 {
-                    installer.Install();
+                    app.Installer.Install();
                 }
                 else
                 {
@@ -70,6 +82,7 @@ namespace WinAppDriver
             app.Launch();
             session = this.sessionManager.CreateSession(app, caps);
 
+            // TODO turn off IME, release all modifier keys
             return caps; // TODO capabilities
         }
 

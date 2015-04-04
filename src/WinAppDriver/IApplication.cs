@@ -2,6 +2,10 @@
 {
     internal interface IApplication
     {
+        Capabilities Capabilities { get; }
+
+        IPackageInstaller Installer { get; }
+
         bool IsInstalled();
 
         void Launch();
