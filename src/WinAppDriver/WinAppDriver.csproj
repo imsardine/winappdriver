@@ -38,7 +38,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -93,6 +93,8 @@
   <ItemGroup>
     <Compile Include="Capabilities.cs" />
     <Compile Include="ClickElementHandler.cs" />
+    <Compile Include="Desktop\DesktopApp.cs" />
+    <Compile Include="Desktop\DesktopAppInstaller.cs" />
     <Compile Include="EndPoint.cs" />
     <Compile Include="FailedCommandException.cs" />
     <Compile Include="DeleteSessionHandler.cs" />
@@ -101,9 +103,11 @@
     <Compile Include="GetSourceHandler.cs" />
     <Compile Include="GetElementTextHandler.cs" />
     <Compile Include="IApplication.cs" />
+    <Compile Include="Desktop\IDesktopApp.cs" />
     <Compile Include="IHandler.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="IKeyboard.cs" />
+    <Compile Include="UAC\IUACPomptHandler.cs" />
     <Compile Include="IUIAutomation.cs" />
     <Compile Include="Keyboard.cs" />
     <Compile Include="IPackageInstaller.cs" />
@@ -121,6 +125,7 @@
     <Compile Include="SendKeysHandler.cs" />
     <Compile Include="SetElementValueHandler.cs" />
     <Compile Include="StoreAppPackageInstaller.cs" />
+    <Compile Include="UAC\UACPromptHandler.cs" />
     <Compile Include="UIAutomation.cs" />
     <Compile Include="WinAppDriverException.cs" />
     <Compile Include="Wrappers\SystemWrapper.Windows.Input\IKeyboardWrap.cs" />

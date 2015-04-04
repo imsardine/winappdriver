@@ -16,6 +16,11 @@ namespace WinAppDriver
             this.PackageName = this.ExtractStringCap(capabilities, "packageName");
             this.App = this.ExtractStringCap(capabilities, "app");
             this.MD5 = this.ExtractStringCap(capabilities, "md5");
+            this.InstallCommand = this.ExtractStringCap(capabilities, "installCommand");
+            this.UninstallCommand = this.ExtractStringCap(capabilities, "uninstallCommand");
+            this.ResetCommand = this.ExtractStringCap(capabilities, "resetCommand");
+            this.OpenCommand = this.ExtractStringCap(capabilities, "openCommand");
+            this.CloseCommand = this.ExtractStringCap(capabilities, "closeCommand");
         }
 
         [JsonProperty("platformName")]
@@ -29,6 +34,21 @@ namespace WinAppDriver
 
         [JsonProperty("md5")]
         public string MD5 { get; set; }
+
+        [JsonProperty("installCommand")]
+        public string InstallCommand { get; set; }
+
+        [JsonProperty("uninstallCommand")]
+        public string UninstallCommand { get; set; }
+
+        [JsonProperty("resetCommand")]
+        public string ResetCommand { get; set; }
+
+        [JsonProperty("openCommand")]
+        public string OpenCommand { get; set; }
+
+        [JsonProperty("closeCommand")]
+        public string CloseCommand { get; set; }
 
         private string ExtractStringCap(IDictionary<string, object> caps, string key)
         {

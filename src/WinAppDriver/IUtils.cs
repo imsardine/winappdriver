@@ -1,6 +1,7 @@
 ﻿namespace WinAppDriver
 {
     using System;
+    using System.Diagnostics;
     using System.IO;
     using System.Net;
     using System.Security.Cryptography;
@@ -16,6 +17,8 @@
         string GetFileMD5(string filePath);
 
         string GetAppFileFromWeb(string webResource, string expectFileMD5);
+
+        Process Execute(string command, string action, bool wait);
     }
 
     internal class Utils : IUtils
@@ -134,6 +137,51 @@
             }
 
             return storeFileName;
+        }
+
+        public Process Execute(string command, string action, bool wait)
+        {
+            // TODO wait -> detect UAC prompt, and accept it automatically.
+            logger.Info("Command for custom action '{0}': {1}", action, command);
+            if (command == null)
+            {
+                return null;
+            }
+
+            string executable, arguments;
+            this.ParseCommand(command, out executable, out arguments);
+
+            // TODO not exited, or non-zero exit status
+            var process = Process.Start(executable, arguments);
+            if (wait)
+            {
+                process.WaitForExit(10 * 60 * 1000); // 10 minutes
+            }
+
+            return process;
+        }
+
+        private void ParseCommand(string command, out string executable, out string arguments)
+        {
+            // TODO quoted executable
+            int index = command.IndexOf(' '); // the first space as the separator
+            if (index == -1)
+            {
+                executable = command;
+                arguments = null;
+            }
+            else
+            {
+                executable = command.Substring(0, index);
+                arguments = command.Substring(index);
+            }
+
+            // TODO PowerShell scripts -> use PowerShell.exe and append '-ExecutionPolicy Bypass' (if not provided)
+            logger.Debug(
+                "Parse command; [{0}] ==> executable = [{1}], arguments = [{2}]",
+                command,
+                executable,
+                arguments);
         }
     }
 }

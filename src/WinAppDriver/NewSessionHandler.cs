@@ -2,6 +2,8 @@ namespace WinAppDriver
 {
     using System.Collections.Generic;
     using Newtonsoft.Json;
+    using WinAppDriver.Desktop;
+    using WinAppDriver.UAC;
 
     [Route("POST", "/session")]
     internal class NewSessionHandler : IHandler
@@ -10,11 +12,14 @@ namespace WinAppDriver
 
         private SessionManager sessionManager;
 
+        private IUACPomptHandler uacHandler;
+
         private IUtils utils;
 
-        public NewSessionHandler(SessionManager sessionManager, IUtils utils)
+        public NewSessionHandler(SessionManager sessionManager, IUACPomptHandler uacHandler, IUtils utils)
         {
             this.sessionManager = sessionManager;
+            this.uacHandler = uacHandler;
             this.utils = utils;
         }
 
@@ -37,7 +42,7 @@ namespace WinAppDriver
             switch (caps.PlatformName)
             {
                 case "Windows":
-                    app = null; // TODO
+                    app = new DesktopApp(caps, this.uacHandler, this.utils);
                     break;
 
                 case "WindowsModern":
