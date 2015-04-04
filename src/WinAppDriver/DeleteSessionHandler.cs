@@ -14,7 +14,7 @@
 
         public object Handle(Dictionary<string, string> urlParams, string body, ref Session session)
         {
-            var app = (IStoreApp)session.Application;
+            var app = session.Application;
             this.sessionManager.DeleteSession(session.ID);
             app.Terminate();
             app.RestoreInitialStates();
