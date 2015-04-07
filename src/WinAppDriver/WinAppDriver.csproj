@@ -165,8 +165,10 @@
   <PropertyGroup>
     <PostBuildEvent>
 signtool.exe sign /f "$(ProjectDir)WinAppDriver.pfx" /p WinAppDriver "$(TargetPath)"
+<!--
 mkdir "$(ProgramFiles)\WinAppDriver"
 copy /y "$(TargetDir)*" "$(ProgramFiles)\WinAppDriver"
+-->
 </PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets" Condition="Exists('..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets')" />
