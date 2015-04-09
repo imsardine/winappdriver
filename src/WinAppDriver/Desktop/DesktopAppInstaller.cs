@@ -1,5 +1,6 @@
 ﻿namespace WinAppDriver.Desktop
 {
+    using System.Collections.Generic;
     using System.IO;
     using System.Text;
     using WinAppDriver.UAC;
@@ -50,13 +51,35 @@
         public void Install()
         {
             string md5;
-            string instPackage = this.PrepareInstallationPackage(out md5);
-            // TODO Pass the package through environment variable AppInstallationPackage
+            string package = this.PrepareInstallationPackage(out md5);
+
+            // Directly execute the installation package, if the external command is not provided.
+            var caps = this.app.Capabilities;
+            string command;
+            if (caps.InstallCommand != null)
+            {
+                command = caps.InstallCommand;
+                logger.Info(
+                    "Invoke the install command '{0}' to carry out the installation of package '{1}'.",
+                    command, package);
+            }
+            else
+            {
+                command = package;
+                logger.Info(
+                    "Install command is not provided, so directly invoke the (executable?) installation package '{1}'.",
+                    package);
+            }
+
+            var envs = new Dictionary<string, string>
+            {
+                { "AppInstallationPackage", package }
+            };
 
             try
             {
                 this.uacHandler.Activate(true);
-                this.utils.Execute(this.app.Capabilities.InstallCommand, "Install", true);
+                this.utils.Execute(command, envs, true);
             }
             finally
             {

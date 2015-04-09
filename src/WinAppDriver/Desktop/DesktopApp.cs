@@ -62,12 +62,16 @@
 
         public void Activate()
         {
-            this.utils.Execute(this.capabilities.OpenCommand, "Open", false);
+            this.utils.Execute(this.capabilities.OpenCommand, null, false);
         }
 
         public void Terminate()
         {
-            this.utils.Execute(this.capabilities.CloseCommand, "Close", true);
+            var command = this.capabilities.CloseCommand;
+            if (command != null)
+            {
+                this.utils.Execute(command, null, false);
+            }
         }
 
         public void BackupInitialStates()
@@ -77,12 +81,20 @@
 
         public void RestoreInitialStates()
         {
-            this.utils.Execute(this.capabilities.ResetCommand, "Reset", true);
+            var command = this.capabilities.ResetCommand;
+            if (command != null)
+            {
+                this.utils.Execute(command, null, false);
+            }
         }
 
         public void Uninstall()
         {
-            this.utils.Execute(this.capabilities.UninstallCommand, "Uninstall", true);
+            var command = this.capabilities.UninstallCommand;
+            if (command != null)
+            {
+                this.utils.Execute(command, null, false);
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿namespace WinAppDriver
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
     using System.Net;
@@ -18,7 +19,7 @@
 
         string GetAppFileFromWeb(string webResource, string expectFileMD5);
 
-        Process Execute(string command, string action, bool wait);
+        Process Execute(string command, IDictionary<string, string> envs, bool wait);
     }
 
     internal class Utils : IUtils
@@ -139,20 +140,24 @@
             return storeFileName;
         }
 
-        public Process Execute(string command, string action, bool wait)
+        public Process Execute(string command, IDictionary<string, string> variables, bool wait)
         {
-            // TODO wait -> detect UAC prompt, and accept it automatically.
-            logger.Info("Command for custom action '{0}': {1}", action, command);
-            if (command == null)
-            {
-                return null;
-            }
-
             string executable, arguments;
             this.ParseCommand(command, out executable, out arguments);
 
             // TODO not exited, or non-zero exit status
-            var process = Process.Start(executable, arguments);
+            var startInfo = new ProcessStartInfo(executable, arguments);
+            startInfo.UseShellExecute = false; // mandatory for setting environment variables
+            if (variables != null)
+            {
+                var envs = startInfo.EnvironmentVariables;
+                foreach (var item in variables)
+                {
+                    envs[item.Key] = item.Value;
+                }
+            }
+
+            var process = Process.Start(startInfo);
             if (wait)
             {
                 process.WaitForExit(10 * 60 * 1000); // 10 minutes
