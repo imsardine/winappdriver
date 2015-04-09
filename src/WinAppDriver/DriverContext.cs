@@ -32,7 +32,7 @@
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
-                logger.Info("Working directory for a certain app created: [{0}]; app = [{1}]", path);
+                logger.Info("Working directory for a certain app created: [{0}]; app = [{1}]", path, app.DriverAppID);
             }
 
             return path;

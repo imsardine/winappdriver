@@ -37,13 +37,13 @@
                 return true;
             }
 
-            string packageMD5;
-            string package = this.PrepareInstallationPackage(out packageMD5);
-            bool changed = currentMD5 != packageMD5;
+            string cachedMD5;
+            string package = this.PrepareInstallationPackage(out cachedMD5);
+            bool changed = currentMD5 != cachedMD5;
 
             logger.Info(
-                "Build changed? {0}; app = [{1}], current MD5 = [{2}], package MD5 = [{3}]",
-                changed, this.app.DriverAppID, currentMD5, packageMD5);
+                "Build changed? {0}; app = [{1}], current MD5 = [{2}], cached MD5 = [{3}]",
+                changed, this.app.DriverAppID, currentMD5, cachedMD5);
             return changed;
         }
 
@@ -101,53 +101,93 @@
             }
 
             md5 = File.ReadAllText(path);
-            logger.Debug("Current MD5: [{0}]", md5);
+            logger.Debug("Current build (MD5): [{0}]", md5);
             return true;
+        }
+
+        private void UpdateCurrent(string md5)
+        {
+            string path = this.CurrentFile;
+            md5 = md5.ToLower();
+            logger.Debug("Update current build (MD5); app = [{0}], md5 = [{1}]", this.app.DriverAppID, md5);
+
+            File.WriteAllText(path, md5);
         }
 
         private string PrepareInstallationPackage(out string md5)
         {
-            string packageDir = this.PackageDir;
+            string baseDir = this.PackageDir;
             var caps = this.app.Capabilities;
+            logger.Debug(
+                "Prepare installation package; app = [{0}], base dir = [{1}], caps.App = [{2}], caps.MD5 = [{3}]",
+                this.app.DriverAppID, baseDir, caps.App, caps.MD5);
+
+            string filename;
+            string fullpath;
+            bool cached = this.TryReadCachedPackageInfo(out filename, out md5);
+            if (this.prepared && cached)
+            {
+                fullpath = Path.Combine(baseDir, filename);
+                logger.Debug(
+                    "Alread prepared; path = [{1}], MD5 = [{2}]", fullpath, md5);
+                return fullpath;
+            }
 
             // Quick comparison
-            string filename;
-            if (caps.MD5 != null && this.TryReadPackageInfo(out filename, out md5))
+            if (caps.MD5 != null && cached)
             {
+                logger.Debug("MD5 matching (case-insensitive); caps.MD5 = [{0}], cached MD5 = [{1}]", caps.MD5, md5);
+                fullpath = Path.Combine(baseDir, filename);
                 if (md5 == caps.MD5.ToLower())
                 {
+                    logger.Info(
+                        "The cached installation package of app '{0}' ({1}) can be reused, because of matched checksums.",
+                        this.app.DriverAppID, fullpath);
+
                     this.prepared = true;
-                    return Path.Combine(packageDir, filename);
+                    return fullpath;
+                }
+                else
+                {
+                    logger.Info(
+                        "The cached installation package of app '{0}' ({1}) can not be reused, because of unmatched checksums.",
+                        this.app.DriverAppID, fullpath);
                 }
             }
 
             // Download the installer
-            var installer = this.utils.GetAppFileFromWeb(caps.App, caps.MD5);
-            filename = Path.GetFileName(installer); // TODO Preserve original filename
-            md5 = caps.MD5 != null ? caps.MD5.ToLower() : this.utils.GetFileMD5(installer);
+            logger.Info(
+                "Start downloading installation pacakge of app '{0}' from {1}.",
+                this.app.DriverAppID, caps.App);
+            string downloaded = this.utils.GetAppFileFromWeb(caps.App, caps.MD5);
+            filename = Path.GetFileName(downloaded); // TODO Preserve original filename, and replace invalid characters
+            md5 = caps.MD5 != null ? caps.MD5.ToLower() : this.utils.GetFileMD5(downloaded);
+            logger.Info("Installation package downloaded: {0} ({1}).", downloaded, md5);
 
-            // Discard existing package
-            if (Directory.Exists(packageDir))
+            // Discard cached installation package
+            if (Directory.Exists(baseDir))
             {
-                Directory.Delete(packageDir, true);
+                Directory.Delete(baseDir, true);
             }
-            Directory.CreateDirectory(packageDir);
+            Directory.CreateDirectory(baseDir);
 
-            File.Move(installer, Path.Combine(packageDir, filename));
-            this.WritePackageInfo(filename, md5);
-            string[] lines = { filename, md5 };
+            // Update cached package information.
+            fullpath = Path.Combine(baseDir, filename);
+            logger.Info("Cache the installation package: {0}.", fullpath);
+            File.Move(downloaded, fullpath);
+            this.WriteCachedPackageInfo(filename, md5);
 
             this.prepared = true;
-            return null;
+            return fullpath;
         }
 
-        private bool TryReadPackageInfo(out string filename, out string md5)
+        private bool TryReadCachedPackageInfo(out string filename, out string md5)
         {
             string path = this.PackageInfoFile;
-            logger.Debug("Package info file: [{0}]; app = [{1}]", path, this.app.DriverAppID);
+            logger.Debug("Cached package info file: [{0}]; app = [{1}]", path, this.app.DriverAppID);
             if (!File.Exists(path))
             {
-                logger.Debug("Package info file does not exist.");
+                logger.Debug("Cached package info file does not exist.");
                 filename = null;
                 md5 = null;
                 return false;
@@ -157,16 +197,16 @@
             filename = lines[0];
             md5 = lines[1];
 
-            logger.Debug("Package info: filename = [{0}], MD5 = [{1}]", filename, md5);
+            logger.Debug("Cached package info: filename = [{0}], MD5 = [{1}]", filename, md5);
             return true;
         }
 
-        private void WritePackageInfo(string filename, string md5)
+        private void WriteCachedPackageInfo(string filename, string md5)
         {
             string path = this.PackageInfoFile;
             string[] lines = { filename, md5 };
             logger.Debug(
-                "Write package info; app = [{0}], path = [{1}], filename = [{2}], MD5 = [{3}]",
+                "Write cached package info; app = [{0}], path = [{1}], filename = [{2}], MD5 = [{3}]",
                 this.app.DriverAppID, path, filename, md5);
 
             File.WriteAllLines(path, lines, Encoding.UTF8);
