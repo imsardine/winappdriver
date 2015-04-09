@@ -41,6 +41,11 @@
             this.utils = utils;
         }
 
+        public string DriverAppID
+        {
+            get { return this.PackageName; }
+        }
+
         public Capabilities Capabilities
         {
             get { return this.capabilities; }

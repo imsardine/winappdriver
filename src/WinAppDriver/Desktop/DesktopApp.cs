@@ -7,6 +7,8 @@
     {
         private static ILogger logger = Logger.GetLogger("WinAppDriver");
 
+        private IDriverContext context;
+
         private Capabilities capabilities;
 
         private IUACPomptHandler uacHandler;
@@ -15,11 +17,17 @@
 
         private IPackageInstaller installerCache;
 
-        public DesktopApp(Capabilities capabilities, IUACPomptHandler uacHandler, IUtils utils)
+        public DesktopApp(IDriverContext context, Capabilities capabilities, IUACPomptHandler uacHandler, IUtils utils)
         {
-            this.capabilities = capabilities;
+            this.context = context;
+            this.capabilities = capabilities; // TODO validate capabilities
             this.uacHandler = uacHandler;
             this.utils = utils;
+        }
+
+        public string DriverAppID
+        {
+            get { return "MyDesktopApp"; } // TODO deduce the app ID
         }
 
         public Capabilities Capabilities
@@ -33,7 +41,7 @@
             {
                 if (this.installerCache == null)
                 {
-                    this.installerCache = new DesktopAppInstaller(this, this.uacHandler, this.utils);
+                    this.installerCache = new DesktopAppInstaller(this.context, this, this.uacHandler, this.utils);
                 }
 
                 return this.installerCache;
@@ -42,7 +50,7 @@
 
         public bool IsInstalled()
         {
-            return false; // TODO
+            return false; // TODO with the help of external commands (exit status?)
         }
 
         public void Launch()

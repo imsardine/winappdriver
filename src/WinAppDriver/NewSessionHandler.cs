@@ -10,14 +10,17 @@ namespace WinAppDriver
     {
         private static ILogger logger = Logger.GetLogger("WinAppDriver");
 
+        private IDriverContext context;
+
         private SessionManager sessionManager;
 
         private IUACPomptHandler uacHandler;
 
         private IUtils utils;
 
-        public NewSessionHandler(SessionManager sessionManager, IUACPomptHandler uacHandler, IUtils utils)
+        public NewSessionHandler(IDriverContext context, SessionManager sessionManager, IUACPomptHandler uacHandler, IUtils utils)
         {
+            this.context = context;
             this.sessionManager = sessionManager;
             this.uacHandler = uacHandler;
             this.utils = utils;
@@ -42,7 +45,7 @@ namespace WinAppDriver
             switch (caps.PlatformName)
             {
                 case "Windows":
-                    app = new DesktopApp(caps, this.uacHandler, this.utils);
+                    app = new DesktopApp(this.context, caps, this.uacHandler, this.utils);
                     break;
 
                 case "WindowsModern":

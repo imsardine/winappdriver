@@ -19,6 +19,7 @@ namespace WinAppDriver
 
         private static RequestManager InitRequestManager(SessionManager sessionManager)
         {
+            var context = new DriverContext();
             var manager = new RequestManager(sessionManager);
             var utils = new Utils();
             var keyboard = new Keyboard(new KeyboardWrap(), new KeyInteropWrap(), new WinUserWrap());
@@ -31,7 +32,7 @@ namespace WinAppDriver
             manager.AddHandler(new FindElementsHandler(uiAutomation));
             manager.AddHandler(new GetElementTextHandler());
             manager.AddHandler(new GetSourceHandler(uiAutomation));
-            manager.AddHandler(new NewSessionHandler(sessionManager, uacHandler, utils));
+            manager.AddHandler(new NewSessionHandler(context, sessionManager, uacHandler, utils));
             manager.AddHandler(new ScreenshotHandler());
             manager.AddHandler(new SendKeysHandler(keyboard));
             manager.AddHandler(new SetElementValueHandler());

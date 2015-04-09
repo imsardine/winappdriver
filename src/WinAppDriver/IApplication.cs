@@ -2,6 +2,8 @@
 {
     internal interface IApplication
     {
+        string DriverAppID { get; }
+
         Capabilities Capabilities { get; }
 
         IPackageInstaller Installer { get; }
