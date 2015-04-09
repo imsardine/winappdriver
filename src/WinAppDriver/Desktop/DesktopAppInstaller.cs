@@ -155,7 +155,7 @@
                 }
             }
 
-            // Download the installer
+            // Download the installation package
             logger.Info(
                 "Start downloading installation pacakge of app '{0}' from {1}.",
                 this.app.DriverAppID, caps.App);
