@@ -27,6 +27,30 @@
             this.utils = utils;
         }
 
+        private string CurrentFile
+        {
+            get
+            {
+                return Path.Combine(this.context.GetAppWorkingDir(this.app), "Current.txt");
+            }
+        }
+
+        private string PackageDir
+        {
+            get
+            {
+                return Path.Combine(this.context.GetAppWorkingDir(this.app), "InstallationPackage");
+            }
+        }
+
+        private string PackageInfoFile
+        {
+            get
+            {
+                return Path.Combine(this.PackageDir, "Info.txt");
+            }
+        }
+
         public bool IsBuildChanged()
         {
             string currentMD5;
@@ -84,30 +108,6 @@
             finally
             {
                 this.uacHandler.Deactivate();
-            }
-        }
-
-        private string CurrentFile
-        {
-            get
-            {
-                return Path.Combine(this.context.GetAppWorkingDir(this.app), "Current.txt");
-            }
-        }
-
-        private string PackageDir
-        {
-            get
-            {
-                return Path.Combine(this.context.GetAppWorkingDir(this.app), "InstallationPackage");
-            }
-        }
-
-        private string PackageInfoFile
-        {
-            get
-            {
-                return Path.Combine(this.PackageDir, "Info.txt");
             }
         }
 
@@ -192,6 +192,7 @@
             {
                 Directory.Delete(baseDir, true);
             }
+
             Directory.CreateDirectory(baseDir);
 
             // Update cached package information.

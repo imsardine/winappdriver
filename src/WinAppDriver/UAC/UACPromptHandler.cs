@@ -67,7 +67,7 @@
                             Thread.Sleep(1000);
                         }
                     }
-                    catch (ThreadInterruptedException e)
+                    catch (ThreadInterruptedException)
                     {
                         this.alive = true;
                     }
