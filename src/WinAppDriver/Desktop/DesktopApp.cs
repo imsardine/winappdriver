@@ -53,13 +53,6 @@
             return false; // TODO with the help of external commands (exit status?)
         }
 
-        public void Launch()
-        {
-            // TODO backup or restore initial states if needed.
-            this.RestoreInitialStates();
-            this.Activate();
-        }
-
         public void Activate()
         {
             this.utils.Execute(this.capabilities.OpenCommand, null, false);

@@ -10,8 +10,6 @@
 
         bool IsInstalled();
 
-        void Launch();
-
         void Activate();
 
         void Terminate();

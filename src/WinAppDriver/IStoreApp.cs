@@ -116,20 +116,6 @@
             }
         }
 
-        public void Launch()
-        {
-            if (Directory.Exists(this.InitialStatesDir))
-            {
-                this.RestoreInitialStates();
-            }
-            else
-            {
-                this.BackupInitialStates();
-            }
-
-            this.Activate();
-        }
-
         public void Activate()
         {
             // TODO thorw exception if needed

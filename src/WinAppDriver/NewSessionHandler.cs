@@ -58,19 +58,27 @@ namespace WinAppDriver
                     throw new FailedCommandException("The platform name '{0}' is invalid.", 33);
             }
 
+            // TODO validate capabilibites
+
             if (app.IsInstalled())
             {
-                app.Terminate();
                 if (caps.App != null)
                 {
                     if (app.Installer.IsBuildChanged())
                     {
-                        app.Uninstall();
+                        app.Terminate();
+                        app.Uninstall(); // TODO if strategy == reinstall
                         app.Installer.Install();
+                        app.BackupInitialStates();
+                    }
+                    else
+                    {
+                        // TODO fast/full/no reset
                     }
                 }
                 else
                 {
+                    // TODO fast/no reset (full reset is irrelevant here)
                     logger.Info("Store App is already installed and the capability of App is empty, so skip installing.");
                 }
             }
@@ -79,15 +87,16 @@ namespace WinAppDriver
                 if (caps.App != null)
                 {
                     app.Installer.Install();
+                    app.BackupInitialStates();
                 }
                 else
                 {
                     string msg = "The source should be provided if Store App isn't installed.";
-                    throw new WinAppDriverException(msg);
+                    throw new WinAppDriverException(msg); // TODO as-is, only for desktop
                 }
             }
 
-            app.Launch();
+            app.Activate();
             session = this.sessionManager.CreateSession(app, caps);
 
             // TODO turn off IME, release all modifier keys

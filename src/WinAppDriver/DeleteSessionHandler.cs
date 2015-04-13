@@ -16,7 +16,7 @@
         {
             var app = session.Application;
             this.sessionManager.DeleteSession(session.ID);
-            app.Terminate();
+            app.Terminate(); // TODO reset strategy
             app.RestoreInitialStates();
 
             return null;
