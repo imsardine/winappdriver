@@ -91,7 +91,7 @@
             {
                 command = package;
                 logger.Info(
-                    "Install command is not provided, so directly invoke the (executable?) installation package '{1}'.",
+                    "Install command is not provided, so directly invoke the (executable?) installation package '{0}'.",
                     package);
             }
 
