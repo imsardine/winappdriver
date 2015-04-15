@@ -28,38 +28,32 @@ namespace WinAppDriver
 
         public object Handle(Dictionary<string, string> urlParams, string body, ref Session session)
         {
-            NewSessionRequest request = JsonConvert.DeserializeObject<NewSessionRequest>(body);
+            var request = JsonConvert.DeserializeObject<NewSessionRequestAsDict>(body);
             foreach (var kvp in request.DesiredCapabilities)
             {
                 logger.Info("{0} = {1} ({2})", kvp.Key, kvp.Value, kvp.Value.GetType());
             }
 
-            var caps = new Capabilities(request.DesiredCapabilities);
-            if (caps.PlatformName == null)
-            {
-                throw new FailedCommandException("The 'platformName' desired capability is mandatory in any cases. It can be 'Windows', 'WindowsModern' or 'WindowsPhone'.", 33); // TODO define enumeration
-            }
+            var caps = JsonConvert.DeserializeObject<NewSessionRequest>(body).DesiredCapabilities;
 
-            // valid platform names: Windows, WindowModern, WindowPhone
             IApplication app;
-            switch (caps.PlatformName)
+            switch (caps.Platform)
             {
-                case "Windows":
+                case Platform.Windows:
                     app = new DesktopApp(this.context, caps, this.uacHandler, this.utils);
                     break;
 
-                case "WindowsModern":
+                case Platform.WindowsModern:
                     app = new StoreApp(caps, this.utils);
                     break;
 
-                case "WindowsPhone":
+                case Platform.WindowsPhone:
                     throw new FailedCommandException("Windows Phone is not supported yet.", 33);
                 default:
                     throw new FailedCommandException("The platform name '{0}' is invalid.", 33);
             }
 
             // TODO validate capabilibites
-
             if (app.IsInstalled())
             {
                 if (caps.App != null)
@@ -91,8 +85,8 @@ namespace WinAppDriver
                 }
                 else
                 {
-                    string msg = "The source should be provided if Store App isn't installed.";
-                    throw new WinAppDriverException(msg); // TODO as-is, only for desktop
+                    // string msg = "The source should be provided if Store App isn't installed.";
+                    // throw new WinAppDriverException(msg); // TODO as-is, only for desktop
                 }
             }
 
@@ -104,6 +98,15 @@ namespace WinAppDriver
         }
 
         private class NewSessionRequest
+        {
+            [JsonProperty("desiredCapabilities")]
+            internal Capabilities DesiredCapabilities { get; set; }
+
+            [JsonProperty("requiredCapabilities")]
+            internal Capabilities RequiredCapabilities { get; set; }
+        }
+
+        private class NewSessionRequestAsDict
         {
             [JsonProperty("desiredCapabilities")]
             internal Dictionary<string, object> DesiredCapabilities { get; set; }

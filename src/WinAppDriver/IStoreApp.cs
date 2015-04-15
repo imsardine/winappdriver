@@ -57,7 +57,7 @@
             {
                 if (this.installerCache == null)
                 {
-                    this.installerCache = new StoreAppPackageInstaller(this, this.utils, this.capabilities.App, this.capabilities.MD5);
+                    this.installerCache = new StoreAppPackageInstaller(this, this.utils, this.capabilities.App, this.capabilities.AppChecksum);
                 }
 
                 return this.installerCache;

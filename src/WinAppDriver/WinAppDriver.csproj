@@ -62,8 +62,9 @@
     <Reference Include="Essential.Diagnostics">
       <HintPath>..\packages\Essential.Diagnostics.1.2.501.0\lib\Essential.Diagnostics.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>.\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="StyleCop, Version=4.7.1000.0, Culture=neutral, PublicKeyToken=f904653c63bc2738, processorArchitecture=MSIL">
@@ -80,6 +81,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Management.Automation" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.XML" />
     <Reference Include="UIAutomationClient">
@@ -92,6 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Capabilities.cs" />
+    <Compile Include="ChangeBuildStrategy.cs" />
     <Compile Include="ClickElementHandler.cs" />
     <Compile Include="Desktop\DesktopApp.cs" />
     <Compile Include="Desktop\DesktopAppInstaller.cs" />
@@ -109,6 +112,8 @@
     <Compile Include="IHandler.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="IKeyboard.cs" />
+    <Compile Include="Platform.cs" />
+    <Compile Include="ResetStrategy.cs" />
     <Compile Include="UAC\IUACPomptHandler.cs" />
     <Compile Include="IUIAutomation.cs" />
     <Compile Include="Keyboard.cs" />

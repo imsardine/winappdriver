@@ -53,29 +53,29 @@
 
         public bool IsBuildChanged()
         {
-            string currentMD5;
-            if (!this.TryReadCurrent(out currentMD5))
+            string currentChecksum;
+            if (!this.TryReadCurrent(out currentChecksum))
             {
                 logger.Info(
-                    "Build changed, because current build (MD5) is unknown; app = [{0}]",
+                    "Build changed, because current build (checksum) is unknown; app = [{0}]",
                     this.app.DriverAppID);
                 return true;
             }
 
-            string cachedMD5;
-            string package = this.PrepareInstallationPackage(out cachedMD5);
-            bool changed = currentMD5 != cachedMD5;
+            string cachedChecksum;
+            string package = this.PrepareInstallationPackage(out cachedChecksum);
+            bool changed = currentChecksum != cachedChecksum;
 
             logger.Info(
-                "Build changed? {0}; app = [{1}], current MD5 = [{2}], cached MD5 = [{3}]",
-                changed, this.app.DriverAppID, currentMD5, cachedMD5);
+                "Build changed? {0}; app = [{1}], current checksum = [{2}], cached checksum = [{3}]",
+                changed, this.app.DriverAppID, currentChecksum, cachedChecksum);
             return changed;
         }
 
         public void Install()
         {
-            string md5;
-            string package = this.PrepareInstallationPackage(out md5);
+            string checksum;
+            string package = this.PrepareInstallationPackage(out checksum);
 
             // Directly execute the installation package, if the external command is not provided.
             var caps = this.app.Capabilities;
@@ -111,7 +111,7 @@
             }
         }
 
-        private bool TryReadCurrent(out string md5)
+        private bool TryReadCurrent(out string checksum)
         {
             string path = this.CurrentFile;
             logger.Debug("Current file: [{0}]; app = [{1}]", path, this.app.DriverAppID);
@@ -119,49 +119,49 @@
             if (!File.Exists(path))
             {
                 logger.Debug("Current file does not exist.");
-                md5 = null;
+                checksum = null;
                 return false;
             }
 
-            md5 = File.ReadAllText(path);
-            logger.Debug("Current build (MD5): [{0}]", md5);
+            checksum = File.ReadAllText(path);
+            logger.Debug("Current build (checksum): [{0}]", checksum);
             return true;
         }
 
-        private void UpdateCurrent(string md5)
+        private void UpdateCurrent(string checksum)
         {
             string path = this.CurrentFile;
-            md5 = md5.ToLower();
-            logger.Debug("Update current build (MD5); app = [{0}], md5 = [{1}]", this.app.DriverAppID, md5);
+            checksum = checksum.ToLower();
+            logger.Debug("Update current build (checksum); app = [{0}], checksum = [{1}]", this.app.DriverAppID, checksum);
 
-            File.WriteAllText(path, md5);
+            File.WriteAllText(path, checksum);
         }
 
-        private string PrepareInstallationPackage(out string md5)
+        private string PrepareInstallationPackage(out string checksum)
         {
             string baseDir = this.PackageDir;
             var caps = this.app.Capabilities;
             logger.Debug(
-                "Prepare installation package; app = [{0}], base dir = [{1}], caps.App = [{2}], caps.MD5 = [{3}]",
-                this.app.DriverAppID, baseDir, caps.App, caps.MD5);
+                "Prepare installation package; app = [{0}], base dir = [{1}], caps.App = [{2}], caps.AppChecksum = [{3}]",
+                this.app.DriverAppID, baseDir, caps.App, caps.AppChecksum);
 
             string filename;
             string fullpath;
-            bool cached = this.TryReadCachedPackageInfo(out filename, out md5);
+            bool cached = this.TryReadCachedPackageInfo(out filename, out checksum);
             if (this.prepared && cached)
             {
                 fullpath = Path.Combine(baseDir, filename);
                 logger.Debug(
-                    "Alread prepared; path = [{1}], MD5 = [{2}]", fullpath, md5);
+                    "Alread prepared; path = [{1}], checksum = [{2}]", fullpath, checksum);
                 return fullpath;
             }
 
             // Quick comparison
-            if (caps.MD5 != null && cached)
+            if (caps.AppChecksum != null && cached)
             {
-                logger.Debug("MD5 matching (case-insensitive); caps.MD5 = [{0}], cached MD5 = [{1}]", caps.MD5, md5);
+                logger.Debug("Checksum matching (case-insensitive); caps.AppChecksum = [{0}], cached checksum = [{1}]", caps.AppChecksum, checksum);
                 fullpath = Path.Combine(baseDir, filename);
-                if (md5 == caps.MD5.ToLower())
+                if (checksum == caps.AppChecksum.ToLower())
                 {
                     logger.Info(
                         "The cached installation package of app '{0}' ({1}) can be reused, because of matched checksums.",
@@ -182,10 +182,10 @@
             logger.Info(
                 "Start downloading installation pacakge of app '{0}' from {1}.",
                 this.app.DriverAppID, caps.App);
-            string downloaded = this.utils.GetAppFileFromWeb(caps.App, caps.MD5);
+            string downloaded = this.utils.GetAppFileFromWeb(caps.App, caps.AppChecksum);
             filename = Path.GetFileName(downloaded); // TODO Preserve original filename, and replace invalid characters
-            md5 = caps.MD5 != null ? caps.MD5.ToLower() : this.utils.GetFileMD5(downloaded);
-            logger.Info("Installation package downloaded: {0} ({1}).", downloaded, md5);
+            checksum = caps.AppChecksum != null ? caps.AppChecksum.ToLower() : this.utils.GetFileMD5(downloaded);
+            logger.Info("Installation package downloaded: {0} ({1}).", downloaded, checksum);
 
             // Discard cached installation package
             if (Directory.Exists(baseDir))
@@ -199,13 +199,13 @@
             fullpath = Path.Combine(baseDir, filename);
             logger.Info("Cache the installation package: {0}.", fullpath);
             File.Move(downloaded, fullpath);
-            this.WriteCachedPackageInfo(filename, md5);
+            this.WriteCachedPackageInfo(filename, checksum);
 
             this.prepared = true;
             return fullpath;
         }
 
-        private bool TryReadCachedPackageInfo(out string filename, out string md5)
+        private bool TryReadCachedPackageInfo(out string filename, out string checksum)
         {
             string path = this.PackageInfoFile;
             logger.Debug("Cached package info file: [{0}]; app = [{1}]", path, this.app.DriverAppID);
@@ -213,25 +213,25 @@
             {
                 logger.Debug("Cached package info file does not exist.");
                 filename = null;
-                md5 = null;
+                checksum = null;
                 return false;
             }
 
             string[] lines = File.ReadAllLines(path, Encoding.UTF8);
             filename = lines[0];
-            md5 = lines[1];
+            checksum = lines[1];
 
-            logger.Debug("Cached package info: filename = [{0}], MD5 = [{1}]", filename, md5);
+            logger.Debug("Cached package info: filename = [{0}], checksum = [{1}]", filename, checksum);
             return true;
         }
 
-        private void WriteCachedPackageInfo(string filename, string md5)
+        private void WriteCachedPackageInfo(string filename, string checksum)
         {
             string path = this.PackageInfoFile;
-            string[] lines = { filename, md5 };
+            string[] lines = { filename, checksum };
             logger.Debug(
-                "Write cached package info; app = [{0}], path = [{1}], filename = [{2}], MD5 = [{3}]",
-                this.app.DriverAppID, path, filename, md5);
+                "Write cached package info; app = [{0}], path = [{1}], filename = [{2}], checksum = [{3}]",
+                this.app.DriverAppID, path, filename, checksum);
 
             File.WriteAllLines(path, lines, Encoding.UTF8);
         }

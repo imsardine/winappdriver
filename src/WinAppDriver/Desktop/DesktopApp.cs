@@ -27,7 +27,7 @@
 
         public string DriverAppID
         {
-            get { return "MyDesktopApp"; } // TODO deduce the app ID
+            get { return this.capabilities.AppID ?? "Windows"; }
         }
 
         public Capabilities Capabilities
@@ -55,7 +55,11 @@
 
         public void Activate()
         {
-            this.utils.Execute(this.capabilities.OpenCommand, null, false);
+            var command = this.capabilities.OpenCommand;
+            if (command != null)
+            {
+                this.utils.Execute(command, null, false);
+            }
         }
 
         public void Terminate()
@@ -69,12 +73,12 @@
 
         public void BackupInitialStates()
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException(); // TODO delegate to external commands
         }
 
         public void RestoreInitialStates()
         {
-            var command = this.capabilities.ResetCommand;
+            var command = this.capabilities.RestoreStatesCommand;
             if (command != null)
             {
                 this.utils.Execute(command, null, false);
