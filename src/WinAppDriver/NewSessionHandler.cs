@@ -85,7 +85,16 @@ namespace WinAppDriver
                 }
                 else
                 {
-                    if (caps.Platform != Platform.Windows)
+                    if (caps.Platform == Platform.Windows)
+                    {
+                        // full-reset is irrelevant here
+                        if (caps.ResetStrategy == ResetStrategy.Fast)
+                        {
+                            app.Terminate();
+                            app.RestoreInitialStates();
+                        }
+                    }
+                    else
                     {
                         var msg = "'app' capability is mandatory if the target platform is not 'Windows' " +
                             "(default) and the app under test '{0}' is not installed beforehand.";
