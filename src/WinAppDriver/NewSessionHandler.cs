@@ -53,7 +53,7 @@ namespace WinAppDriver
                     throw new FailedCommandException("The platform name '{0}' is invalid.", 33);
             }
 
-            // TODO validate capabilibites
+            // TODO validate capabilibites, add logs for identifying which decision path is chosen.
             if (app.IsInstalled())
             {
                 if (caps.App != null)
@@ -72,19 +72,35 @@ namespace WinAppDriver
                 }
                 else
                 {
-                    // TODO fast/no reset (full reset is irrelevant here)
-                    logger.Info("Store App is already installed and the capability of App is empty, so skip installing.");
+                    logger.Info(
+                        "App '{0}' is already installed, but the installation package is not provided. Reset: {1}",
+                        app.DriverAppID, caps.ResetStrategy);
+
+                    // full-reset is irrelevant here
+                    if (caps.ResetStrategy == ResetStrategy.Fast)
+                    {
+                        app.Terminate();
+                        app.RestoreInitialStates();
+                    }
                 }
             }
             else
             {
                 if (caps.App != null)
                 {
+                    logger.Info(
+                        "App '{0}' is not installed yet, but the installation package is provided.",
+                        app.DriverAppID);
+
                     app.Installer.Install();
                     app.BackupInitialStates();
                 }
                 else
                 {
+                    logger.Info(
+                        "App '{0}' is not installed yet, and the installation package is not provided. Reset: {1}",
+                        app.DriverAppID, caps.ResetStrategy);
+
                     if (caps.Platform == Platform.Windows)
                     {
                         // full-reset is irrelevant here
