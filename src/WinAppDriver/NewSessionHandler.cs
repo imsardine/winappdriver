@@ -85,8 +85,12 @@ namespace WinAppDriver
                 }
                 else
                 {
-                    // string msg = "The source should be provided if Store App isn't installed.";
-                    // throw new WinAppDriverException(msg); // TODO as-is, only for desktop
+                    if (caps.Platform != Platform.Windows)
+                    {
+                        var msg = "'app' capability is mandatory if the target platform is not 'Windows' " +
+                            "(default) and the app under test '{0}' is not installed beforehand.";
+                        throw new WinAppDriverException(string.Format(msg, app.DriverAppID));
+                    }
                 }
             }
 
