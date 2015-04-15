@@ -98,7 +98,7 @@ namespace WinAppDriver
             session = this.sessionManager.CreateSession(app, caps);
 
             // TODO turn off IME, release all modifier keys
-            return caps; // TODO capabilities
+            return caps;
         }
 
         private class NewSessionRequest
