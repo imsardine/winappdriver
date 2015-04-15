@@ -58,16 +58,49 @@ namespace WinAppDriver
             {
                 if (caps.App != null)
                 {
+                    logger.Info(
+                        "App '{0}' is already installed, and the installation package is also provided.",
+                        app.DriverAppID);
+
                     if (app.Installer.IsBuildChanged())
                     {
+                        logger.Info("Build changed. Strategy: {0}, Reset: {1}", caps.ChangeBuildStrategy, caps.ResetStrategy);
+
                         app.Terminate();
-                        app.Uninstall(); // TODO if strategy == reinstall
-                        app.Installer.Install();
-                        app.BackupInitialStates();
+                        if (caps.ChangeBuildStrategy == ChangeBuildStrategy.Reinstall)
+                        {
+                            // reset strategy is irrelevant here
+                            app.Uninstall();
+                            app.Installer.Install();
+                            app.BackupInitialStates();
+                        }
+                        else if (caps.ChangeBuildStrategy == ChangeBuildStrategy.Upgrade)
+                        {
+                            // full-reset strategy is irrelevant here
+                            if (caps.ResetStrategy != ResetStrategy.No)
+                            {
+                                app.RestoreInitialStates();
+                                app.Installer.Install();
+                                app.BackupInitialStates();
+                            }
+                        }
                     }
                     else
                     {
-                        // TODO fast/full/no reset
+                        logger.Info("Build not changed. Reset: {0}", caps.ResetStrategy);
+
+                        if (caps.ResetStrategy == ResetStrategy.Fast)
+                        {
+                            app.Terminate();
+                            app.RestoreInitialStates();
+                        }
+                        else if (caps.ResetStrategy == ResetStrategy.Full)
+                        {
+                            app.Terminate();
+                            app.Uninstall();
+                            app.Installer.Install();
+                            app.BackupInitialStates();
+                        }
                     }
                 }
                 else
