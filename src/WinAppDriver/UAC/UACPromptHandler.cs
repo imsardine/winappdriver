@@ -34,10 +34,7 @@
             this.allowed = allowed;
             var thread = this.GetThread();
 
-            if (!thread.IsAlive)
-            {
-                thread.Interrupt();
-            }
+            thread.Interrupt();
         }
 
         public void Deactivate()
@@ -67,9 +64,8 @@
                             Thread.Sleep(1000);
                         }
                     }
-                    catch (ThreadInterruptedException)
+                    catch (ThreadInterruptedException) 
                     {
-                        this.alive = true;
                     }
                 }
             }
