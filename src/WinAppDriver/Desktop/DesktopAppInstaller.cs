@@ -105,7 +105,7 @@
                 this.uacHandler.Activate(true);
 
                 int exitCode;
-                this.utils.Execute(command, envs, out exitCode);
+                this.app.TriggerCustomAction(command, envs, out exitCode);
                 this.UpdateCurrent(checksum);
             }
             finally

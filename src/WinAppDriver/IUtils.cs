@@ -20,8 +20,6 @@
         string GetAppFileFromWeb(string webResource, string checksum);
 
         Process Execute(string command, IDictionary<string, string> envs);
-
-        Process Execute(string command, IDictionary<string, string> envs, out int waitExitCode);
     }
 
     internal class Utils : IUtils
@@ -160,15 +158,6 @@
             }
 
             return Process.Start(startInfo);
-        }
-
-        public Process Execute(string command, IDictionary<string, string> variables, out int waitExitCode)
-        {
-            var process = this.Execute(command, variables);
-            process.WaitForExit(3 * 60 * 1000); // 3 minutes
-
-            waitExitCode = process.ExitCode;
-            return process;
         }
 
         private void ParseCommand(string command, out string executable, out string arguments)
