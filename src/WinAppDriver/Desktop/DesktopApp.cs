@@ -50,7 +50,16 @@
 
         public bool IsInstalled()
         {
-            return false; // TODO with the help of external commands (exit status?)
+            var command = this.capabilities.CheckInstalledCommand;
+            if (command == null)
+            {
+                return true;
+            }
+
+            int exitCode;
+            this.utils.Execute(command, null, out exitCode);
+
+            return exitCode == 0;
         }
 
         public void Activate()
@@ -58,7 +67,7 @@
             var command = this.capabilities.OpenCommand;
             if (command != null)
             {
-                this.utils.Execute(command, null, false);
+                this.utils.Execute(command, null);
             }
         }
 
@@ -67,13 +76,19 @@
             var command = this.capabilities.CloseCommand;
             if (command != null)
             {
-                this.utils.Execute(command, null, false);
+                int exitCode;
+                this.utils.Execute(command, null, out exitCode);
             }
         }
 
         public void BackupInitialStates()
         {
-            throw new NotImplementedException(); // TODO delegate to external commands
+            var command = this.capabilities.BackupStatesCommand;
+            if (command != null)
+            {
+                int exitCode;
+                this.utils.Execute(command, null, out exitCode);
+            }
         }
 
         public void RestoreInitialStates()
@@ -81,7 +96,8 @@
             var command = this.capabilities.RestoreStatesCommand;
             if (command != null)
             {
-                this.utils.Execute(command, null, false);
+                int exitCode;
+                this.utils.Execute(command, null, out exitCode);
             }
         }
 
@@ -90,7 +106,17 @@
             var command = this.capabilities.UninstallCommand;
             if (command != null)
             {
-                this.utils.Execute(command, null, false);
+                try
+                {
+                    this.uacHandler.Activate(true);
+
+                    int exitCode;
+                    this.utils.Execute(command, null, out exitCode);
+                }
+                finally
+                {
+                    this.uacHandler.Deactivate();
+                }
             }
         }
     }

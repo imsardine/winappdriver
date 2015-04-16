@@ -97,13 +97,16 @@
 
             var envs = new Dictionary<string, string>
             {
-                { "AppInstallationPackage", package }
+                { "WinAppDriverInstallationPackage", package }
             };
 
             try
             {
                 this.uacHandler.Activate(true);
-                this.utils.Execute(command, envs, true);
+
+                int exitCode;
+                this.utils.Execute(command, envs, out exitCode);
+                this.UpdateCurrent(checksum);
             }
             finally
             {
@@ -152,7 +155,7 @@
             {
                 fullpath = Path.Combine(baseDir, filename);
                 logger.Debug(
-                    "Alread prepared; path = [{1}], checksum = [{2}]", fullpath, checksum);
+                    "Alread prepared; path = [{0}], checksum = [{1}]", fullpath, checksum);
                 return fullpath;
             }
 

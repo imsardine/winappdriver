@@ -16,8 +16,18 @@
         {
             var app = session.Application;
             this.sessionManager.DeleteSession(session.ID);
-            app.Terminate(); // TODO reset strategy
-            app.RestoreInitialStates();
+
+            var caps = session.Capabilities;
+            if (caps.ResetStrategy == ResetStrategy.Fast)
+            {
+                app.Terminate();
+                app.RestoreInitialStates();
+            }
+            else if (caps.ResetStrategy == ResetStrategy.Full)
+            {
+                app.Terminate();
+                app.Uninstall();
+            }
 
             return null;
         }

@@ -19,7 +19,9 @@
 
         string GetAppFileFromWeb(string webResource, string checksum);
 
-        Process Execute(string command, IDictionary<string, string> envs, bool wait);
+        Process Execute(string command, IDictionary<string, string> envs);
+
+        Process Execute(string command, IDictionary<string, string> envs, out int waitExitCode);
     }
 
     internal class Utils : IUtils
@@ -140,7 +142,7 @@
             return storeFileName;
         }
 
-        public Process Execute(string command, IDictionary<string, string> variables, bool wait)
+        public Process Execute(string command, IDictionary<string, string> variables)
         {
             string executable, arguments;
             this.ParseCommand(command, out executable, out arguments);
@@ -157,12 +159,15 @@
                 }
             }
 
-            var process = Process.Start(startInfo);
-            if (wait)
-            {
-                process.WaitForExit(10 * 60 * 1000); // 10 minutes
-            }
+            return Process.Start(startInfo);
+        }
 
+        public Process Execute(string command, IDictionary<string, string> variables, out int waitExitCode)
+        {
+            var process = this.Execute(command, variables);
+            process.WaitForExit(3 * 60 * 1000); // 3 minutes
+
+            waitExitCode = process.ExitCode;
             return process;
         }
 
