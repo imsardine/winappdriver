@@ -131,7 +131,10 @@
         public Process TriggerCustomAction(string command, IDictionary<string, string> envs)
         {
             envs = envs ?? new Dictionary<string, string>();
-            envs.Add("WinAppDriverStatesDir", this.StatesDir);
+
+            // make sure the states dir is available to external programs.
+            var statesDir = Directory.CreateDirectory(this.StatesDir);
+            envs.Add("WinAppDriverStatesDir", statesDir.FullName);
 
             return this.utils.Execute(command, envs);
         }
