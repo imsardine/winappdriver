@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="6FE95E58-06A9-45D5-96C6-939898F64216" Name="WinAppDriver" Language="1033" Version="1.0.0.0" Manufacturer="WinAppDriver Dev Team" UpgradeCode="c664c607-1f8b-4925-87be-a0fcdc369fe5">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+    <Icon Id="WinAppDriver.ico" SourceFile="$(var.WinAppDriver.ProjectDir)$(var.WinAppDriver.TargetName).ico" />
+    <Property Id="ARPPRODUCTICON" Value="WinAppDriver.ico" />
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate EmbedCab="yes" />
+
+		<Feature Id="ProductFeature" Title="WinAppDriver" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+    </Feature>
+	</Product>
+
+	<Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLDIR" Name="WinAppDriver">
+          <Component Id="WinAppDriver" Guid="72D24FF6-D158-45B3-9A0D-9DC39518E3A6">
+            <File Id="WinAppDriverExe" Name="$(var.WinAppDriver.TargetFileName)" KeyPath="yes"
+                  Source="$(var.WinAppDriver.TargetPath)">
+              <Shortcut Id="DesktopShortcut" Advertise="yes" Directory="DesktopFolder"
+                        Name="WinAppDriver" WorkingDirectory="INSTALLDIR" Icon="WinAppDriver.ico" />
+              <!--fw:FirewallException Id="FirewallException" Name="WinAppDriver" Scope="any" /-->
+            </File>
+            <File Id="WinAppDriverCfg" Name="$(var.WinAppDriver.TargetFileName).config"
+                  Source="$(var.WinAppDriver.TargetDir)$(var.WinAppDriver.TargetFileName).config" />
+            <File Id="WinAppDriverPdb" Name="$(var.WinAppDriver.TargetName).pdb" 
+                  Source="$(var.WinAppDriver.TargetDir)$(var.WinAppDriver.TargetName).pdb" />
+            <File Id="ActivateStoreAppExe" Name="$(var.ActivateStoreApp.TargetFileName)" 
+                  Source="$(var.ActivateStoreApp.TargetPath)" />
+            <File Id="ActivateStoreAppPdb" Name="$(var.ActivateStoreApp.TargetName).pdb" 
+                  Source="$(var.ActivateStoreApp.TargetDir)$(var.ActivateStoreApp.TargetName).pdb" />
+          </Component>
+          <Component Id="Diagnostics" Guid="0EDFD3E2-42D6-436C-875B-A96CEF8780DF">
+            <File Id="EssentialDiagnosticsDll" Name="Essential.Diagnostics.dll" KeyPath="yes"
+                  Source="$(var.WinAppDriver.TargetDir)Essential.Diagnostics.dll" />
+            <File Id="EssentialDiagnosticsXml" Name="Essential.Diagnostics.xml"
+                  Source="$(var.WinAppDriver.TargetDir)Essential.Diagnostics.xml" />
+          </Component>
+          <Component Id="Json.NET" Guid="211C9CAC-B4D9-47EC-92F4-89BA6CCA906B">
+            <File Id="NewtonsoftJsonDll" Name="Newtonsoft.Json.dll" KeyPath="yes"
+                  Source="$(var.WinAppDriver.TargetDir)Newtonsoft.Json.dll" />
+            <File Id="NewtonsoftJsonXml" Name="Newtonsoft.Json.xml"
+                  Source="$(var.WinAppDriver.TargetDir)Newtonsoft.Json.xml" />
+          </Component>
+        </Directory>
+        <Directory Id="DesktopFolder" Name="Desktop" />
+			</Directory>
+		</Directory>
+
+    <Feature Id="Complete">
+      <ComponentRef Id="WinAppDriver" />
+      <ComponentRef Id="Diagnostics" />
+      <ComponentRef Id="Json.NET" />
+    </Feature>
+	</Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLDIR" />
+	</Fragment>
+</Wix>
