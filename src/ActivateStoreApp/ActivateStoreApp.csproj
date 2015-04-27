@@ -43,14 +43,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent Condition=" '$(OS)' != 'Unix' ">
-md "c:\Program Files (x86)\WinAppDriver"
-copy /y $(TargetPath) "c:\Program Files (x86)\WinAppDriver"</PostBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup>
-    <PostBuildEvent>
+    <PostBuildEvent><!--
 mkdir "$(ProgramFiles)\WinAppDriver"
-copy /y "$(TargetPath)*" "$(ProgramFiles)\WinAppDriver"</PostBuildEvent>
+copy /y "$(TargetPath)*" "$(ProgramFiles)\WinAppDriver"
+  --></PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
