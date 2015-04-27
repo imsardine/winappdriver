@@ -45,6 +45,12 @@
             <File Id="NewtonsoftJsonXml" Name="Newtonsoft.Json.xml"
                   Source="$(var.WinAppDriver.TargetDir)Newtonsoft.Json.xml" />
           </Component>
+          <Component Id="UACSettings" Guid="2156C506-2E18-44C0-BD21-FBFD92198EF2">
+            <!-- The registry value will be removed during uninstall -->
+            <RegistryKey Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System">
+              <RegistryValue Type="integer" Name="PromptOnSecureDesktop" Value="0" />
+            </RegistryKey>
+          </Component>
         </Directory>
         <Directory Id="DesktopFolder" Name="Desktop" />
 			</Directory>
@@ -54,6 +60,7 @@
       <ComponentRef Id="WinAppDriver" />
       <ComponentRef Id="Diagnostics" />
       <ComponentRef Id="Json.NET" />
+      <ComponentRef Id="UACSettings" />
     </Feature>
 	</Fragment>
 
