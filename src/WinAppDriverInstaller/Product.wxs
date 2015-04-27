@@ -13,7 +13,22 @@
 		<Feature Id="ProductFeature" Title="WinAppDriver" Level="1">
       <ComponentGroupRef Id="ProductComponents" />
     </Feature>
-	</Product>
+
+    <!-- Add/Remove WCF namespace reservations. For more information,
+         visit https://msdn.microsoft.com/en-us/library/ms733768.aspx -->
+    <CustomAction Id="AddWcfNamespaceReservation"
+                  Directory="INSTALLDIR" Return="asyncWait"
+                  Impersonate="no" Execute="deferred"
+                  ExeCommand="[SystemFolder]netsh.exe http add urlacl url=http://+:4444/wd/hub/ user=\Everyone" />
+    <CustomAction Id="DelWcfNamespaceReservation"
+                  Directory="INSTALLDIR" Return="asyncWait"
+                  Impersonate="no" Execute="deferred"
+                  ExeCommand="[SystemFolder]netsh.exe http del urlacl url=http://+:4444/wd/hub/" />
+    <InstallExecuteSequence>
+      <Custom Action="AddWcfNamespaceReservation" Before="InstallFinalize">NOT Installed</Custom>
+      <Custom Action="DelWcfNamespaceReservation" Before="InstallFinalize">Installed</Custom>
+    </InstallExecuteSequence>
+  </Product>
 
 	<Fragment>
     <Binary Id="WinAppDriverCer" SourceFile="$(var.WinAppDriver.ProjectDir)WinAppDriver.cer" />
