@@ -42,6 +42,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <WixExtension Include="WixIIsExtension">
+      <HintPath>$(WixExtDir)\WixIIsExtension.dll</HintPath>
+      <Name>WixIIsExtension</Name>
+    </WixExtension>
     <WixExtension Include="WixFirewallExtension">
       <HintPath>$(WixExtDir)\WixFirewallExtension.dll</HintPath>
       <Name>WixFirewallExtension</Name>
