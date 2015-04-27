@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:fw="http://schemas.microsoft.com/wix/FirewallExtension">
 	<Product Id="6FE95E58-06A9-45D5-96C6-939898F64216" Name="WinAppDriver" Language="1033" Version="1.0.0.0" Manufacturer="WinAppDriver Dev Team" UpgradeCode="c664c607-1f8b-4925-87be-a0fcdc369fe5">
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
     <Icon Id="WinAppDriver.ico" SourceFile="$(var.WinAppDriver.ProjectDir)$(var.WinAppDriver.TargetName).ico" />
@@ -32,6 +33,8 @@
                   Source="$(var.ActivateStoreApp.TargetPath)" />
             <File Id="ActivateStoreAppPdb" Name="$(var.ActivateStoreApp.TargetName).pdb" 
                   Source="$(var.ActivateStoreApp.TargetDir)$(var.ActivateStoreApp.TargetName).pdb" />
+            <fw:FirewallException Id="FirewallException" Name="WinAppDriver"
+                                  Port="4444" Scope="any" />
           </Component>
           <Component Id="Diagnostics" Guid="0EDFD3E2-42D6-436C-875B-A96CEF8780DF">
             <File Id="EssentialDiagnosticsDll" Name="Essential.Diagnostics.dll" KeyPath="yes"
