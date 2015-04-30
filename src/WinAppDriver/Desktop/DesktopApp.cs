@@ -30,7 +30,7 @@
 
         public string DriverAppID
         {
-            get { return this.capabilities.AppID ?? "Windows"; }
+            get { return this.capabilities.AppID != null ? this.capabilities.AppID + " (Desktop)" : "Windows (Desktop)"; }
         }
 
         public Capabilities Capabilities

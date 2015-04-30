@@ -44,7 +44,7 @@ namespace WinAppDriver
                     break;
 
                 case Platform.WindowsModern:
-                    app = new StoreApp(caps, this.utils);
+                    app = new StoreApp(this.context, caps, this.utils);
                     break;
 
                 case Platform.WindowsPhone:

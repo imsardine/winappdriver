@@ -7,6 +7,7 @@
     using System.Management.Automation;
     using System.Runtime.InteropServices;
     using System.Xml;
+    using WinAppDriver.Modern;
 
     internal interface IStoreApp : IApplication
     {
@@ -26,6 +27,8 @@
     {
         private static ILogger logger = Logger.GetLogger("WinAppDriver");
 
+        private IDriverContext context;
+
         private Capabilities capabilities;
 
         private AppInfo infoCache;
@@ -34,16 +37,17 @@
 
         private IUtils utils;
 
-        public StoreApp(Capabilities capabilities, IUtils utils)
+        public StoreApp(IDriverContext context, Capabilities capabilities, IUtils utils)
         {
             // TODO verify capabilities
+            this.context = context;
             this.capabilities = capabilities;
             this.utils = utils;
         }
 
         public string DriverAppID
         {
-            get { return this.PackageName; }
+            get { return this.PackageName + " (Modern)"; }
         }
 
         public Capabilities Capabilities
@@ -57,7 +61,7 @@
             {
                 if (this.installerCache == null)
                 {
-                    this.installerCache = new StoreAppPackageInstaller(this, this.utils, this.capabilities.App, this.capabilities.AppChecksum);
+                    this.installerCache = new StoreAppInstaller(this.context, this, this.utils);
                 }
 
                 return this.installerCache;
@@ -142,10 +146,7 @@
 
         private string InitialStatesDir
         {
-            get
-            {
-                return this.utils.ExpandEnvironmentVariables(@"%LOCALAPPDATA%\WinAppDriver\Packages\" + this.PackageFamilyName);
-            }
+            get { return Path.Combine(this.context.GetAppWorkingDir(this), "States"); }
         }
 
         private AppInfo GetInstalledAppInfo()

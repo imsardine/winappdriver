@@ -38,7 +38,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>true</Prefer32Bit>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -96,6 +96,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppInstaller.cs" />
     <Compile Include="Capabilities.cs" />
     <Compile Include="ChangeBuildStrategy.cs" />
     <Compile Include="ClickElementHandler.cs" />
@@ -115,6 +116,7 @@
     <Compile Include="IHandler.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="IKeyboard.cs" />
+    <Compile Include="Modern\StoreAppInstaller.cs" />
     <Compile Include="Platform.cs" />
     <Compile Include="ResetStrategy.cs" />
     <Compile Include="UAC\IUACPomptHandler.cs" />
@@ -134,7 +136,6 @@
     <Compile Include="SessionManager.cs" />
     <Compile Include="SendKeysHandler.cs" />
     <Compile Include="SetElementValueHandler.cs" />
-    <Compile Include="StoreAppPackageInstaller.cs" />
     <Compile Include="UAC\UACPromptHandler.cs" />
     <Compile Include="UIAutomation.cs" />
     <Compile Include="WinAppDriverException.cs" />

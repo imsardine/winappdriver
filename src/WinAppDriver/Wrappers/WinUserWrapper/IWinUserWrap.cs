@@ -35,8 +35,9 @@
         public InputUnion u;
     }
 
+    [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1307:AccessibleFieldsMustBeginWithUpperCaseLetter", Justification = "Reviewed.")]
     [StructLayout(LayoutKind.Explicit)]
-    struct InputUnion
+    internal struct InputUnion
     {
         [FieldOffset(0)]
         public MOUSEINPUT mi;

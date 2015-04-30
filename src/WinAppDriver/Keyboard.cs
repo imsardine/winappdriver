@@ -109,7 +109,8 @@
             INPUT input = new INPUT
             {
                 type = (int)INPUTTYPE.KEYBOARD,
-                u = new InputUnion {
+                u = new InputUnion 
+                {
                     ki = new KEYBDINPUT
                     {
                         wVk = (ushort)vkey,
