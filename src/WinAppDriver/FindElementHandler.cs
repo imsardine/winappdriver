@@ -19,16 +19,17 @@ namespace WinAppDriver
         {
             FindElementRequest request = JsonConvert.DeserializeObject<FindElementRequest>(body);
 
-            var root = AutomationElement.RootElement;
+            AutomationElement start;
+            this.uiAutomation.TryGetFocusedWindowOrRoot(out start);
             if (urlParams.ContainsKey("id"))
             {
-                root = session.GetUIElement(int.Parse(urlParams["id"]));
+                start = session.GetUIElement(int.Parse(urlParams["id"]));
             }
 
             AutomationElement element = null;
             if (request.Strategy == "xpath")
             {
-                element = this.uiAutomation.FindFirstByXPath(root, request.Locator);
+                element = this.uiAutomation.FindFirstByXPath(start, request.Locator);
             }
             else
             {
@@ -43,7 +44,7 @@ namespace WinAppDriver
                     property = AutomationElement.ClassNameProperty;
                 }
 
-                element = root.FindFirst(
+                element = start.FindFirst(
                     TreeScope.Descendants,
                     new PropertyCondition(property, request.Locator));
             }

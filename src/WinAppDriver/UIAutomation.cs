@@ -8,21 +8,47 @@ namespace WinAppDriver
 
     internal class UIAutomation : IUIAutomation
     {
-        public string DumpXml(AutomationElement root)
+        public bool TryGetFocusedWindowOrRoot(out AutomationElement window)
         {
-            return this.DumpXmlImpl(root, null);
+            window = AutomationElement.RootElement;
+
+            var walker = TreeWalker.ContentViewWalker;
+            var parent = AutomationElement.FocusedElement;
+            while (parent != null)
+            {
+                if (parent == AutomationElement.RootElement)
+                {
+                    return false;
+                }
+                else if (parent.Current.ControlType == ControlType.Window)
+                {
+                    window = parent;
+                    return true;
+                }
+                else
+                {
+                    parent = walker.GetParent(parent);
+                }
+            }
+
+            return false;
         }
 
-        public string DumpXml(AutomationElement root, out IList<AutomationElement> elements)
+        public string DumpXml(AutomationElement start)
+        {
+            return this.DumpXmlImpl(start, null);
+        }
+
+        public string DumpXml(AutomationElement start, out IList<AutomationElement> elements)
         {
             elements = new List<AutomationElement>();
-            return this.DumpXmlImpl(root, elements);
+            return this.DumpXmlImpl(start, elements);
         }
 
-        public AutomationElement FindFirstByXPath(AutomationElement root, string xpath)
+        public AutomationElement FindFirstByXPath(AutomationElement start, string xpath)
         {
             IList<AutomationElement> nodes;
-            string xml = this.DumpXml(root, out nodes);
+            string xml = this.DumpXml(start, out nodes);
 
             var doc = new XPathDocument(new StringReader(xml));
             XPathNavigator node = doc.CreateNavigator().SelectSingleNode(xpath);
@@ -37,10 +63,10 @@ namespace WinAppDriver
             }
         }
 
-        public IList<AutomationElement> FindAllByXPath(AutomationElement root, string xpath)
+        public IList<AutomationElement> FindAllByXPath(AutomationElement start, string xpath)
         {
             IList<AutomationElement> elements;
-            string xml = this.DumpXml(root, out elements);
+            string xml = this.DumpXml(start, out elements);
 
             var doc = new XPathDocument(new StringReader(xml));
             XPathNodeIterator nodes = doc.CreateNavigator().Select(xpath);
@@ -66,7 +92,7 @@ namespace WinAppDriver
 
             writer.WriteStartDocument();
             writer.WriteStartElement("WinAppDriver");
-            this.WalkTree(AutomationElement.RootElement, walker, writer, elements);
+            this.WalkTree(start, walker, writer, elements);
             writer.WriteEndDocument();
 
             return stringWriter.ToString();
@@ -74,26 +100,26 @@ namespace WinAppDriver
 
         private void WalkTree(AutomationElement parent, TreeWalker walker, XmlWriter writer, IList<AutomationElement> elements)
         {
+            var info = parent.Current;
+            writer.WriteStartElement(info.ControlType.ProgrammaticName);
+            if (elements != null)
+            {
+                writer.WriteAttributeString("_index_", elements.Count.ToString());
+                elements.Add(parent);
+            }
+
+            writer.WriteAttributeString("id", info.AutomationId);
+            writer.WriteAttributeString("name", info.Name);
+            writer.WriteAttributeString("class", info.ClassName);
+
             var child = walker.GetFirstChild(parent);
             while (child != null)
             {
-                var info = child.Current;
-                writer.WriteStartElement(info.ControlType.ProgrammaticName);
-                if (elements != null)
-                {
-                    writer.WriteAttributeString("_index_", elements.Count.ToString());
-                    elements.Add(child);
-                }
-
-                writer.WriteAttributeString("id", info.AutomationId);
-                writer.WriteAttributeString("name", info.Name);
-                writer.WriteAttributeString("class", info.ClassName);
-
                 this.WalkTree(child, walker, writer, elements);
-                writer.WriteEndElement();
-
                 child = walker.GetNextSibling(child);
             }
+
+            writer.WriteEndElement();
         }
     }
 }

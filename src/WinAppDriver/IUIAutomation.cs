@@ -5,12 +5,14 @@ namespace WinAppDriver
 
     internal interface IUIAutomation
     {
-        string DumpXml(AutomationElement root);
+        bool TryGetFocusedWindowOrRoot(out AutomationElement window);
 
-        string DumpXml(AutomationElement root, out IList<AutomationElement> elements);
+        string DumpXml(AutomationElement start);
 
-        AutomationElement FindFirstByXPath(AutomationElement root, string xpath);
+        string DumpXml(AutomationElement start, out IList<AutomationElement> elements);
 
-        IList<AutomationElement> FindAllByXPath(AutomationElement root, string xpath);
+        AutomationElement FindFirstByXPath(AutomationElement start, string xpath);
+
+        IList<AutomationElement> FindAllByXPath(AutomationElement start, string xpath);
     }
 }

@@ -20,16 +20,17 @@
         {
             FindElementRequest request = JsonConvert.DeserializeObject<FindElementRequest>(body);
 
-            var root = AutomationElement.RootElement;
+            AutomationElement start;
+            this.uiAutomation.TryGetFocusedWindowOrRoot(out start);
             if (urlParams.ContainsKey("id"))
             {
-                root = session.GetUIElement(int.Parse(urlParams["id"]));
+                start = session.GetUIElement(int.Parse(urlParams["id"]));
             }
 
             IEnumerable elements = null;
             if (request.Strategy == "xpath")
             {
-                elements = this.uiAutomation.FindAllByXPath(root, request.Locator);
+                elements = this.uiAutomation.FindAllByXPath(start, request.Locator);
             }
             else
             {
@@ -43,7 +44,7 @@
                     property = AutomationElement.ClassNameProperty;
                 }
 
-                elements = root.FindAll(
+                elements = start.FindAll(
                     TreeScope.Descendants,
                     new PropertyCondition(property, request.Locator));
             }

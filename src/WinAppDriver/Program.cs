@@ -24,7 +24,7 @@ namespace WinAppDriver
             var utils = new Utils();
             var keyboard = new Keyboard(new KeyboardWrap(), new KeyInteropWrap(), new WinUserWrap());
             var uiAutomation = new UIAutomation();
-            var uacHandler = new UACPromptHandler(keyboard);
+            var uacHandler = new UACPromptHandler(uiAutomation, keyboard);
 
             manager.AddHandler(new ClickElementHandler());
             manager.AddHandler(new DeleteSessionHandler(sessionManager));

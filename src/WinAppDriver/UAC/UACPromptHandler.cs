@@ -8,6 +8,8 @@
     {
         private static ILogger logger = Logger.GetLogger("WinAppDriver");
 
+        private IUIAutomation uiAutomation;
+
         private IKeyboard keyboard;
 
         private Thread threadLazy;
@@ -18,8 +20,9 @@
 
         private bool allowed; // true = Yes, false = No
 
-        public UACPromptHandler(IKeyboard keyboard)
+        public UACPromptHandler(IUIAutomation uiAutomation, IKeyboard keyboard)
         {
+            this.uiAutomation = uiAutomation;
             this.keyboard = keyboard;
             this.threadLazy = null;
             this.stopped = false;
@@ -76,7 +79,7 @@
             logger.Info("Trying to find the (focused) UAC elevation prompt.");
 
             AutomationElement window = null;
-            if (this.TryGetFocusedWindow(out window))
+            if (this.uiAutomation.TryGetFocusedWindowOrRoot(out window))
             {
                 var conditions = new AndCondition(
                     Automation.ContentViewCondition,
@@ -95,32 +98,6 @@
                     this.keyboard.KeyUpOrDown(Key.LeftAlt);
 
                     return true;
-                }
-            }
-
-            return false;
-        }
-
-        private bool TryGetFocusedWindow(out AutomationElement window)
-        {
-            window = null;
-
-            var walker = TreeWalker.ContentViewWalker;
-            var parent = AutomationElement.FocusedElement;
-            while (parent != null)
-            {
-                if (parent == AutomationElement.RootElement)
-                {
-                    return false;
-                }
-                else if (parent.Current.ControlType == ControlType.Window)
-                {
-                    window = parent;
-                    return true;
-                }
-                else
-                {
-                    parent = walker.GetParent(parent);
                 }
             }
 
