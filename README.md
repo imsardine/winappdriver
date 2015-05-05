@@ -1,7 +1,7 @@
 WinAppDriver - WebDriver for Windows Applications
 =================================================
 
-WinAppDriver is a WebDriver implementation for Windows applications, including desktop applications and store apps (formerly known as Metro-style apps). The support for Windows Phone apps is also planned.
+WinAppDriver is a WebDriver implementation for Windows applications, including desktop applications and store apps (formerly known as Metro-style apps). Support of CEF-based desktop applications and Windows Phone apps is also planned.
 
 Status
 ------
