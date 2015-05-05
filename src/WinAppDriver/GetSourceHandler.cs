@@ -15,10 +15,7 @@
 
         public object Handle(Dictionary<string, string> urlParams, string body, ref Session session)
         {
-            AutomationElement start;
-            this.uiAutomation.TryGetFocusedWindowOrRoot(out start);
-
-            return this.uiAutomation.DumpXml(start);
+            return this.uiAutomation.DumpXml(this.uiAutomation.GetFocusedWindowOrRoot());
         }
     }
 }

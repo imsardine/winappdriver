@@ -8,30 +8,19 @@ namespace WinAppDriver
 
     internal class UIAutomation : IUIAutomation
     {
-        public bool TryGetFocusedWindowOrRoot(out AutomationElement window)
+        public AutomationElement GetFocusedWindowOrRoot()
         {
-            window = AutomationElement.RootElement;
-
             var walker = TreeWalker.ContentViewWalker;
-            var parent = AutomationElement.FocusedElement;
-            while (parent != null)
+            var node = AutomationElement.FocusedElement;
+            var parent = node;
+
+            while (parent != AutomationElement.RootElement)
             {
-                if (parent == AutomationElement.RootElement)
-                {
-                    return false;
-                }
-                else if (parent.Current.ControlType == ControlType.Window)
-                {
-                    window = parent;
-                    return true;
-                }
-                else
-                {
-                    parent = walker.GetParent(parent);
-                }
+                node = parent;
+                parent = walker.GetParent(node);
             }
 
-            return false;
+            return node;
         }
 
         public string DumpXml(AutomationElement start)

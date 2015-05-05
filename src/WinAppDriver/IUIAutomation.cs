@@ -5,7 +5,7 @@ namespace WinAppDriver
 
     internal interface IUIAutomation
     {
-        bool TryGetFocusedWindowOrRoot(out AutomationElement window);
+        AutomationElement GetFocusedWindowOrRoot();
 
         string DumpXml(AutomationElement start);
 

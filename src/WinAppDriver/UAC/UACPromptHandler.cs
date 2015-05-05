@@ -78,15 +78,14 @@
         {
             logger.Info("Trying to find the (focused) UAC elevation prompt.");
 
-            AutomationElement window = null;
-            if (this.uiAutomation.TryGetFocusedWindowOrRoot(out window))
+            AutomationElement dialog = this.uiAutomation.GetFocusedWindowOrRoot();
             {
                 var conditions = new AndCondition(
                     Automation.ContentViewCondition,
                     new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Pane),
                     new PropertyCondition(AutomationElement.ClassNameProperty, "CtrlNotifySink"));
 
-                var elements = window.FindAll(TreeScope.Descendants, conditions);
+                var elements = dialog.FindAll(TreeScope.Descendants, conditions);
                 if (elements.Count > 0)
                 {
                     logger.Info("The UAC elevation prompt found.");

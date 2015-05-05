@@ -19,8 +19,7 @@ namespace WinAppDriver
         {
             FindElementRequest request = JsonConvert.DeserializeObject<FindElementRequest>(body);
 
-            AutomationElement start;
-            this.uiAutomation.TryGetFocusedWindowOrRoot(out start);
+            var start = this.uiAutomation.GetFocusedWindowOrRoot();
             if (urlParams.ContainsKey("id"))
             {
                 start = session.GetUIElement(int.Parse(urlParams["id"]));
