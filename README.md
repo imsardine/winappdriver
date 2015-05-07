@@ -37,8 +37,6 @@ Here are other scenarios supported by WinAppDriver:
  * [Desktop Applications](//github.com/imsardine/winappdriver/wiki/Desotop-Applications) ([already installed?](//github.com/imsardine/winappdriver/wiki/Desotop-Applications-Already-Installed))
  * [Universal Apps](//github.com/imsardine/winappdriver/wiki/Universal-Apps) ([already installed?](//github.com/imsardine/winappdriver/wiki/Universal-Apps-Already-Installed))
 
-###To target a specific desktop app:
-
 ##Documentation
 
 In addition to [wiki](//github.com/imsardine/winappdriver/wiki), Here are some documents/slides:
