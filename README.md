@@ -15,6 +15,8 @@ Give it a try, and your feeback is appreciated.
 
 Then you can control the application under test (or even whole desktop) with any [WebDriver language bindings](http://docs.seleniumhq.org/download/#client-drivers) you prefer. Several [desired capabilities](//github.com/imsardine/winappdriver/wiki/Desired-Capabilities) could be used to how the server behaves for a specific session.
 
+###Quick Start
+
 Take whole desktop as an example:
 
 (Python)
