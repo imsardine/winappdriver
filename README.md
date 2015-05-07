@@ -3,6 +3,8 @@ WinAppDriver - WebDriver for Windows Applications
 
 WinAppDriver is a [WebDriver implementation](//github.com/imsardine/winappdriver/wiki/Protocol-Implementation) for Windows applications, including [desktop applications](//github.com/imsardine/winappdriver/wiki/Desotop-Applications) and [universal apps](//github.com/imsardine/winappdriver/wiki/Universal-Apps) (formerly known as store apps, modern UI apps, or Metro-style apps). Support of [CEF-based desktop applications](//github.com/imsardine/winappdriver/wiki/Hybrid-Desktop-Applications) and [Windows Phone apps](//github.com/imsardine/winappdriver/wiki/Windows-Phone-Apps) is also planned.
 
+Give it a try, and your feeback is appreciated.
+
 ##Getting Started
 
 ###Install WinAppDriver:
@@ -56,15 +58,12 @@ desired_caps = {
 
 driver = Remote('http://your-winappdriver-server:4444/wd/hub', desired_caps)
 ```
+##Documentation
 
-##Status
+In addition to [wiki](//github.com/imsardine/winappdriver/wiki), Here are some documents/slides:
 
-Support for desktop applications and store apps is almost done. Give it a try, and your feeback is appreciated.
-
-Here are some documents for your reference as well:
-
- * For an overview of what it is, refer to [Windows Store Apps Test Automation](http://www.slideshare.net/jeremykao92/winappdriver-windows-store-apps-test-automation).
- * For how to contribute, refer to [WinAppDriver Developemnt](http://www.slideshare.net/jeremykao92/winappdriver-development).
+ * [Windows Store Apps Test Automation](http://www.slideshare.net/jeremykao92/winappdriver-windows-store-apps-test-automation)
+ * [WinAppDriver Developemnt](http://www.slideshare.net/jeremykao92/winappdriver-development)
 
 ##License
 
