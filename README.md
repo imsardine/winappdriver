@@ -15,49 +15,30 @@ Give it a try, and your feeback is appreciated.
 
 Then you can control the application under test (or even whole desktop) with any [WebDriver language bindings](http://docs.seleniumhq.org/download/#client-drivers) you prefer. Several [desired capabilities](//github.com/imsardine/winappdriver/wiki/Desired-Capabilities) could be used to how the server behaves for a specific session.
 
-###Not to target a specific app: (whole desktop)
+Take whole desktop as an example:
 
+(Python)
 ```python
 from selenium.webdriver import Remote, DesiredCapabilities
 
 desired_caps = {}
 driver = Remote('http://your-winappdriver-server:4444/wd/hub', desired_caps)
+
+driver.find_element_by_id('username').send_keys('your-username')
+driver.find_element_by_id('password').send_keys('your-password')
+driver.find_element_by_id('signin').click()
 ```
 
-###To target a specific store app:
+TBD: C#, Java, Ruby
 
-```python
-from selenium.webdriver import Remote, DesiredCapabilities
+Here are other scenarios supported by WinAppDriver:
 
-desired_caps = {
-    'platformName': 'WindowsModern',
-    'app': 'http://your-ci-server/path/to/your/pacakge.zip',
-    'packageName': 'your-app-package-name',
-}
-
-driver = Remote('http://your-winappdriver-server:4444/wd/hub', desired_caps)
-```
+ * [Whole Desktop](//github.com/imsardine/winappdriver/wiki/Whole-Desktop) (for more details)
+ * [Desktop Applications](//github.com/imsardine/winappdriver/wiki/Desotop-Applications) ([already installed?](//github.com/imsardine/winappdriver/wiki/Desotop-Applications-Already-Installed))
+ * [Universal Apps](//github.com/imsardine/winappdriver/wiki/Universal-Apps) ([already installed?](//github.com/imsardine/winappdriver/wiki/Universal-Apps-Already-Installed))
 
 ###To target a specific desktop app:
 
-```python
-from selenium.webdriver import Remote, DesiredCapabilities
-
-desired_caps = {
-    #'platformName': 'Windows',
-    'appID': 'your-product-name',
-    'app': 'http://your-ci-server/path/to/your/installer.exe',
-    'checkInstalledCommand': r'C:\path\to\your\check-installed.bat',
-    'openCommand': r'C:\path\to\your\open-app.bat',
-    'closeCommand': r'C:\path\to\your\close-app-if-needed.bat',
-    'installCommand': r'C:\path\to\your\install-if-needed.bat',
-    'uninstallCommand': r'C:\path\to\your\uninstall-if-needed.bat',
-    'backupCommand': r'C:\path\to\your\backup-states-if-needed.bat',
-    'restoreCommand': r'C:\path\to\your\restore-states-if-needed.bat',
-}
-
-driver = Remote('http://your-winappdriver-server:4444/wd/hub', desired_caps)
-```
 ##Documentation
 
 In addition to [wiki](//github.com/imsardine/winappdriver/wiki), Here are some documents/slides:
