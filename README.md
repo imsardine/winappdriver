@@ -1,15 +1,17 @@
 WinAppDriver - WebDriver for Windows Applications
 =================================================
 
-WinAppDriver is a WebDriver implementation for Windows applications, including desktop applications and store apps (formerly known as Metro-style apps). Support of CEF-based desktop applications and Windows Phone apps is also planned.
+WinAppDriver is a [WebDriver implementation](//github.com/imsardine/winappdriver/wiki/Protocol-Implementation) for Windows applications, including [desktop applications](//github.com/imsardine/winappdriver/wiki/Desotop-Applications) and [universal apps](//github.com/imsardine/winappdriver/wiki/Universal-Apps) (formerly known as store apps, modern UI apps, or Metro-style apps). Support of [CEF-based desktop applications](//github.com/imsardine/winappdriver/wiki/Hybrid-Desktop-Applications) and [Windows Phone apps](//github.com/imsardine/winappdriver/wiki/Windows-Phone-Apps) is also planned.
 
 ##Getting Started
 
 ###Install WinAppDriver:
 
- 1. [Download](https://github.com/imsardine/winappdriver/releases/download/v0.1/WinAppDriverInstaller.msi) the installer and execute it.
+ 1. [Download](https://github.com/imsardine/winappdriver/releases/download/v0.1/WinAppDriverInstaller.msi) the installer and execute it. A desktop shortcut will be created for launching _WinAppDriver Server_.
 
- 2. The installer creates a shortcut named _WinAppDriver_. Use the shortcut to launch _WinAppDriver server_, which listens on port 4444 on all addresses.
+ 2. Launch the server, and it listens on port 4444 on all addresses.
+
+Then you can control the application under test (or even whole desktop) with any [WebDriver language bindings](http://docs.seleniumhq.org/download/#client-drivers) you prefer. Several [desired capabilities](//github.com/imsardine/winappdriver/wiki/Desired-Capabilities) could be used to how the server behaves for a specific session.
 
 ###Not to target a specific app: (whole desktop)
 
