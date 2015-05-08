@@ -1,79 +1,174 @@
 namespace WinAppDriver
 {
-    using System;
     using System.Collections.Generic;
     using Newtonsoft.Json;
+    using WinAppDriver.Desktop;
+    using WinAppDriver.UAC;
 
     [Route("POST", "/session")]
     internal class NewSessionHandler : IHandler
     {
         private static ILogger logger = Logger.GetLogger("WinAppDriver");
 
+        private IDriverContext context;
+
         private SessionManager sessionManager;
+
+        private IUACPomptHandler uacHandler;
 
         private IUtils utils;
 
-        public NewSessionHandler(SessionManager sessionManager, IUtils utils)
+        public NewSessionHandler(IDriverContext context, SessionManager sessionManager, IUACPomptHandler uacHandler, IUtils utils)
         {
+            this.context = context;
             this.sessionManager = sessionManager;
+            this.uacHandler = uacHandler;
             this.utils = utils;
         }
 
         public object Handle(Dictionary<string, string> urlParams, string body, ref Session session)
         {
-            NewSessionRequest request = JsonConvert.DeserializeObject<NewSessionRequest>(body);
+            var request = JsonConvert.DeserializeObject<NewSessionRequestAsDict>(body);
             foreach (var kvp in request.DesiredCapabilities)
             {
                 logger.Info("{0} = {1} ({2})", kvp.Key, kvp.Value, kvp.Value.GetType());
             }
 
-            var caps = new Capabilities()
+            var caps = JsonConvert.DeserializeObject<NewSessionRequest>(body).DesiredCapabilities;
+
+            IApplication app;
+            switch (caps.Platform)
             {
-                PlatformName = (string)request.DesiredCapabilities["platformName"],
-                PackageName = (string)request.DesiredCapabilities["packageName"],
-                App = request.DesiredCapabilities.ContainsKey("app") ? (string)request.DesiredCapabilities["app"] : null,
-                MD5 = request.DesiredCapabilities.ContainsKey("MD5") ? (string)request.DesiredCapabilities["MD5"] : null
-            };
+                case Platform.Windows:
+                    app = new DesktopApp(this.context, caps, this.uacHandler, this.utils);
+                    break;
 
-            IStoreApp app = new StoreApp(caps.PackageName, this.utils);
-            IPackageInstaller installer = new StoreAppPackageInstaller(app, this.utils, caps.App, caps.MD5);
+                case Platform.WindowsModern:
+                    app = new StoreApp(this.context, caps, this.utils);
+                    break;
 
+                case Platform.WindowsPhone:
+                    throw new FailedCommandException("Windows Phone is not supported yet.", 33);
+                default:
+                    throw new FailedCommandException("The platform name '{0}' is invalid.", 33);
+            }
+
+            // TODO validate capabilibites, add logs for identifying which decision path is chosen.
             if (app.IsInstalled())
             {
-                app.Terminate();
                 if (caps.App != null)
                 {
-                    if (installer.IsBuildChanged())
+                    logger.Info(
+                        "App '{0}' is already installed, and the installation package is also provided.",
+                        app.DriverAppID);
+
+                    if (app.Installer.IsBuildChanged())
                     {
-                        app.Uninstall();
-                        installer.Install();
+                        logger.Info("Build changed. Strategy: {0}, Reset: {1}", caps.ChangeBuildStrategy, caps.ResetStrategy);
+
+                        app.Terminate();
+                        if (caps.ChangeBuildStrategy == ChangeBuildStrategy.Reinstall)
+                        {
+                            // reset strategy is irrelevant here
+                            app.Uninstall();
+                            app.Installer.Install();
+                            app.BackupInitialStates();
+                        }
+                        else if (caps.ChangeBuildStrategy == ChangeBuildStrategy.Upgrade)
+                        {
+                            // full-reset strategy is irrelevant here
+                            if (caps.ResetStrategy != ResetStrategy.No)
+                            {
+                                app.RestoreInitialStates();
+                                app.Installer.Install();
+                                app.BackupInitialStates();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        logger.Info("Build not changed. Reset: {0}", caps.ResetStrategy);
+
+                        if (caps.ResetStrategy == ResetStrategy.Fast)
+                        {
+                            app.Terminate();
+                            app.RestoreInitialStates();
+                        }
+                        else if (caps.ResetStrategy == ResetStrategy.Full)
+                        {
+                            app.Terminate();
+                            app.Uninstall();
+                            app.Installer.Install();
+                            app.BackupInitialStates();
+                        }
                     }
                 }
                 else
                 {
-                    logger.Info("Store App is already installed and the capability of App is empty, so skip installing.");
+                    logger.Info(
+                        "App '{0}' is already installed, but the installation package is not provided. Reset: {1}",
+                        app.DriverAppID, caps.ResetStrategy);
+
+                    // full-reset is irrelevant here
+                    if (caps.ResetStrategy == ResetStrategy.Fast)
+                    {
+                        app.Terminate();
+                        app.RestoreInitialStates();
+                    }
                 }
             }
             else
             {
                 if (caps.App != null)
                 {
-                    installer.Install();
+                    logger.Info(
+                        "App '{0}' is not installed yet, but the installation package is provided.",
+                        app.DriverAppID);
+
+                    app.Installer.Install();
+                    app.BackupInitialStates();
                 }
                 else
                 {
-                    string msg = "The source should be provided if Store App isn't installed.";
-                    throw new WinAppDriverException(msg);
+                    logger.Info(
+                        "App '{0}' is not installed yet, and the installation package is not provided. Reset: {1}",
+                        app.DriverAppID, caps.ResetStrategy);
+
+                    if (caps.Platform == Platform.Windows)
+                    {
+                        // full-reset is irrelevant here
+                        if (caps.ResetStrategy == ResetStrategy.Fast)
+                        {
+                            app.Terminate();
+                            app.RestoreInitialStates();
+                        }
+                    }
+                    else
+                    {
+                        var msg = "'app' capability is mandatory if the target platform is not 'Windows' " +
+                            "(default) and the app under test '{0}' is not installed beforehand.";
+                        throw new WinAppDriverException(string.Format(msg, app.DriverAppID));
+                    }
                 }
             }
 
-            app.Launch();
+            app.Activate();
             session = this.sessionManager.CreateSession(app, caps);
 
-            return caps; // TODO capabilities
+            // TODO turn off IME, release all modifier keys
+            return caps;
         }
 
         private class NewSessionRequest
+        {
+            [JsonProperty("desiredCapabilities")]
+            internal Capabilities DesiredCapabilities { get; set; }
+
+            [JsonProperty("requiredCapabilities")]
+            internal Capabilities RequiredCapabilities { get; set; }
+        }
+
+        private class NewSessionRequestAsDict
         {
             [JsonProperty("desiredCapabilities")]
             internal Dictionary<string, object> DesiredCapabilities { get; set; }

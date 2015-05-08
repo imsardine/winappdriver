@@ -2,9 +2,13 @@
 {
     internal interface IApplication
     {
-        bool IsInstalled();
+        string DriverAppID { get; }
 
-        void Launch();
+        Capabilities Capabilities { get; }
+
+        IPackageInstaller Installer { get; }
+
+        bool IsInstalled();
 
         void Activate();
 

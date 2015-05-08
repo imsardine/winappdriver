@@ -7,6 +7,7 @@
     using System.Management.Automation;
     using System.Runtime.InteropServices;
     using System.Xml;
+    using WinAppDriver.Modern;
 
     internal interface IStoreApp : IApplication
     {
@@ -26,20 +27,53 @@
     {
         private static ILogger logger = Logger.GetLogger("WinAppDriver");
 
+        private IDriverContext context;
+
+        private Capabilities capabilities;
+
         private AppInfo infoCache;
+
+        private IPackageInstaller installerCache;
 
         private IUtils utils;
 
-        public StoreApp(string packageName, IUtils utils)
+        public StoreApp(IDriverContext context, Capabilities capabilities, IUtils utils)
         {
-            this.PackageName = packageName;
+            // TODO verify capabilities
+            this.context = context;
+            this.capabilities = capabilities;
             this.utils = utils;
+        }
+
+        public string DriverAppID
+        {
+            get { return this.PackageName + " (Modern)"; }
+        }
+
+        public Capabilities Capabilities
+        {
+            get { return this.capabilities; }
+        }
+
+        public IPackageInstaller Installer
+        {
+            get
+            {
+                if (this.installerCache == null)
+                {
+                    this.installerCache = new StoreAppInstaller(this.context, this, this.utils);
+                }
+
+                return this.installerCache;
+            }
         }
 
         public string PackageName
         {
-            get;
-            private set;
+            get
+            {
+                return this.capabilities.PackageName;
+            }
         }
 
         public string AppUserModelId
@@ -86,20 +120,6 @@
             }
         }
 
-        public void Launch()
-        {
-            if (Directory.Exists(this.InitialStatesDir))
-            {
-                this.RestoreInitialStates();
-            }
-            else
-            {
-                this.BackupInitialStates();
-            }
-
-            this.Activate();
-        }
-
         public void Activate()
         {
             // TODO thorw exception if needed
@@ -126,10 +146,7 @@
 
         private string InitialStatesDir
         {
-            get
-            {
-                return this.utils.ExpandEnvironmentVariables(@"%LOCALAPPDATA%\WinAppDriver\Packages\" + this.PackageFamilyName);
-            }
+            get { return Path.Combine(this.context.GetAppWorkingDir(this), "States"); }
         }
 
         private AppInfo GetInstalledAppInfo()

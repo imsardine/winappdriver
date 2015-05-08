@@ -109,12 +109,15 @@
             INPUT input = new INPUT
             {
                 type = (int)INPUTTYPE.KEYBOARD,
-                ki = new KEYBDINPUT
+                u = new InputUnion 
                 {
-                    wVk = (ushort)vkey,
-                    wScan = 0,
-                    dwFlags = (uint)type,
-                    dwExtraInfo = this.winUser.GetMessageExtraInfo(),
+                    ki = new KEYBDINPUT
+                    {
+                        wVk = (ushort)vkey,
+                        wScan = 0,
+                        dwFlags = (uint)type,
+                        dwExtraInfo = this.winUser.GetMessageExtraInfo(),
+                    }
                 }
             };
 

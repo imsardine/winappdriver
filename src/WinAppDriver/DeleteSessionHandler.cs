@@ -14,10 +14,20 @@
 
         public object Handle(Dictionary<string, string> urlParams, string body, ref Session session)
         {
-            var app = (IStoreApp)session.Application;
+            var app = session.Application;
             this.sessionManager.DeleteSession(session.ID);
-            app.Terminate();
-            app.RestoreInitialStates();
+
+            var caps = session.Capabilities;
+            if (caps.ResetStrategy == ResetStrategy.Fast)
+            {
+                app.Terminate();
+                app.RestoreInitialStates();
+            }
+            else if (caps.ResetStrategy == ResetStrategy.Full)
+            {
+                app.Terminate();
+                app.Uninstall();
+            }
 
             return null;
         }

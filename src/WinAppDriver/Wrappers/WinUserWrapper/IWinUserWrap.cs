@@ -33,19 +33,24 @@
 
     [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1307:AccessibleFieldsMustBeginWithUpperCaseLetter", Justification = "Reviewed.")]
     [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder", Justification = "Reviewed.")]
-    [StructLayout(LayoutKind.Explicit)]
     internal struct INPUT
     {
-        [FieldOffset(0)]
         public int type;
 
-        [FieldOffset(4)]
+        public InputUnion u;
+    }
+
+    [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1307:AccessibleFieldsMustBeginWithUpperCaseLetter", Justification = "Reviewed.")]
+    [StructLayout(LayoutKind.Explicit)]
+    internal struct InputUnion
+    {
+        [FieldOffset(0)]
         public MOUSEINPUT mi;
 
-        [FieldOffset(4)]
+        [FieldOffset(0)]
         public KEYBDINPUT ki;
 
-        [FieldOffset(4)]
+        [FieldOffset(0)]
         public HARDWAREINPUT hi;
     }
 

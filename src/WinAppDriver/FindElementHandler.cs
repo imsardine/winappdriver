@@ -8,30 +8,46 @@ namespace WinAppDriver
     [Route("POST", "/session/:sessionId/element/:id/element")]
     internal class FindElementHandler : IHandler
     {
+        private IUIAutomation uiAutomation;
+
+        public FindElementHandler(IUIAutomation uiAutomation)
+        {
+            this.uiAutomation = uiAutomation;
+        }
+
         public object Handle(Dictionary<string, string> urlParams, string body, ref Session session)
         {
             FindElementRequest request = JsonConvert.DeserializeObject<FindElementRequest>(body);
 
-            var root = AutomationElement.RootElement;
+            var start = this.uiAutomation.GetFocusedWindowOrRoot();
             if (urlParams.ContainsKey("id"))
             {
-                root = session.GetUIElement(int.Parse(urlParams["id"]));
+                start = session.GetUIElement(int.Parse(urlParams["id"]));
             }
 
-            // TODO throw exceptions to indicate other strategies are not supported.
-            var property = AutomationElement.AutomationIdProperty;
-            if (request.Strategy == "name")
+            AutomationElement element = null;
+            if (request.Strategy == "xpath")
             {
-                property = AutomationElement.NameProperty;
+                element = this.uiAutomation.FindFirstByXPath(start, request.Locator);
             }
-            else if (request.Strategy == "class name")
+            else
             {
-                property = AutomationElement.ClassNameProperty;
+                // TODO throw exceptions to indicate other strategies are not supported.
+                var property = AutomationElement.AutomationIdProperty;
+                if (request.Strategy == "name")
+                {
+                    property = AutomationElement.NameProperty;
+                }
+                else if (request.Strategy == "class name")
+                {
+                    property = AutomationElement.ClassNameProperty;
+                }
+
+                element = start.FindFirst(
+                    TreeScope.Descendants,
+                    new PropertyCondition(property, request.Locator));
             }
 
-            var element = root.FindFirst(
-                TreeScope.Descendants,
-                new PropertyCondition(property, request.Locator));
             if (element == null)
             {
                 throw new NoSuchElementException(request.Strategy, request.Locator);
