@@ -7,6 +7,8 @@ namespace WinAppDriver
     {
         AutomationElement GetFocusedWindowOrRoot();
 
+        ISet<AutomationElement> GetTopLevelWindows();
+
         string DumpXml(AutomationElement start);
 
         string DumpXml(AutomationElement start, out IList<AutomationElement> elements);

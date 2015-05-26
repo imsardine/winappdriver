@@ -23,6 +23,21 @@ namespace WinAppDriver
             return node;
         }
 
+        public ISet<AutomationElement> GetTopLevelWindows()
+        {
+            var windows = new HashSet<AutomationElement>();
+            var walker = TreeWalker.ControlViewWalker;
+
+            var child = walker.GetFirstChild(AutomationElement.RootElement);
+            while (child != null)
+            {
+                windows.Add(child);
+                child = walker.GetNextSibling(child);
+            }
+
+            return windows;
+        }
+
         public string DumpXml(AutomationElement start)
         {
             return this.DumpXmlImpl(start, null);
