@@ -1,8 +1,9 @@
-namespace WinAppDriver
+namespace WinAppDriver.Handlers
 {
     using System.Collections.Generic;
     using Newtonsoft.Json;
     using WinAppDriver.Desktop;
+    using WinAppDriver.Modern;
     using WinAppDriver.UAC;
 
     [Route("POST", "/session")]

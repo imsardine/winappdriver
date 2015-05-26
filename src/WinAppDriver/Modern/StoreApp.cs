@@ -1,4 +1,4 @@
-﻿namespace WinAppDriver
+﻿namespace WinAppDriver.Modern
 {
     using System;
     using System.Diagnostics;
@@ -7,20 +7,6 @@
     using System.Management.Automation;
     using System.Runtime.InteropServices;
     using System.Xml;
-    using WinAppDriver.Modern;
-
-    internal interface IStoreApp : IApplication
-    {
-        string PackageName { get; }
-
-        string AppUserModelId { get; }
-
-        string PackageFamilyName { get; }
-
-        string PackageFullName { get; }
-
-        string PackageFolderDir { get; }
-    }
 
     [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder", Justification = "Reviewed.")]
     internal class StoreApp : IStoreApp

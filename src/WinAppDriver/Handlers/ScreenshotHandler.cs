@@ -1,4 +1,4 @@
-namespace WinAppDriver
+namespace WinAppDriver.Handlers
 {
     using System;
     using System.Collections.Generic;

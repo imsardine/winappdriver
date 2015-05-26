@@ -1,17 +1,16 @@
-﻿namespace WinAppDriver
+namespace WinAppDriver.Handlers
 {
-    using System.Collections;
     using System.Collections.Generic;
     using System.Windows.Automation;
     using Newtonsoft.Json;
 
-    [Route("POST", "/session/:sessionId/elements")]
-    [Route("POST", "/session/:sessionId/element/:id/elements")]
-    internal class FindElementsHandler : IHandler
+    [Route("POST", "/session/:sessionId/element")]
+    [Route("POST", "/session/:sessionId/element/:id/element")]
+    internal class FindElementHandler : IHandler
     {
         private IUIAutomation uiAutomation;
 
-        public FindElementsHandler(IUIAutomation uiAutomation)
+        public FindElementHandler(IUIAutomation uiAutomation)
         {
             this.uiAutomation = uiAutomation;
         }
@@ -26,13 +25,14 @@
                 start = session.GetUIElement(int.Parse(urlParams["id"]));
             }
 
-            IEnumerable elements = null;
+            AutomationElement element = null;
             if (request.Strategy == "xpath")
             {
-                elements = this.uiAutomation.FindAllByXPath(start, request.Locator);
+                element = this.uiAutomation.FindFirstByXPath(start, request.Locator);
             }
             else
             {
+                // TODO throw exceptions to indicate other strategies are not supported.
                 var property = AutomationElement.AutomationIdProperty;
                 if (request.Strategy == "name")
                 {
@@ -43,19 +43,18 @@
                     property = AutomationElement.ClassNameProperty;
                 }
 
-                elements = start.FindAll(
+                element = start.FindFirst(
                     TreeScope.Descendants,
                     new PropertyCondition(property, request.Locator));
             }
 
-            var list = new List<Dictionary<string, string>>();
-            foreach (AutomationElement element in elements)
+            if (element == null)
             {
-                int id = session.AddUIElement(element);
-                list.Add(new Dictionary<string, string> { { "ELEMENT", id.ToString() } });
+                throw new NoSuchElementException(request.Strategy, request.Locator);
             }
 
-            return list;
+            int id = session.AddUIElement(element);
+            return new Dictionary<string, string> { { "ELEMENT", id.ToString() } };
         }
 
         private class FindElementRequest

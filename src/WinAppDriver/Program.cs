@@ -2,6 +2,7 @@ namespace WinAppDriver
 {
     using System;
     using SystemWrapper.Windows.Input;
+    using WinAppDriver.Handlers;
     using WinAppDriver.UAC;
     using WinAppDriver.WinUserWrapper;
 
