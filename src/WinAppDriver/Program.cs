@@ -32,6 +32,7 @@ namespace WinAppDriver
             manager.AddHandler(new FindElementHandler(uiAutomation));
             manager.AddHandler(new FindElementsHandler(uiAutomation));
             manager.AddHandler(new GetElementTextHandler());
+            manager.AddHandler(new GetCurrentWindowHandler(uiAutomation));
             manager.AddHandler(new GetSourceHandler(uiAutomation));
             manager.AddHandler(new NewSessionHandler(context, sessionManager, uacHandler, utils));
             manager.AddHandler(new ScreenshotHandler());
