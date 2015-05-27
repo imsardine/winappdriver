@@ -108,6 +108,7 @@
     <Compile Include="Handlers\DeleteSessionHandler.cs" />
     <Compile Include="Handlers\FindElementHandler.cs" />
     <Compile Include="Handlers\FindElementsHandler.cs" />
+    <Compile Include="Handlers\GetTitleHandler.cs" />
     <Compile Include="Handlers\SwitchToWindowHandler.cs" />
     <Compile Include="Handlers\GetWindowsHandler.cs" />
     <Compile Include="Handlers\GetCurrentWindowHandler.cs" />
