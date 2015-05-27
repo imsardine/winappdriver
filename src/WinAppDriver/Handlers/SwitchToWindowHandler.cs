@@ -3,10 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Windows.Automation;
-    using System.Windows.Input;
     using Newtonsoft.Json;
     using WinAppDriver.UI;
-    using WinUserWrapper;
 
     [Route("POST", "/session/:sessionId/window")]
     internal class SwitchToWindowHandler : IHandler
@@ -15,15 +13,12 @@
 
         private IUIAutomation uiAutomation;
 
-        private IWinUserWrap winUserWrap;
+        private IWindowFactory windowFactory;
 
-        private IKeyboard keyboard;
-
-        public SwitchToWindowHandler(IUIAutomation uiAutomation, IWinUserWrap winUserWrap, IKeyboard keyboard)
+        public SwitchToWindowHandler(IUIAutomation uiAutomation, IWindowFactory windowFactory)
         {
             this.uiAutomation = uiAutomation;
-            this.winUserWrap = winUserWrap;
-            this.keyboard = keyboard;
+            this.windowFactory = windowFactory;
         }
 
         public object Handle(Dictionary<string, string> urlParams, string body, ref Session session)
@@ -47,7 +42,7 @@
         private void SwitchByWindowHandle(IntPtr handle)
         {
             logger.Debug("Window handle ({0}) provided.", handle);
-            this.SwitchToWindow(handle);
+            this.windowFactory.GetWindow(handle).BringToFront();
         }
 
         private void SwitchByWindowTitle(string title)
@@ -69,7 +64,7 @@
             {
                 logger.Debug("The (unique) window with the title ({0}) found.", title);
                 var handle = this.uiAutomation.ToNativeWindowHandle(candidates[0].Item1);
-                this.SwitchToWindow(handle);
+                this.windowFactory.GetWindow(handle).BringToFront();
             }
             else if (candidates.Count == 0)
             {
@@ -78,21 +73,6 @@
             else
             {
                 // TODO more than one windows matched -> xxxxx [HWND:nnnnnn]
-            }
-        }
-
-        private void SwitchToWindow(IntPtr handle)
-        {
-            // The system automatically enables calls to SetForegroundWindow if the user presses the ALT key
-            // http://www.codeproject.com/Tips/76427/How-to-bring-window-to-top-with-SetForegroundWindo.aspx
-            try
-            {
-                this.keyboard.KeyUpOrDown(Key.LeftAlt);
-                this.winUserWrap.SetForegroundWindow(handle);
-            }
-            finally
-            {
-                this.keyboard.KeyUpOrDown(Key.LeftAlt);
             }
         }
 

@@ -126,6 +126,8 @@
     <Compile Include="ResetStrategy.cs" />
     <Compile Include="UAC\IUACPomptHandler.cs" />
     <Compile Include="UI\IUIAutomation.cs" />
+    <Compile Include="UI\IWindow.cs" />
+    <Compile Include="UI\IWindowFactory.cs" />
     <Compile Include="UI\Keyboard.cs" />
     <Compile Include="IPackageInstaller.cs" />
     <Compile Include="Modern\IStoreApp.cs" />
@@ -143,6 +145,8 @@
     <Compile Include="Handlers\SetElementValueHandler.cs" />
     <Compile Include="UAC\UACPromptHandler.cs" />
     <Compile Include="UI\UIAutomation.cs" />
+    <Compile Include="UI\Window.cs" />
+    <Compile Include="UI\WindowFactory.cs" />
     <Compile Include="WinAppDriverException.cs" />
     <Compile Include="Wrappers\SystemWrapper.Windows.Input\IKeyboardWrap.cs" />
     <Compile Include="Wrappers\SystemWrapper.Windows.Input\IKeyInteropWrap.cs" />
