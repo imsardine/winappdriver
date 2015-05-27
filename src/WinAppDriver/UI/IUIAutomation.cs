@@ -8,8 +8,6 @@ namespace WinAppDriver.UI
     {
         AutomationElement GetFocusedWindowOrRoot();
 
-        ISet<string> GetTopLevelWindowHandles();
-
         ISet<AutomationElement> GetTopLevelWindows();
 
         IntPtr ToNativeWindowHandle(AutomationElement element);

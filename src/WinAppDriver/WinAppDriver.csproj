@@ -109,6 +109,7 @@
     <Compile Include="Handlers\FindElementHandler.cs" />
     <Compile Include="Handlers\FindElementsHandler.cs" />
     <Compile Include="Handlers\GetTitleHandler.cs" />
+    <Compile Include="Handlers\CloseWindowHandler.cs" />
     <Compile Include="Handlers\SwitchToWindowHandler.cs" />
     <Compile Include="Handlers\GetWindowsHandler.cs" />
     <Compile Include="Handlers\GetCurrentWindowHandler.cs" />
@@ -128,6 +129,7 @@
     <Compile Include="UI\IUIAutomation.cs" />
     <Compile Include="UI\IWindow.cs" />
     <Compile Include="UI\IWindowFactory.cs" />
+    <Compile Include="UI\IWindowUtils.cs" />
     <Compile Include="UI\Keyboard.cs" />
     <Compile Include="IPackageInstaller.cs" />
     <Compile Include="Modern\IStoreApp.cs" />
@@ -147,6 +149,7 @@
     <Compile Include="UI\UIAutomation.cs" />
     <Compile Include="UI\Window.cs" />
     <Compile Include="UI\WindowFactory.cs" />
+    <Compile Include="UI\WindowUtils.cs" />
     <Compile Include="WinAppDriverException.cs" />
     <Compile Include="Wrappers\SystemWrapper.Windows.Input\IKeyboardWrap.cs" />
     <Compile Include="Wrappers\SystemWrapper.Windows.Input\IKeyInteropWrap.cs" />

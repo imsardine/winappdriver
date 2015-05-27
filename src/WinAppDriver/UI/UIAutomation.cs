@@ -24,19 +24,6 @@ namespace WinAppDriver.UI
             return node;
         }
 
-        public ISet<string> GetTopLevelWindowHandles()
-        {
-            var handles = new HashSet<string>();
-            foreach (var window in this.GetTopLevelWindows())
-            {
-                int handle = (int)window.GetCurrentPropertyValue(
-                    AutomationElement.NativeWindowHandleProperty, true);
-                handles.Add(handle.ToString());
-            }
-
-            return handles;
-        }
-
         public ISet<AutomationElement> GetTopLevelWindows()
         {
             var windows = new HashSet<AutomationElement>();

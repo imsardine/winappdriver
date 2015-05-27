@@ -1,22 +1,27 @@
 ﻿namespace WinAppDriver.Handlers
 {
     using System.Collections.Generic;
-    using System.Windows.Automation;
     using WinAppDriver.UI;
 
     [Route("GET", "/session/:sessionId/window_handles")]
     internal class GetWindowsHandler : IHandler
     {
-        private IUIAutomation uiAutomation;
+        private IWindowUtils windowUtils;
 
-        public GetWindowsHandler(IUIAutomation uiAutomation)
+        public GetWindowsHandler(IWindowUtils windowUtils)
         {
-            this.uiAutomation = uiAutomation;
+            this.windowUtils = windowUtils;
         }
 
         public object Handle(Dictionary<string, string> urlParams, string body, ref Session session)
         {
-            return this.uiAutomation.GetTopLevelWindowHandles();
+            var handles = new HashSet<string>();
+            foreach (var handle in this.windowUtils.GetTopLevelWindowHandles())
+            {
+                handles.Add(handle.ToString());
+            }
+
+            return handles;
         }
     }
 }

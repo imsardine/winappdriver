@@ -15,18 +15,20 @@
 
         private IWindowFactory windowFactory;
 
-        public SwitchToWindowHandler(IUIAutomation uiAutomation, IWindowFactory windowFactory)
+        private IWindowUtils windowUtils;
+
+        public SwitchToWindowHandler(IUIAutomation uiAutomation, IWindowFactory windowFactory, IWindowUtils windowUtils)
         {
             this.uiAutomation = uiAutomation;
             this.windowFactory = windowFactory;
+            this.windowUtils = windowUtils;
         }
 
         public object Handle(Dictionary<string, string> urlParams, string body, ref Session session)
         {
             var request = JsonConvert.DeserializeObject<SwitchToWindowRequest>(body);
 
-            var handles = this.uiAutomation.GetTopLevelWindowHandles();
-            if (handles.Contains(request.HandleOrTitle))
+            if (this.IsValidWindowHandle(request.HandleOrTitle))
             {
                 var handle = new IntPtr(int.Parse(request.HandleOrTitle));
                 this.SwitchByWindowHandle(handle);
@@ -37,6 +39,19 @@
             }
 
             return null;
+        }
+
+        private bool IsValidWindowHandle(string handleOrTitle)
+        {
+            int handle;
+            if (int.TryParse(handleOrTitle, out handle))
+            {
+                return this.windowUtils.GetTopLevelWindowHandles().Contains(new IntPtr(handle));
+            }
+            else
+            {
+                return false;
+            }
         }
 
         private void SwitchByWindowHandle(IntPtr handle)
