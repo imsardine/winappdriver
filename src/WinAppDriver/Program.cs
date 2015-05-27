@@ -4,6 +4,7 @@ namespace WinAppDriver
     using SystemWrapper.Windows.Input;
     using WinAppDriver.Handlers;
     using WinAppDriver.UAC;
+    using WinAppDriver.UI;
     using WinAppDriver.WinUserWrapper;
 
     internal class Program

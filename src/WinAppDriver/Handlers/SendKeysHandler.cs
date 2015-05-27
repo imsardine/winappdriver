@@ -4,6 +4,7 @@ namespace WinAppDriver.Handlers
     using System.Diagnostics.CodeAnalysis;
     using System.Windows.Input;
     using Newtonsoft.Json;
+    using WinAppDriver.UI;
 
     [Route("POST", "/session/:sessionId/keys")]
     internal class SendKeysHandler : IHandler

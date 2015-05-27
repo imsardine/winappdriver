@@ -1,4 +1,4 @@
-﻿namespace WinAppDriver
+﻿namespace WinAppDriver.UI
 {
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;

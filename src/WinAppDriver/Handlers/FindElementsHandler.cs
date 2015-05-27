@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Windows.Automation;
     using Newtonsoft.Json;
+    using WinAppDriver.UI;
 
     [Route("POST", "/session/:sessionId/elements")]
     [Route("POST", "/session/:sessionId/element/:id/elements")]

@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Windows.Automation;
+    using WinAppDriver.UI;
 
     [Route("GET", "/session/:sessionId/source")]
     internal class GetSourceHandler : IHandler

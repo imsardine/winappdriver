@@ -1,4 +1,4 @@
-﻿namespace WinAppDriver
+﻿namespace WinAppDriver.UI
 {
     using System.Windows.Input;
 

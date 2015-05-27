@@ -119,14 +119,14 @@
     <Compile Include="IDriverContext.cs" />
     <Compile Include="IHandler.cs" />
     <Compile Include="ILogger.cs" />
-    <Compile Include="IKeyboard.cs" />
+    <Compile Include="UI\IKeyboard.cs" />
     <Compile Include="Modern\StoreApp.cs" />
     <Compile Include="Modern\StoreAppInstaller.cs" />
     <Compile Include="Platform.cs" />
     <Compile Include="ResetStrategy.cs" />
     <Compile Include="UAC\IUACPomptHandler.cs" />
-    <Compile Include="IUIAutomation.cs" />
-    <Compile Include="Keyboard.cs" />
+    <Compile Include="UI\IUIAutomation.cs" />
+    <Compile Include="UI\Keyboard.cs" />
     <Compile Include="IPackageInstaller.cs" />
     <Compile Include="Modern\IStoreApp.cs" />
     <Compile Include="IUtils.cs" />
@@ -142,7 +142,7 @@
     <Compile Include="Handlers\SendKeysHandler.cs" />
     <Compile Include="Handlers\SetElementValueHandler.cs" />
     <Compile Include="UAC\UACPromptHandler.cs" />
-    <Compile Include="UIAutomation.cs" />
+    <Compile Include="UI\UIAutomation.cs" />
     <Compile Include="WinAppDriverException.cs" />
     <Compile Include="Wrappers\SystemWrapper.Windows.Input\IKeyboardWrap.cs" />
     <Compile Include="Wrappers\SystemWrapper.Windows.Input\IKeyInteropWrap.cs" />

@@ -3,6 +3,7 @@ namespace WinAppDriver.Handlers
     using System.Collections.Generic;
     using System.Windows.Automation;
     using Newtonsoft.Json;
+    using WinAppDriver.UI;
 
     [Route("POST", "/session/:sessionId/element")]
     [Route("POST", "/session/:sessionId/element/:id/element")]

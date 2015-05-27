@@ -5,6 +5,7 @@
     using System.Windows.Automation;
     using System.Windows.Input;
     using Newtonsoft.Json;
+    using WinAppDriver.UI;
     using WinUserWrapper;
 
     [Route("POST", "/session/:sessionId/window")]
