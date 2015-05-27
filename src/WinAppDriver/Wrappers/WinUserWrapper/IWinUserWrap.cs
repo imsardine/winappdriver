@@ -13,6 +13,8 @@
         IntPtr GetMessageExtraInfo();
 
         short VkKeyScan(char ch);
+
+        bool SetForegroundWindow(IntPtr hWnd);
     }
 
     [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1310:FieldNamesMustNotContainUnderscore", Justification = "Reviewed.")]

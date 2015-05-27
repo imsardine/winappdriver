@@ -1,5 +1,6 @@
 namespace WinAppDriver
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Windows.Automation;
@@ -23,6 +24,19 @@ namespace WinAppDriver
             return node;
         }
 
+        public ISet<string> GetTopLevelWindowHandles()
+        {
+            var handles = new HashSet<string>();
+            foreach (var window in this.GetTopLevelWindows())
+            {
+                int handle = (int)window.GetCurrentPropertyValue(
+                    AutomationElement.NativeWindowHandleProperty, true);
+                handles.Add(handle.ToString());
+            }
+
+            return handles;
+        }
+
         public ISet<AutomationElement> GetTopLevelWindows()
         {
             var windows = new HashSet<AutomationElement>();
@@ -36,6 +50,18 @@ namespace WinAppDriver
             }
 
             return windows;
+        }
+
+        public IntPtr ToNativeWindowHandle(AutomationElement element)
+        {
+            var handle = (int)element.GetCurrentPropertyValue(
+                AutomationElement.NativeWindowHandleProperty, true);
+            return new IntPtr(handle);
+        }
+
+        public AutomationElement FromNativeWindowHandle(IntPtr handle)
+        {
+            return AutomationElement.FromHandle(handle);
         }
 
         public string DumpXml(AutomationElement start)

@@ -22,6 +22,12 @@
             return WinUserExtern.VkKeyScan(ch);
         }
 
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed.")]
+        public bool SetForegroundWindow(IntPtr hWnd)
+        {
+            return WinUserExtern.SetForegroundWindow(hWnd);
+        }
+
         private class WinUserExtern
         {
             [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed.")]
@@ -33,6 +39,10 @@
 
             [DllImport("user32.dll")]
             public static extern short VkKeyScan(char ch);
+
+            [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed.")]
+            [DllImport("user32.dll", SetLastError = true)]
+            public static extern bool SetForegroundWindow(IntPtr hWnd);
         }
     }
 }

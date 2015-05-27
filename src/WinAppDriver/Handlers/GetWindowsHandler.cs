@@ -15,15 +15,7 @@
 
         public object Handle(Dictionary<string, string> urlParams, string body, ref Session session)
         {
-            var handles = new HashSet<string>();
-            foreach (var window in this.uiAutomation.GetTopLevelWindows())
-            {
-                int handle = (int)window.GetCurrentPropertyValue(
-                    AutomationElement.NativeWindowHandleProperty, true);
-                handles.Add(handle.ToString());
-            }
-
-            return handles;
+            return this.uiAutomation.GetTopLevelWindowHandles();
         }
     }
 }

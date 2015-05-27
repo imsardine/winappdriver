@@ -1,5 +1,6 @@
 namespace WinAppDriver
 {
+    using System;
     using System.Collections.Generic;
     using System.Windows.Automation;
 
@@ -7,7 +8,13 @@ namespace WinAppDriver
     {
         AutomationElement GetFocusedWindowOrRoot();
 
+        ISet<string> GetTopLevelWindowHandles();
+
         ISet<AutomationElement> GetTopLevelWindows();
+
+        IntPtr ToNativeWindowHandle(AutomationElement element);
+
+        AutomationElement FromNativeWindowHandle(IntPtr handle);
 
         string DumpXml(AutomationElement start);
 
