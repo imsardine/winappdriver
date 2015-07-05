@@ -114,7 +114,7 @@ namespace WinAppDriver.UI
         private void WalkTree(AutomationElement parent, TreeWalker walker, XmlWriter writer, IList<AutomationElement> elements)
         {
             var info = parent.Current;
-            writer.WriteStartElement(info.ControlType.ProgrammaticName);
+            writer.WriteStartElement(info.ControlType.ProgrammaticName.Substring(12)); // "ContentType."
             if (elements != null)
             {
                 writer.WriteAttributeString("_index_", elements.Count.ToString());
