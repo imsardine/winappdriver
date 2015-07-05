@@ -100,16 +100,12 @@ namespace WinAppDriver.UI
 
         private string DumpXmlImpl(AutomationElement start, IList<AutomationElement> elements)
         {
-            var control = new PropertyCondition(AutomationElement.IsControlElementProperty, true);
-            var visible = new PropertyCondition(AutomationElement.IsOffscreenProperty, false);
-            var walker = new TreeWalker(new AndCondition(control, visible));
-
             var stringWriter = new StringWriter();
             XmlWriter writer = new XmlTextWriter(stringWriter);
 
             writer.WriteStartDocument();
             writer.WriteStartElement("WinAppDriver");
-            this.WalkTree(start, walker, writer, elements);
+            this.WalkTree(start, TreeWalker.ControlViewWalker, writer, elements);
             writer.WriteEndDocument();
 
             return stringWriter.ToString();
@@ -130,6 +126,7 @@ namespace WinAppDriver.UI
             writer.WriteAttributeString("class", info.ClassName);
 
             var rect = info.BoundingRectangle;
+            writer.WriteAttributeString("visible", info.IsOffscreen ? "false" : "true");
             writer.WriteAttributeString("x", ((int)rect.X).ToString());
             writer.WriteAttributeString("y", ((int)rect.Y).ToString());
             writer.WriteAttributeString("width", ((int)rect.Width).ToString());
