@@ -17,14 +17,20 @@
             this.uiAutomation = uiAutomation;
         }
 
-        public object Handle(Dictionary<string, string> urlParams, string body, ref Session session)
+        public object Handle(Dictionary<string, string> urlParams, string body, ref ISession session)
         {
             FindElementRequest request = JsonConvert.DeserializeObject<FindElementRequest>(body);
 
-            var start = this.uiAutomation.GetFocusedWindowOrRoot();
+            AutomationElement start = null;
             if (urlParams.ContainsKey("id"))
             {
                 start = session.GetUIElement(int.Parse(urlParams["id"]));
+            }
+            else
+            {
+                start = session.FocusOnCurrentWindow ? 
+                    this.uiAutomation.GetFocusedWindowOrRoot() :
+                    AutomationElement.RootElement;
             }
 
             IEnumerable elements = null;

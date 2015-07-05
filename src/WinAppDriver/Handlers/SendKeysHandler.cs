@@ -78,7 +78,7 @@ namespace WinAppDriver.Handlers
             this.keyboard = keyboard;
         }
 
-        public object Handle(Dictionary<string, string> urlParams, string body, ref Session session)
+        public object Handle(Dictionary<string, string> urlParams, string body, ref ISession session)
         {
             var request = JsonConvert.DeserializeObject<ElementValueRequest>(body);
             var keys = string.Join(string.Empty, request.KeySequence);

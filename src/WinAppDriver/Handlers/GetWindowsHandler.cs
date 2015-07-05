@@ -13,7 +13,7 @@
             this.windowUtils = windowUtils;
         }
 
-        public object Handle(Dictionary<string, string> urlParams, string body, ref Session session)
+        public object Handle(Dictionary<string, string> urlParams, string body, ref ISession session)
         {
             var handles = new HashSet<string>();
             foreach (var handle in this.windowUtils.GetTopLevelWindowHandles())

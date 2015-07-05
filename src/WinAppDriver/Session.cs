@@ -4,7 +4,7 @@ namespace WinAppDriver
     using System.Collections.Generic;
     using System.Windows.Automation;
 
-    internal class Session
+    internal class Session : ISession
     {
         private List<AutomationElement> uiElements;
 
@@ -13,6 +13,7 @@ namespace WinAppDriver
             this.ID = id;
             this.Application = application;
             this.Capabilities = capabilities;
+            this.FocusOnCurrentWindow = true;
             this.uiElements = new List<AutomationElement>();
         }
 
@@ -21,6 +22,8 @@ namespace WinAppDriver
         public IApplication Application { get; private set; }
 
         public Capabilities Capabilities { get; private set; }
+
+        public bool FocusOnCurrentWindow { get; set; }
 
         public int AddUIElement(AutomationElement element)
         {

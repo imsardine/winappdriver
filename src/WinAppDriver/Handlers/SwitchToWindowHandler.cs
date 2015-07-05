@@ -24,9 +24,15 @@
             this.windowUtils = windowUtils;
         }
 
-        public object Handle(Dictionary<string, string> urlParams, string body, ref Session session)
+        public object Handle(Dictionary<string, string> urlParams, string body, ref ISession session)
         {
             var request = JsonConvert.DeserializeObject<SwitchToWindowRequest>(body);
+
+            if (request.HandleOrTitle == null)
+            {
+                session.FocusOnCurrentWindow = false;
+                return null;
+            }
 
             if (this.IsValidWindowHandle(request.HandleOrTitle))
             {
@@ -38,6 +44,7 @@
                 this.SwitchByWindowTitle(request.HandleOrTitle);
             }
 
+            session.FocusOnCurrentWindow = true;
             return null;
         }
 

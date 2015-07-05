@@ -31,7 +31,7 @@ namespace WinAppDriver
             }
         }
 
-        public object Handle(string method, string path, string body, out Session session)
+        public object Handle(string method, string path, string body, out ISession session)
         {
             session = null;
             Dictionary<string, string> urlParams = null;

@@ -120,6 +120,7 @@
     <Compile Include="IDriverContext.cs" />
     <Compile Include="IHandler.cs" />
     <Compile Include="ILogger.cs" />
+    <Compile Include="ISession.cs" />
     <Compile Include="UI\IKeyboard.cs" />
     <Compile Include="Modern\StoreApp.cs" />
     <Compile Include="Modern\StoreAppInstaller.cs" />

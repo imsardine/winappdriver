@@ -13,7 +13,7 @@
             this.uiAutomation = uiAutomation;
         }
 
-        public object Handle(Dictionary<string, string> urlParams, string body, ref Session session)
+        public object Handle(Dictionary<string, string> urlParams, string body, ref ISession session)
         {
             var window = this.uiAutomation.GetFocusedWindowOrRoot();
             return this.uiAutomation.ToNativeWindowHandle(window).ToString();

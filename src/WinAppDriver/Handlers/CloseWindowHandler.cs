@@ -13,7 +13,7 @@
             this.windowsUtils = windowsUtils;
         }
 
-        public object Handle(Dictionary<string, string> urlParams, string body, ref Session session)
+        public object Handle(Dictionary<string, string> urlParams, string body, ref ISession session)
         {
             this.windowsUtils.GetCurrentWindow().Close();
             return null;

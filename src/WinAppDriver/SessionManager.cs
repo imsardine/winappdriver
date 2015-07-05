@@ -5,19 +5,19 @@ namespace WinAppDriver
 
     internal class SessionManager
     {
-        private Dictionary<string, Session> sessions;
+        private Dictionary<string, ISession> sessions;
 
         public SessionManager()
         {
-            this.sessions = new Dictionary<string, Session>();
+            this.sessions = new Dictionary<string, ISession>();
         }
 
-        public Session this[string id]
+        public ISession this[string id]
         {
             get { return this.sessions[id]; }
         }
 
-        public Session CreateSession(IApplication application, Capabilities capabilities)
+        public ISession CreateSession(IApplication application, Capabilities capabilities)
         {
             var id = Guid.NewGuid().ToString();
             var session = new Session(id, application, capabilities);
