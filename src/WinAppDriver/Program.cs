@@ -28,7 +28,7 @@ namespace WinAppDriver
             var keyboard = new Keyboard(new KeyboardWrap(), new KeyInteropWrap(), winUserWrap);
             var uiAutomation = new UIAutomation();
             var uacHandler = new UACPromptHandler(uiAutomation, keyboard);
-            var windowFactory = new WindowFactory(keyboard, winUserWrap);
+            var windowFactory = new WindowFactory(uiAutomation, keyboard, winUserWrap);
             var windowUtils = new WindowUtils(uiAutomation, windowFactory);
 
             manager.AddHandler(new ClickElementHandler());
@@ -43,7 +43,9 @@ namespace WinAppDriver
             manager.AddHandler(new GetCurrentWindowHandler(uiAutomation));
             manager.AddHandler(new GetSourceHandler(uiAutomation));
             manager.AddHandler(new GetTitleHandler(uiAutomation));
+            manager.AddHandler(new GetWindowLocationHandler(windowFactory, windowUtils));
             manager.AddHandler(new GetWindowsHandler(windowUtils));
+            manager.AddHandler(new GetWindowSizeHandler(windowFactory, windowUtils));
             manager.AddHandler(new IsElementDisplayedHandler());
             manager.AddHandler(new NewSessionHandler(context, sessionManager, uacHandler, utils));
             manager.AddHandler(new ScreenshotHandler());
