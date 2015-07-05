@@ -129,6 +129,12 @@ namespace WinAppDriver.UI
             writer.WriteAttributeString("name", info.Name);
             writer.WriteAttributeString("class", info.ClassName);
 
+            var rect = info.BoundingRectangle;
+            writer.WriteAttributeString("x", ((int)rect.X).ToString());
+            writer.WriteAttributeString("y", ((int)rect.Y).ToString());
+            writer.WriteAttributeString("width", ((int)rect.Width).ToString());
+            writer.WriteAttributeString("height", ((int)rect.Height).ToString());
+
             var child = walker.GetFirstChild(parent);
             while (child != null)
             {
