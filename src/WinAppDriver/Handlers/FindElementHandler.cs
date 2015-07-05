@@ -49,6 +49,10 @@ namespace WinAppDriver.Handlers
                 {
                     property = AutomationElement.ClassNameProperty;
                 }
+                else if (request.Strategy == "id")
+                {
+                    property = AutomationElement.AutomationIdProperty;
+                }
 
                 element = start.FindFirst(
                     TreeScope.Descendants,

@@ -49,6 +49,10 @@
                 {
                     property = AutomationElement.ClassNameProperty;
                 }
+                else if (request.Strategy == "id")
+                {
+                    property = AutomationElement.AutomationIdProperty;
+                }
 
                 elements = start.FindAll(
                     TreeScope.Descendants,
