@@ -10,7 +10,8 @@
             var element = session.GetUIElement(int.Parse(urlParams["id"]));
 
             var rect = element.Current.BoundingRectangle;
-            return new Dictionary<string, int> {
+            return new Dictionary<string, int>
+            {
                 { "x", (int)rect.X },
                 { "y", (int)rect.Y }
             };

@@ -11,7 +11,7 @@
 
         private IWinUserWrap winUserWrap;
 
-        public WindowFactory(IUIAutomation uiAutomation,IKeyboard keyboard, IWinUserWrap winUserWrap)
+        public WindowFactory(IUIAutomation uiAutomation, IKeyboard keyboard, IWinUserWrap winUserWrap)
         {
             this.uiAutomation = uiAutomation;
             this.keyboard = keyboard;

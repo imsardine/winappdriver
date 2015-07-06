@@ -110,6 +110,7 @@
     <Compile Include="Handlers\FindElementsHandler.cs" />
     <Compile Include="Handlers\GetElementTagNameHandler.cs" />
     <Compile Include="Handlers\GetWindowLocationHandler.cs" />
+    <Compile Include="Handlers\IsElementEnabledHandler.cs" />
     <Compile Include="Handlers\IsElementDisplayedHandler.cs" />
     <Compile Include="Handlers\GetElementSizeHandler.cs" />
     <Compile Include="Handlers\GetElementLocationHandler.cs" />
