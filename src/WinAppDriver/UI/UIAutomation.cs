@@ -125,8 +125,11 @@ namespace WinAppDriver.UI
             writer.WriteAttributeString("name", info.Name);
             writer.WriteAttributeString("class", info.ClassName);
 
-            var rect = info.BoundingRectangle;
             writer.WriteAttributeString("visible", info.IsOffscreen ? "false" : "true");
+            writer.WriteAttributeString("enabled", info.IsEnabled ? "true" : "false");
+            writer.WriteAttributeString("selected", this.IsElementSelected(parent) ? "true" : "false");
+
+            var rect = info.BoundingRectangle;
             writer.WriteAttributeString("x", ((int)rect.X).ToString());
             writer.WriteAttributeString("y", ((int)rect.Y).ToString());
             writer.WriteAttributeString("width", ((int)rect.Width).ToString());
@@ -140,6 +143,20 @@ namespace WinAppDriver.UI
             }
 
             writer.WriteEndElement();
+        }
+
+        private bool IsElementSelected(AutomationElement element)
+        {
+            object pattern;
+            if (element.TryGetCurrentPattern(TogglePattern.Pattern, out pattern))
+            {
+                var state = ((TogglePattern)pattern).Current.ToggleState;
+                return state != ToggleState.Off;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
