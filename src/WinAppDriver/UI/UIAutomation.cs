@@ -179,12 +179,19 @@ namespace WinAppDriver.UI
             }
 
             writer.WriteAttributeString("id", element.ID);
+            writer.WriteAttributeString("framework", element.UIFramework);
             writer.WriteAttributeString("name", element.Name);
             writer.WriteAttributeString("class", element.ClassName);
+            writer.WriteAttributeString("help", element.Help);
 
             writer.WriteAttributeString("visible", element.Visible ? "true" : "false");
             writer.WriteAttributeString("enabled", element.Enabled ? "true" : "false");
+            writer.WriteAttributeString("focusable", element.Focusable ? "true" : "false");
+            writer.WriteAttributeString("focused", element.Focused ? "true" : "false");
             writer.WriteAttributeString("selected", element.Selected ? "true" : "false");
+            writer.WriteAttributeString("protected", element.Protected ? "true" : "false");
+
+            writer.WriteAttributeString("handle", element.Handle.ToString());
 
             writer.WriteAttributeString("x", element.X.ToString());
             writer.WriteAttributeString("y", element.Y.ToString());

@@ -1,5 +1,6 @@
 ﻿namespace WinAppDriver.UI
 {
+    using System;
     using System.Windows;
     using System.Windows.Automation;
 
@@ -16,9 +17,19 @@
             this.element = element;
         }
 
+        public string UIFramework
+        {
+            get { return this.Info.FrameworkId; }
+        }
+
         public string ID
         {
             get { return this.Info.AutomationId; }
+        }
+
+        public IntPtr Handle
+        {
+            get { return new IntPtr(this.Info.NativeWindowHandle); }
         }
 
         public string TypeName
@@ -38,6 +49,21 @@
         public string ClassName
         {
             get { return this.Info.ClassName; }
+        }
+
+        public string Help
+        {
+            get { return this.Info.HelpText; }
+        }
+
+        public bool Focusable
+        {
+            get { return this.Info.IsKeyboardFocusable; }
+        }
+
+        public bool Focused
+        {
+            get { return this.Info.HasKeyboardFocus; }
         }
 
         public bool Visible
@@ -65,6 +91,11 @@
                     return false;
                 }
             }
+        }
+
+        public bool Protected
+        {
+            get { return this.Info.IsPassword; }
         }
 
         public int X

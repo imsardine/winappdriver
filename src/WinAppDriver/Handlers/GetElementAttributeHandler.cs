@@ -25,11 +25,17 @@
                 case "id":
                     return element.ID;
 
+                case "framework":
+                    return element.UIFramework;
+
                 case "name":
                     return element.Name;
 
                 case "class":
                     return element.ClassName;
+
+                case "help":
+                    return element.Help;
 
                 case "visible":
                     return element.Visible ? "true" : "false";
@@ -37,8 +43,20 @@
                 case "enabled":
                     return element.Enabled ? "true" : "false";
 
+                case "focusable":
+                    return element.Focusable ? "true" : "false";
+
+                case "focused":
+                    return element.Focused ? "true" : "false";
+
                 case "selected":
                     return element.Selected ? "true" : "false";
+
+                case "protected":
+                    return element.Protected ? "true" : "false";
+
+                case "handle":
+                    return element.Handle.ToString();
 
                 case "x":
                     return element.X.ToString();
