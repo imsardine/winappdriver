@@ -108,6 +108,7 @@
     <Compile Include="Handlers\DeleteSessionHandler.cs" />
     <Compile Include="Handlers\FindElementHandler.cs" />
     <Compile Include="Handlers\FindElementsHandler.cs" />
+    <Compile Include="Handlers\GetElementAttributeHandler.cs" />
     <Compile Include="Handlers\GetElementTagNameHandler.cs" />
     <Compile Include="Handlers\GetWindowLocationHandler.cs" />
     <Compile Include="Handlers\IsElementSelectedHandler.cs" />

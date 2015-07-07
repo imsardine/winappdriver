@@ -132,9 +132,9 @@ namespace WinAppDriver.UI
             writer.WriteAttributeString("name", element.Name);
             writer.WriteAttributeString("class", element.ClassName);
 
-            writer.WriteAttributeString("visible", element.Visible.ToString());
-            writer.WriteAttributeString("enabled", element.Enabled.ToString());
-            writer.WriteAttributeString("selected", element.Selected.ToString());
+            writer.WriteAttributeString("visible", element.Visible ? "true" : "false");
+            writer.WriteAttributeString("enabled", element.Enabled ? "true" : "false");
+            writer.WriteAttributeString("selected", element.Selected ? "true" : "false");
 
             writer.WriteAttributeString("x", element.X.ToString());
             writer.WriteAttributeString("y", element.Y.ToString());
