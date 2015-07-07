@@ -9,6 +9,13 @@ namespace WinAppDriver.UI
 
     internal class UIAutomation : IUIAutomation
     {
+        private IElementFactory elementFactory;
+
+        public UIAutomation(IElementFactory elementFactory)
+        {
+            this.elementFactory = elementFactory;
+        }
+
         public AutomationElement GetFocusedWindowOrRoot()
         {
             var walker = TreeWalker.ContentViewWalker;
@@ -113,27 +120,29 @@ namespace WinAppDriver.UI
 
         private void WalkTree(AutomationElement parent, TreeWalker walker, XmlWriter writer, IList<AutomationElement> elements)
         {
-            var info = parent.Current;
-            writer.WriteStartElement(info.ControlType.ProgrammaticName.Substring(12)); // "ContentType."
+            var element = this.elementFactory.GetElement(parent);
+            writer.WriteStartElement(element.TypeName);
             if (elements != null)
             {
                 writer.WriteAttributeString("_index_", elements.Count.ToString());
                 elements.Add(parent);
             }
 
-            writer.WriteAttributeString("id", info.AutomationId);
-            writer.WriteAttributeString("name", info.Name);
-            writer.WriteAttributeString("class", info.ClassName);
+            writer.WriteAttributeString("id", element.ID);
+            writer.WriteAttributeString("name", element.Name);
+            writer.WriteAttributeString("class", element.ClassName);
 
-            writer.WriteAttributeString("visible", info.IsOffscreen ? "false" : "true");
-            writer.WriteAttributeString("enabled", info.IsEnabled ? "true" : "false");
-            writer.WriteAttributeString("selected", this.IsElementSelected(parent) ? "true" : "false");
+            writer.WriteAttributeString("visible", element.Visible.ToString());
+            writer.WriteAttributeString("enabled", element.Enabled.ToString());
+            writer.WriteAttributeString("selected", element.Selected.ToString());
 
-            var rect = info.BoundingRectangle;
-            writer.WriteAttributeString("x", ((int)rect.X).ToString());
-            writer.WriteAttributeString("y", ((int)rect.Y).ToString());
-            writer.WriteAttributeString("width", ((int)rect.Width).ToString());
-            writer.WriteAttributeString("height", ((int)rect.Height).ToString());
+            writer.WriteAttributeString("x", element.X.ToString());
+            writer.WriteAttributeString("y", element.Y.ToString());
+            writer.WriteAttributeString("width", element.Width.ToString());
+            writer.WriteAttributeString("height", element.Height.ToString());
+            writer.WriteAttributeString(
+                "bounds",
+                string.Format("[{0},{1}][{2},{3}]", element.X, element.Y, element.Width, element.Height));
 
             var child = walker.GetFirstChild(parent);
             while (child != null)

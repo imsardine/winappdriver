@@ -26,7 +26,7 @@ namespace WinAppDriver
             var utils = new Utils();
             var winUserWrap = new WinUserWrap();
             var keyboard = new Keyboard(new KeyboardWrap(), new KeyInteropWrap(), winUserWrap);
-            var uiAutomation = new UIAutomation();
+            var uiAutomation = new UIAutomation(new ElementFactory());
             var uacHandler = new UACPromptHandler(uiAutomation, keyboard);
             var windowFactory = new WindowFactory(uiAutomation, keyboard, winUserWrap);
             var windowUtils = new WindowUtils(uiAutomation, windowFactory);

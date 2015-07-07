@@ -129,6 +129,10 @@
     <Compile Include="IHandler.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="ISession.cs" />
+    <Compile Include="UI\Element.cs" />
+    <Compile Include="UI\ElementFactory.cs" />
+    <Compile Include="UI\IElement.cs" />
+    <Compile Include="UI\IElementFactory.cs" />
     <Compile Include="UI\IKeyboard.cs" />
     <Compile Include="Modern\StoreApp.cs" />
     <Compile Include="Modern\StoreAppInstaller.cs" />
