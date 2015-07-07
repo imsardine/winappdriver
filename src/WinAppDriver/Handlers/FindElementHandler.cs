@@ -41,6 +41,8 @@ namespace WinAppDriver.Handlers
             {
                 // TODO throw exceptions to indicate other strategies are not supported.
                 var property = AutomationElement.AutomationIdProperty;
+                object locator = request.Locator;
+
                 if (request.Strategy == "name")
                 {
                     property = AutomationElement.NameProperty;
@@ -53,10 +55,15 @@ namespace WinAppDriver.Handlers
                 {
                     property = AutomationElement.AutomationIdProperty;
                 }
+                else if (request.Strategy == "tag name")
+                {
+                    property = AutomationElement.ControlTypeProperty;
+                    locator = this.uiAutomation.FromTagName(request.Locator);
+                }
 
                 element = start.FindFirst(
                     TreeScope.Descendants,
-                    new PropertyCondition(property, request.Locator));
+                    new PropertyCondition(property, locator));
             }
 
             if (element == null)

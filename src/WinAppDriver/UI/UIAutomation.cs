@@ -9,7 +9,47 @@ namespace WinAppDriver.UI
 
     internal class UIAutomation : IUIAutomation
     {
+        private static IDictionary<ControlType, string> controlTypes =
+            new Dictionary<ControlType, string>();
+
+        private static IDictionary<string, ControlType> tagNames =
+            new Dictionary<string, ControlType>();
+
         private IElementFactory elementFactory;
+
+        static UIAutomation()
+        {
+            var types = new List<ControlType>
+            {
+                ControlType.Button, ControlType.Calendar,
+                ControlType.CheckBox, ControlType.ComboBox,
+                ControlType.Custom, ControlType.DataGrid,
+                ControlType.DataItem, ControlType.Document,
+                ControlType.Edit, ControlType.Group,
+                ControlType.Header, ControlType.HeaderItem,
+                ControlType.Hyperlink, ControlType.Image,
+                ControlType.List, ControlType.ListItem,
+                ControlType.Menu, ControlType.MenuBar,
+                ControlType.MenuItem, ControlType.Pane,
+                ControlType.ProgressBar, ControlType.RadioButton,
+                ControlType.ScrollBar, ControlType.Separator,
+                ControlType.Slider, ControlType.Spinner,
+                ControlType.SplitButton, ControlType.StatusBar,
+                ControlType.Tab, ControlType.TabItem,
+                ControlType.Table, ControlType.Text,
+                ControlType.Thumb, ControlType.TitleBar,
+                ControlType.ToolBar, ControlType.ToolTip,
+                ControlType.Tree, ControlType.TreeItem,
+                ControlType.Window
+            };
+
+            foreach (var type in types)
+            {
+                var tag = type.ProgrammaticName.Substring(12); // ControlType.
+                controlTypes.Add(new KeyValuePair<ControlType, string>(type, tag));
+                tagNames.Add(new KeyValuePair<string, ControlType>(tag, type));
+            }
+        }
 
         public UIAutomation(IElementFactory elementFactory)
         {
@@ -67,6 +107,16 @@ namespace WinAppDriver.UI
         {
             elements = new List<AutomationElement>();
             return this.DumpXmlImpl(start, elements);
+        }
+
+        public ControlType FromTagName(string tag)
+        {
+            return tagNames[tag];
+        }
+
+        public string ToTagName(ControlType type)
+        {
+            return controlTypes[type];
         }
 
         public AutomationElement FindFirstByXPath(AutomationElement start, string xpath)

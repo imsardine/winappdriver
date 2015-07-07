@@ -41,6 +41,8 @@
             else
             {
                 var property = AutomationElement.AutomationIdProperty;
+                object locator = request.Locator;
+
                 if (request.Strategy == "name")
                 {
                     property = AutomationElement.NameProperty;
@@ -53,10 +55,15 @@
                 {
                     property = AutomationElement.AutomationIdProperty;
                 }
+                else if (request.Strategy == "tag name")
+                {
+                    property = AutomationElement.ControlTypeProperty;
+                    locator = this.uiAutomation.FromTagName(request.Locator);
+                }
 
                 elements = start.FindAll(
                     TreeScope.Descendants,
-                    new PropertyCondition(property, request.Locator));
+                    new PropertyCondition(property, locator));
             }
 
             var list = new List<Dictionary<string, string>>();

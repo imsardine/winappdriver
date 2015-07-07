@@ -18,6 +18,10 @@ namespace WinAppDriver.UI
 
         string DumpXml(AutomationElement start, out IList<AutomationElement> elements);
 
+        ControlType FromTagName(string tag);
+
+        string ToTagName(ControlType type);
+
         AutomationElement FindFirstByXPath(AutomationElement start, string xpath);
 
         IList<AutomationElement> FindAllByXPath(AutomationElement start, string xpath);
