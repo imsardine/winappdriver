@@ -1,4 +1,4 @@
-namespace WinAppDriver
+namespace WinAppDriver.Handlers
 {
     using System.Collections.Generic;
     using System.Text;
@@ -8,7 +8,7 @@ namespace WinAppDriver
     [Route("POST", "/session/:sessionId/element/:id/value")]
     internal class SetElementValueHandler : IHandler
     {
-        public object Handle(Dictionary<string, string> urlParams, string body, ref Session session)
+        public object Handle(Dictionary<string, string> urlParams, string body, ref ISession session)
         {
             var element = session.GetUIElement(int.Parse(urlParams["id"]));
             var request = JsonConvert.DeserializeObject<ElementValueRequest>(body);

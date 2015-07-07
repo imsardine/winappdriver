@@ -1,4 +1,4 @@
-namespace WinAppDriver
+namespace WinAppDriver.Handlers
 {
     using System;
     using System.Collections.Generic;
@@ -10,7 +10,7 @@ namespace WinAppDriver
     [Route("GET", "/session/:sessionId/screenshot")]
     internal class ScreenshotHandler : IHandler
     {
-        public object Handle(Dictionary<string, string> urlParams, string body, ref Session session)
+        public object Handle(Dictionary<string, string> urlParams, string body, ref ISession session)
         {
             return Convert.ToBase64String(this.TakeScreenshotAsPng());
         }

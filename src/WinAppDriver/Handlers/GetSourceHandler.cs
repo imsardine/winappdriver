@@ -1,7 +1,8 @@
-﻿namespace WinAppDriver
+﻿namespace WinAppDriver.Handlers
 {
     using System.Collections.Generic;
     using System.Windows.Automation;
+    using WinAppDriver.UI;
 
     [Route("GET", "/session/:sessionId/source")]
     internal class GetSourceHandler : IHandler
@@ -13,9 +14,12 @@
             this.uiAutomation = uiAutomation;
         }
 
-        public object Handle(Dictionary<string, string> urlParams, string body, ref Session session)
+        public object Handle(Dictionary<string, string> urlParams, string body, ref ISession session)
         {
-            return this.uiAutomation.DumpXml(this.uiAutomation.GetFocusedWindowOrRoot());
+            var start = session.FocusOnCurrentWindow ?
+                this.uiAutomation.GetFocusedWindowOrRoot() :
+                AutomationElement.RootElement;
+            return this.uiAutomation.DumpXml(start);
         }
     }
 }

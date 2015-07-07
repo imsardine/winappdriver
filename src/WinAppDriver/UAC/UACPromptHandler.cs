@@ -3,6 +3,7 @@
     using System.Threading;
     using System.Windows.Automation;
     using System.Windows.Input;
+    using WinAppDriver.UI;
 
     internal class UACPromptHandler : IUACPomptHandler
     {
@@ -67,7 +68,7 @@
                             Thread.Sleep(1000);
                         }
                     }
-                    catch (ThreadInterruptedException) 
+                    catch (ThreadInterruptedException)
                     {
                     }
                 }

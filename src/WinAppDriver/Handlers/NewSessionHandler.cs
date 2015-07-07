@@ -1,8 +1,9 @@
-namespace WinAppDriver
+namespace WinAppDriver.Handlers
 {
     using System.Collections.Generic;
     using Newtonsoft.Json;
     using WinAppDriver.Desktop;
+    using WinAppDriver.Modern;
     using WinAppDriver.UAC;
 
     [Route("POST", "/session")]
@@ -26,7 +27,7 @@ namespace WinAppDriver
             this.utils = utils;
         }
 
-        public object Handle(Dictionary<string, string> urlParams, string body, ref Session session)
+        public object Handle(Dictionary<string, string> urlParams, string body, ref ISession session)
         {
             var request = JsonConvert.DeserializeObject<NewSessionRequestAsDict>(body);
             foreach (var kvp in request.DesiredCapabilities)

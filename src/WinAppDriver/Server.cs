@@ -41,7 +41,7 @@ namespace WinAppDriver
             string body = new StreamReader(request.InputStream, request.ContentEncoding).ReadToEnd();
             logger.Debug("Request: {0} {1}\n{2}", method, path, body);
 
-            Session session = null;
+            ISession session = null;
             try
             {
                 object result = this.requestManager.Handle(method, path, body, out session);
@@ -55,7 +55,7 @@ namespace WinAppDriver
         }
 
         private void ResponseException(
-            string method, string path, Exception ex, Session session, HttpListenerResponse response)
+            string method, string path, Exception ex, ISession session, HttpListenerResponse response)
         {
             string body = null;
             var httpStatus = HttpStatusCode.InternalServerError;
@@ -87,7 +87,7 @@ namespace WinAppDriver
         }
 
         private void ResponseResult(
-            string method, string path, object result, Session session, HttpListenerResponse response)
+            string method, string path, object result, ISession session, HttpListenerResponse response)
         {
             var message = new Dictionary<string, object>
             {

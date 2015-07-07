@@ -1,4 +1,4 @@
-namespace WinAppDriver
+namespace WinAppDriver.Handlers
 {
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
@@ -14,7 +14,7 @@ namespace WinAppDriver
 
         private IWinUserWrap winUser = new WinUserWrap();
 
-        public object Handle(Dictionary<string, string> urlParams, string body, ref Session session)
+        public object Handle(Dictionary<string, string> urlParams, string body, ref ISession session)
         {
             var element = session.GetUIElement(int.Parse(urlParams["id"]));
             Rect rect = element.Current.BoundingRectangle;

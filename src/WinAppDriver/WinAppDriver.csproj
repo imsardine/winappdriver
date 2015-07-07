@@ -99,47 +99,73 @@
     <Compile Include="AppInstaller.cs" />
     <Compile Include="Capabilities.cs" />
     <Compile Include="ChangeBuildStrategy.cs" />
-    <Compile Include="ClickElementHandler.cs" />
     <Compile Include="ClickHandler.cs" />
     <Compile Include="Desktop\DesktopApp.cs" />
     <Compile Include="Desktop\DesktopAppInstaller.cs" />
     <Compile Include="DriverContext.cs" />
     <Compile Include="EndPoint.cs" />
     <Compile Include="FailedCommandException.cs" />
-    <Compile Include="DeleteSessionHandler.cs" />
-    <Compile Include="FindElementHandler.cs" />
-    <Compile Include="FindElementsHandler.cs" />
-    <Compile Include="GetSourceHandler.cs" />
-    <Compile Include="GetElementTextHandler.cs" />
+    <Compile Include="Handlers\ClickElementHandler.cs" />
+    <Compile Include="Handlers\DeleteSessionHandler.cs" />
+    <Compile Include="Handlers\FindElementHandler.cs" />
+    <Compile Include="Handlers\FindElementsHandler.cs" />
+    <Compile Include="Handlers\GetElementAttributeHandler.cs" />
+    <Compile Include="Handlers\GetElementTagNameHandler.cs" />
+    <Compile Include="Handlers\GetWindowLocationHandler.cs" />
+    <Compile Include="Handlers\IsElementSelectedHandler.cs" />
+    <Compile Include="Handlers\IsElementEnabledHandler.cs" />
+    <Compile Include="Handlers\IsElementDisplayedHandler.cs" />
+    <Compile Include="Handlers\GetElementSizeHandler.cs" />
+    <Compile Include="Handlers\GetElementLocationHandler.cs" />
+    <Compile Include="Handlers\GetTitleHandler.cs" />
+    <Compile Include="Handlers\CloseWindowHandler.cs" />
+    <Compile Include="Handlers\GetWindowSizeHandler.cs" />
+    <Compile Include="Handlers\SwitchToWindowHandler.cs" />
+    <Compile Include="Handlers\GetWindowsHandler.cs" />
+    <Compile Include="Handlers\GetCurrentWindowHandler.cs" />
+    <Compile Include="Handlers\GetSourceHandler.cs" />
+    <Compile Include="Handlers\GetElementTextHandler.cs" />
+    <Compile Include="Handlers\NewSessionHandler.cs" />
     <Compile Include="IApplication.cs" />
     <Compile Include="Desktop\IDesktopApp.cs" />
     <Compile Include="IDriverContext.cs" />
     <Compile Include="IHandler.cs" />
     <Compile Include="ILogger.cs" />
-    <Compile Include="IKeyboard.cs" />
+    <Compile Include="ISession.cs" />
+    <Compile Include="UI\Element.cs" />
+    <Compile Include="UI\ElementFactory.cs" />
+    <Compile Include="UI\IElement.cs" />
+    <Compile Include="UI\IElementFactory.cs" />
+    <Compile Include="UI\IKeyboard.cs" />
+    <Compile Include="Modern\StoreApp.cs" />
     <Compile Include="Modern\StoreAppInstaller.cs" />
     <Compile Include="Platform.cs" />
     <Compile Include="ResetStrategy.cs" />
     <Compile Include="UAC\IUACPomptHandler.cs" />
-    <Compile Include="IUIAutomation.cs" />
-    <Compile Include="Keyboard.cs" />
+    <Compile Include="UI\IUIAutomation.cs" />
+    <Compile Include="UI\IWindow.cs" />
+    <Compile Include="UI\IWindowFactory.cs" />
+    <Compile Include="UI\IWindowUtils.cs" />
+    <Compile Include="UI\Keyboard.cs" />
     <Compile Include="IPackageInstaller.cs" />
-    <Compile Include="IStoreApp.cs" />
+    <Compile Include="Modern\IStoreApp.cs" />
     <Compile Include="IUtils.cs" />
     <Compile Include="MoveToHandler.cs" />
-    <Compile Include="NewSessionHandler.cs" />
     <Compile Include="NoSuchElementException.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="RequestManager.cs" />
     <Compile Include="RouteAttribute.cs" />
-    <Compile Include="ScreenshotHandler.cs" />
+    <Compile Include="Handlers\ScreenshotHandler.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Session.cs" />
     <Compile Include="SessionManager.cs" />
-    <Compile Include="SendKeysHandler.cs" />
-    <Compile Include="SetElementValueHandler.cs" />
+    <Compile Include="Handlers\SendKeysHandler.cs" />
+    <Compile Include="Handlers\SetElementValueHandler.cs" />
     <Compile Include="UAC\UACPromptHandler.cs" />
-    <Compile Include="UIAutomation.cs" />
+    <Compile Include="UI\UIAutomation.cs" />
+    <Compile Include="UI\Window.cs" />
+    <Compile Include="UI\WindowFactory.cs" />
+    <Compile Include="UI\WindowUtils.cs" />
     <Compile Include="WinAppDriverException.cs" />
     <Compile Include="Wrappers\SystemWrapper.Windows.Input\IKeyboardWrap.cs" />
     <Compile Include="Wrappers\SystemWrapper.Windows.Input\IKeyInteropWrap.cs" />
@@ -180,11 +206,8 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
-signtool.exe sign /f "$(ProjectDir)WinAppDriver.pfx" /p WinAppDriver "$(TargetPath)"
-<!--
-mkdir "$(ProgramFiles)\WinAppDriver"
-copy /y "$(TargetDir)*" "$(ProgramFiles)\WinAppDriver"
---></PostBuildEvent>
+"C:\Program Files (x86)\Windows Kits\8.1\bin\x64\signtool.exe" sign /f "$(ProjectDir)WinAppDriver.pfx" /p WinAppDriver "$(TargetPath)"
+</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets" Condition="Exists('..\packages\StyleCop.MSBuild.4.7.49.0\build\StyleCop.MSBuild.Targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

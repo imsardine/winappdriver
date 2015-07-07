@@ -1,4 +1,4 @@
-﻿namespace WinAppDriver
+﻿namespace WinAppDriver.Handlers
 {
     using System.Collections.Generic;
 
@@ -12,7 +12,7 @@
             this.sessionManager = sessionManager;
         }
 
-        public object Handle(Dictionary<string, string> urlParams, string body, ref Session session)
+        public object Handle(Dictionary<string, string> urlParams, string body, ref ISession session)
         {
             var app = session.Application;
             this.sessionManager.DeleteSession(session.ID);
