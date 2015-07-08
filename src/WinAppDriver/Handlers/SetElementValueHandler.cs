@@ -19,6 +19,7 @@ namespace WinAppDriver.Handlers
                 sb.Append(key);
             }
 
+            // TODO send keyboard strokes, as SendKeysHandler
             var value = sb.ToString();
             ((ValuePattern)element.GetCurrentPattern(ValuePattern.Pattern)).SetValue(value);
 

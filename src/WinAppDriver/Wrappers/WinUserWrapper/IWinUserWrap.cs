@@ -74,7 +74,7 @@
     }
 
     [Flags]
-    internal enum MOUSEEVENTF
+    internal enum MOUSEEVENTF : uint
     {
         MOVE = 0x0001,
         LEFTDOWN = 0x0002,

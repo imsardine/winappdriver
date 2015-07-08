@@ -1,32 +1,35 @@
 namespace WinAppDriver.Handlers
 {
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Runtime.InteropServices;
-    using System.Windows;
-    using System.Windows.Automation;
-    using WinUserWrapper;
+    using System.Windows.Input;
+    using WinAppDriver.UI;
 
     [Route("POST", "/session/:sessionId/element/:id/click")]
     internal class ClickElementHandler : IHandler
     {
         private static ILogger logger = Logger.GetLogger("WinAppDriver");
 
-        private IWinUserWrap winUser = new WinUserWrap();
+        private IMouse mouse;
+
+        private IElementFactory elementFactory;
+
+        public ClickElementHandler(IMouse mouse, IElementFactory elementFactory)
+        {
+            this.mouse = mouse;
+            this.elementFactory = elementFactory;
+        }
 
         public object Handle(Dictionary<string, string> urlParams, string body, ref ISession session)
         {
-            var element = session.GetUIElement(int.Parse(urlParams["id"]));
-            Rect rect = element.Current.BoundingRectangle;
+            var id = int.Parse(urlParams["id"]);
+            var element = this.elementFactory.GetElement(session.GetUIElement(id));
 
-            int x = (int)(rect.Left + (rect.Width / 2));
-            int y = (int)(rect.Top + (rect.Height / 2));
+            int x = element.X + (element.Width / 2);
+            int y = element.Y + (element.Height / 2);
 
-            logger.Info("click " + element.Current.Name);
-            this.winUser.SetCursorPos(x, y);
+            this.mouse.MoveTo(x, y);
+            this.mouse.Click(MouseButton.Left);
 
-            this.winUser.mouse_event((int)MOUSEEVENTF.LEFTDOWN, 0, 0, 0, 0);
-            this.winUser.mouse_event((int)MOUSEEVENTF.LEFTUP, 0, 0, 0, 0);
             return null;
         }
     }

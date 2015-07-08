@@ -99,7 +99,7 @@
     <Compile Include="AppInstaller.cs" />
     <Compile Include="Capabilities.cs" />
     <Compile Include="ChangeBuildStrategy.cs" />
-    <Compile Include="ClickHandler.cs" />
+    <Compile Include="Handlers\ClickHandler.cs" />
     <Compile Include="Desktop\DesktopApp.cs" />
     <Compile Include="Desktop\DesktopAppInstaller.cs" />
     <Compile Include="DriverContext.cs" />
@@ -142,6 +142,7 @@
     <Compile Include="Platform.cs" />
     <Compile Include="ResetStrategy.cs" />
     <Compile Include="UAC\IUACPomptHandler.cs" />
+    <Compile Include="UI\IMouse.cs" />
     <Compile Include="UI\IUIAutomation.cs" />
     <Compile Include="UI\IWindow.cs" />
     <Compile Include="UI\IWindowFactory.cs" />
@@ -150,7 +151,7 @@
     <Compile Include="IPackageInstaller.cs" />
     <Compile Include="Modern\IStoreApp.cs" />
     <Compile Include="IUtils.cs" />
-    <Compile Include="MoveToHandler.cs" />
+    <Compile Include="Handlers\MoveToHandler.cs" />
     <Compile Include="NoSuchElementException.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="RequestManager.cs" />
@@ -162,6 +163,7 @@
     <Compile Include="Handlers\SendKeysHandler.cs" />
     <Compile Include="Handlers\SetElementValueHandler.cs" />
     <Compile Include="UAC\UACPromptHandler.cs" />
+    <Compile Include="UI\Mouse.cs" />
     <Compile Include="UI\UIAutomation.cs" />
     <Compile Include="UI\Window.cs" />
     <Compile Include="UI\WindowFactory.cs" />

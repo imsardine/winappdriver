@@ -19,8 +19,9 @@
 
         public string UIFramework
         {
-            get {
-                // "Win32", "WinForm", "DirectUI", "XAML"
+            get
+            {
+                // "Win32", "WinForm", "DirectUI", "XAML", "WPF", etc.
                 return this.Info.FrameworkId;
             }
         }
