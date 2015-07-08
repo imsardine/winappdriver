@@ -99,6 +99,7 @@
     <Compile Include="AppInstaller.cs" />
     <Compile Include="Capabilities.cs" />
     <Compile Include="ChangeBuildStrategy.cs" />
+    <Compile Include="Handlers\ButtonUpHandler.cs" />
     <Compile Include="Handlers\ClickHandler.cs" />
     <Compile Include="Desktop\DesktopApp.cs" />
     <Compile Include="Desktop\DesktopAppInstaller.cs" />
@@ -120,6 +121,7 @@
     <Compile Include="Handlers\GetTitleHandler.cs" />
     <Compile Include="Handlers\CloseWindowHandler.cs" />
     <Compile Include="Handlers\GetWindowSizeHandler.cs" />
+    <Compile Include="Handlers\ButtonDownHandler.cs" />
     <Compile Include="Handlers\SwitchToWindowHandler.cs" />
     <Compile Include="Handlers\GetWindowsHandler.cs" />
     <Compile Include="Handlers\GetCurrentWindowHandler.cs" />

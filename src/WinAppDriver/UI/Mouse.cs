@@ -1,7 +1,9 @@
 ﻿namespace WinAppDriver.UI
 {
     using System;
+    using System.Drawing;
     using System.Runtime.InteropServices;
+    using System.Threading;
     using System.Windows.Input;
     using WinAppDriver.WinUserWrapper;
 
@@ -12,6 +14,12 @@
         public Mouse(IWinUserWrap winUser)
         {
             this.winUser = winUser;
+        }
+
+        private Point CursorPosition
+        {
+            get { return System.Windows.Forms.Cursor.Position; }
+            set { System.Windows.Forms.Cursor.Position = value; }
         }
 
         public void Click(MouseButton button)
@@ -28,13 +36,13 @@
 
         public void Move(int x, int y)
         {
-            this.SendMouseInput(x, y, MOUSEEVENTF.MOVE); // TODO doesn't work?
+            var pos = this.CursorPosition;
+            this.CursorPosition = new Point(pos.X + x, pos.Y + y);
         }
 
         public void MoveTo(int x, int y)
         {
-            // SendMouseInput(x, y, MOUSEEVENTF.MOVE | MOUSEEVENTF.ABSOLUTE) doesn't work
-            this.winUser.SetCursorPos(x, y);
+            this.CursorPosition = new Point(x, y);
         }
 
         public void Down(MouseButton button)
