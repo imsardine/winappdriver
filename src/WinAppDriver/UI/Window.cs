@@ -63,7 +63,8 @@
         public void Close()
         {
             // Bring the window to front and close it by pressing Alt + F4
-            // TODO this approach doesn't work with all windows, e.g. Prompt
+            // This approach doesn't work with all windows, e.g. Prompt
+            // TODO use WindowPattern.Close
             this.BringToFront();
 
             this.keyboard.KeyUpOrDown(Key.LeftAlt);
