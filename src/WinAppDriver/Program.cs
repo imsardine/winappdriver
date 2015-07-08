@@ -35,6 +35,7 @@ namespace WinAppDriver
 
             manager.AddHandler(new ButtonUpHandler(mouse));
             manager.AddHandler(new ButtonDownHandler(mouse));
+            manager.AddHandler(new ClearTextHandler(elementFactory));
             manager.AddHandler(new ClickElementHandler(mouse, elementFactory));
             manager.AddHandler(new ClickHandler(mouse));
             manager.AddHandler(new CloseWindowHandler(windowUtils));

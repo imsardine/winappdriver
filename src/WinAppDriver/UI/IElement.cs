@@ -16,6 +16,8 @@
 
         string Name { get; }
 
+        string Value { get; set; }
+
         string ClassName { get; }
 
         string Help { get; }

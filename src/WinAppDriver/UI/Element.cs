@@ -50,6 +50,31 @@
             get { return this.Info.Name; }
         }
 
+        public string Value
+        {
+            get
+            {
+                object pattern = null;
+                if (this.element.TryGetCurrentPattern(ValuePattern.Pattern, out pattern))
+                {
+                    return ((ValuePattern)pattern).Current.Value;
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
+
+            set
+            {
+                object pattern = null;
+                if (this.element.TryGetCurrentPattern(ValuePattern.Pattern, out pattern))
+                {
+                    ((ValuePattern)pattern).SetValue(value);
+                }
+            }
+        }
+
         public string ClassName
         {
             get { return this.Info.ClassName; }

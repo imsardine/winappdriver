@@ -181,6 +181,7 @@ namespace WinAppDriver.UI
             writer.WriteAttributeString("id", element.ID);
             writer.WriteAttributeString("framework", element.UIFramework);
             writer.WriteAttributeString("name", element.Name);
+            writer.WriteAttributeString("value", element.Value);
             writer.WriteAttributeString("class", element.ClassName);
             writer.WriteAttributeString("help", element.Help);
 

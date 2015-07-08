@@ -31,6 +31,9 @@
                 case "name":
                     return element.Name;
 
+                case "value":
+                    return element.Value;
+
                 case "class":
                     return element.ClassName;
 
