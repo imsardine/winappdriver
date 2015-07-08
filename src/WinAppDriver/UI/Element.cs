@@ -127,6 +127,15 @@
             get { return this.Info.IsPassword; }
         }
 
+        public bool Scrollable
+        {
+            get
+            {
+                object pattern;
+                return this.element.TryGetCurrentPattern(ScrollPattern.Pattern, out pattern);
+            }
+        }
+
         public int X
         {
             get { return (int)this.Rect.X; }

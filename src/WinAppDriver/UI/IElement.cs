@@ -34,6 +34,8 @@
 
         bool Protected { get; }
 
+        bool Scrollable { get; }
+
         int X { get; }
 
         int Y { get; }

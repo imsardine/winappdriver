@@ -58,6 +58,9 @@
                 case "protected":
                     return element.Protected ? "true" : "false";
 
+                case "scrollable":
+                    return element.Scrollable ? "true" : "false";
+
                 case "handle":
                     return element.Handle.ToString();
 

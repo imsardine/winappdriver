@@ -191,6 +191,7 @@ namespace WinAppDriver.UI
             writer.WriteAttributeString("focused", element.Focused ? "true" : "false");
             writer.WriteAttributeString("selected", element.Selected ? "true" : "false");
             writer.WriteAttributeString("protected", element.Protected ? "true" : "false");
+            writer.WriteAttributeString("scrollable", element.Scrollable ? "true" : "false");
 
             writer.WriteAttributeString("handle", element.Handle.ToString());
 
