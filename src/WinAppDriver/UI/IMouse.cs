@@ -6,7 +6,7 @@
     {
         void Click(MouseButton button);
 
-        void DoubleClick(MouseButton button);
+        void DoubleClick();
 
         void Move(int x, int y);
 

@@ -99,6 +99,7 @@
     <Compile Include="AppInstaller.cs" />
     <Compile Include="Capabilities.cs" />
     <Compile Include="ChangeBuildStrategy.cs" />
+    <Compile Include="Handlers\DoubleClickHandler.cs" />
     <Compile Include="Handlers\ButtonUpHandler.cs" />
     <Compile Include="Handlers\ClickHandler.cs" />
     <Compile Include="Desktop\DesktopApp.cs" />

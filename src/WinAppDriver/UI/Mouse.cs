@@ -28,10 +28,10 @@
             this.Up(button);
         }
 
-        public void DoubleClick(MouseButton button)
+        public void DoubleClick()
         {
-            this.Click(button);
-            this.Click(button);
+            this.Click(MouseButton.Left);
+            this.Click(MouseButton.Left);
         }
 
         public void Move(int x, int y)
