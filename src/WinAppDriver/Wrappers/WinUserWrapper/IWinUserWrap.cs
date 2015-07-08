@@ -4,10 +4,15 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.InteropServices;
 
-    [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed.")]
     [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder", Justification = "Reviewed.")]
+    [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Reviewed.")]
+    [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed.")]
     internal interface IWinUserWrap
     {
+        void mouse_event(int mouseEventFlag, int incrementX, int incrementY, int data, int extraInfo);
+
+        void SetCursorPos(int x, int y);
+
         uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);
 
         IntPtr GetMessageExtraInfo();
@@ -66,6 +71,19 @@
         KEYUP = 0x0002,
         UNICODE = 0x0004,
         SCANCODE = 0x0008,
+    }
+
+    [Flags]
+    internal enum MOUSEEVENTF : uint
+    {
+        MOVE = 0x0001,
+        LEFTDOWN = 0x0002,
+        LEFTUP = 0x0004,
+        RIGHTDOWN = 0x0008,
+        RIGHTUP = 0x0010,
+        MIDDLEDOWN = 0x0020,
+        MIDDLEUP = 0x0040,
+        ABSOLUTE = 0x8000,
     }
 
     [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed.")]

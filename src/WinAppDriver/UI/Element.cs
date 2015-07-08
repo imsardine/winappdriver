@@ -19,7 +19,11 @@
 
         public string UIFramework
         {
-            get { return this.Info.FrameworkId; }
+            get
+            {
+                // "Win32", "WinForm", "DirectUI", "XAML", "WPF", etc.
+                return this.Info.FrameworkId;
+            }
         }
 
         public string ID
