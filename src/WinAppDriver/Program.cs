@@ -27,8 +27,13 @@ namespace WinAppDriver
             var winUserWrap = new WinUserWrap();
             var keyboard = new Keyboard(new KeyboardWrap(), new KeyInteropWrap(), winUserWrap);
             IMouse mouse = new Mouse(winUserWrap);
+
+            // TODO circular dependency, bad smell?
+            IUIAutomation uiAutomation = new UIAutomation();
             IElementFactory elementFactory = new ElementFactory();
-            var uiAutomation = new UIAutomation(elementFactory);
+            ((UIAutomation)uiAutomation).SetElementFactory(elementFactory);
+            ((ElementFactory)elementFactory).SetUIAutomation(uiAutomation);
+
             var uacHandler = new UACPromptHandler(uiAutomation, keyboard);
             var windowFactory = new WindowFactory(uiAutomation, keyboard, winUserWrap);
             var windowUtils = new WindowUtils(uiAutomation, windowFactory);
@@ -44,8 +49,9 @@ namespace WinAppDriver
             manager.AddHandler(new FindElementHandler(uiAutomation));
             manager.AddHandler(new FindElementsHandler(uiAutomation));
             manager.AddHandler(new GetElementAttributeHandler(elementFactory));
-            manager.AddHandler(new GetElementLocationHandler());
-            manager.AddHandler(new GetElementSizeHandler());
+            manager.AddHandler(new GetElementLocationHandler(elementFactory));
+            manager.AddHandler(new GetElementLocationInViewHandler(elementFactory));
+            manager.AddHandler(new GetElementSizeHandler(elementFactory));
             manager.AddHandler(new GetElementTagNameHandler());
             manager.AddHandler(new GetElementTextHandler());
             manager.AddHandler(new GetCurrentWindowHandler(uiAutomation));

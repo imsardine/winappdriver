@@ -9,6 +9,8 @@ namespace WinAppDriver.UI
 
     internal class UIAutomation : IUIAutomation
     {
+        private static ILogger logger = Logger.GetLogger("WinAppDriver");
+
         private static IDictionary<ControlType, string> controlTypes =
             new Dictionary<ControlType, string>();
 
@@ -51,7 +53,7 @@ namespace WinAppDriver.UI
             }
         }
 
-        public UIAutomation(IElementFactory elementFactory)
+        public void SetElementFactory(IElementFactory elementFactory)
         {
             this.elementFactory = elementFactory;
         }
@@ -153,6 +155,28 @@ namespace WinAppDriver.UI
             }
 
             return results;
+        }
+
+        public IElement GetScrollableContainer(IElement element)
+        {
+            logger.Debug("Trying to find the scrollable container; id = [{0}], name = [{1}].", element.ID, element.Name);
+            var walker = TreeWalker.ContentViewWalker;
+            AutomationElement node = element.AutomationElement;
+
+            while (node != AutomationElement.RootElement)
+            {
+                node = walker.GetParent(node);
+                object pattern = null;
+                if (node.TryGetCurrentPattern(ScrollPattern.Pattern, out pattern))
+                {
+                    var container = this.elementFactory.GetElement(node);
+                    logger.Debug("The container is found; id = [{0}], name = [{1}].", container.ID, element.Name);
+                    return container;
+                }
+            }
+
+            logger.Debug("The container is NOT found.");
+            return null;
         }
 
         private string DumpXmlImpl(AutomationElement start, IList<AutomationElement> elements)

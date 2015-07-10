@@ -3,12 +3,12 @@
     using System.Collections.Generic;
     using WinAppDriver.UI;
 
-    [Route("GET", "/session/:sessionId/element/:id/size")]
-    internal class GetElementSizeHandler : IHandler
+    [Route("GET", "/session/:sessionId/element/:id/location_in_view")]
+    internal class GetElementLocationInViewHandler : IHandler
     {
         private IElementFactory elementFactory;
 
-        public GetElementSizeHandler(IElementFactory elementFactory)
+        public GetElementLocationInViewHandler(IElementFactory elementFactory)
         {
             this.elementFactory = elementFactory;
         }
@@ -18,10 +18,12 @@
             var id = int.Parse(urlParams["id"]);
             var element = this.elementFactory.GetElement(session.GetUIElement(id));
 
+            element.ScrollIntoView();
+
             return new Dictionary<string, int>
             {
-                { "width", element.Width },
-                { "height", element.Height }
+                { "x", element.X },
+                { "y", element.Y }
             };
         }
     }

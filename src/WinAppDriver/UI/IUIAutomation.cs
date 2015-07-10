@@ -25,5 +25,7 @@ namespace WinAppDriver.UI
         AutomationElement FindFirstByXPath(AutomationElement start, string xpath);
 
         IList<AutomationElement> FindAllByXPath(AutomationElement start, string xpath);
+
+        IElement GetScrollableContainer(IElement element);
     }
 }

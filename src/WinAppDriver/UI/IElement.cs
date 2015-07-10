@@ -6,6 +6,8 @@
 
     internal interface IElement
     {
+        AutomationElement AutomationElement { get; }
+
         string UIFramework { get; }
 
         string ID { get; }
@@ -43,5 +45,7 @@
         int Width { get; }
 
         int Height { get; }
+
+        void ScrollIntoView();
     }
 }
