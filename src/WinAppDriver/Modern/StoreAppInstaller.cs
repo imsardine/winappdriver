@@ -6,9 +6,12 @@
 
     internal class StoreAppInstaller : AppInstaller<IStoreApp>
     {
+        private IUtils utils;
+
         public StoreAppInstaller(IDriverContext context, IStoreApp app, IUtils utils)
             : base(context, app, utils)
         {
+            this.utils = utils;
         }
 
         protected internal override void InstallImpl(string package, string checksum)
@@ -22,10 +25,18 @@
             if (files.Length > 0)
             {
                 logger.Info("Installing Windows Store App.");
-                string dirs = files[0].DirectoryName;
-                PowerShell ps = PowerShell.Create();
-                ps.AddScript(string.Format("Powershell.exe -executionpolicy remotesigned -NonInteractive -File \"{0}\"", files[0].FullName));
-                ps.Invoke(); // TODO error handling
+                var command = string.Format(
+                    "Powershell.exe -executionpolicy remotesigned -NonInteractive -File \"{0}\"", 
+                    files[0].FullName);
+                logger.Debug("Command: {0}", command);
+
+                var process = this.utils.Execute(command, null);
+                process.WaitForExit();
+                if (process.ExitCode != 0)
+                {
+                    throw new FailedCommandException(
+                        string.Format("Failed to install the store app. exit = {0}.", process.ExitCode), 13);
+                }
             }
             else
             {
