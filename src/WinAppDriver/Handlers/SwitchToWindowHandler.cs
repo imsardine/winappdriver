@@ -90,7 +90,16 @@
             }
             else if (candidates.Count == 0)
             {
-                // TODO no such window error
+                int handle;
+                if (int.TryParse(title, out handle))
+                {
+                    // modern apps are not in the list of top-level windows, why?
+                    this.SwitchByWindowHandle(new IntPtr(handle));
+                }
+                else
+                {
+                    // TODO no such window error
+                }
             }
             else
             {
