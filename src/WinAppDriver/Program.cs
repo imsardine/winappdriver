@@ -28,6 +28,7 @@ namespace WinAppDriver
             var winUserWrap = new WinUserWrap();
             var keyboard = new Keyboard(new KeyboardWrap(), new KeyInteropWrap(), winUserWrap);
             IMouse mouse = new Mouse(winUserWrap);
+            var wireKeyboard = new WireKeyboard(keyboard);
 
             // TODO circular dependency, bad smell?
             IUIAutomation uiAutomation = new UIAutomation();
@@ -67,8 +68,8 @@ namespace WinAppDriver
             manager.AddHandler(new MoveToHandler(mouse, elementFactory));
             manager.AddHandler(new NewSessionHandler(context, sessionManager, uacHandler, utils));
             manager.AddHandler(new ScreenshotHandler());
-            manager.AddHandler(new SendKeysHandler(keyboard));
-            manager.AddHandler(new SetElementValueHandler());
+            manager.AddHandler(new SendKeysHandler(wireKeyboard));
+            manager.AddHandler(new SetElementValueHandler(wireKeyboard, elementFactory));
             manager.AddHandler(new SwitchToWindowHandler(uiAutomation, windowFactory, windowUtils));
 
             return manager;

@@ -218,6 +218,14 @@
             }
         }
 
+        public void SetFocus()
+        {
+            if (this.Focusable && !this.Focused)
+            {
+                this.element.SetFocus();
+            }
+        }
+
         public void ScrollIntoView()
         {
             var container = this.uiAutomation.GetScrollableContainer(this);

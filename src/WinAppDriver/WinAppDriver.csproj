@@ -125,12 +125,14 @@
     <Compile Include="Handlers\GetWindowSizeHandler.cs" />
     <Compile Include="Handlers\ButtonDownHandler.cs" />
     <Compile Include="Handlers\ClearTextHandler.cs" />
+    <Compile Include="Handlers\IWireKeyboard.cs" />
     <Compile Include="Handlers\SwitchToWindowHandler.cs" />
     <Compile Include="Handlers\GetWindowsHandler.cs" />
     <Compile Include="Handlers\GetCurrentWindowHandler.cs" />
     <Compile Include="Handlers\GetSourceHandler.cs" />
     <Compile Include="Handlers\GetElementTextHandler.cs" />
     <Compile Include="Handlers\NewSessionHandler.cs" />
+    <Compile Include="Handlers\WireKeyboard.cs" />
     <Compile Include="IApplication.cs" />
     <Compile Include="Desktop\IDesktopApp.cs" />
     <Compile Include="IDriverContext.cs" />

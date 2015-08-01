@@ -49,6 +49,8 @@
 
         int Height { get; }
 
+        void SetFocus();
+
         void ScrollIntoView();
     }
 }
