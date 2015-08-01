@@ -1,6 +1,7 @@
 ﻿namespace WinAppDriver.UI
 {
     using System;
+    using System.Collections.Generic;
     using System.Drawing;
     using System.Runtime.InteropServices;
     using System.Threading;
@@ -9,6 +10,8 @@
 
     internal class Mouse : IMouse
     {
+        private static ILogger logger = Logger.GetLogger("WinAppDriver");
+
         private IWinUserWrap winUser;
 
         public Mouse(IWinUserWrap winUser)
@@ -36,13 +39,54 @@
 
         public void Move(int x, int y)
         {
-            var pos = this.CursorPosition;
-            this.CursorPosition = new Point(pos.X + x, pos.Y + y);
+            Point pos = this.CursorPosition;
+            this.MoveTo(pos.X + x, pos.Y + y);
         }
 
-        public void MoveTo(int x, int y)
+        public void MoveTo(int x2, int y2)
         {
-            this.CursorPosition = new Point(x, y);
+            Point pos = this.CursorPosition;
+            int x = pos.X;
+            int y = pos.Y;
+
+            var msg = new System.Text.StringBuilder();
+            msg.AppendFormat(
+                "Move the mouse pointer; from = [{0},{1}], to = [{2},{3}]",
+                x, y, x2, y2);
+
+            // duration determins speed, and steps determins smoothness
+            int duration = 200;
+            int steps = 20;
+            int interval = duration / steps;
+            int stepX = (x2 - x) / steps;
+            int stepY = (y2 - y) / steps;
+            msg.AppendFormat(
+                ", duration = {0} ms, steps = {1}, interval = {2} ms, step = [{3},{4}]",
+                duration, steps, interval, stepX, stepY);
+
+            msg.Append(", movements = ");
+            var movements = new List<Point>();
+            for (int i = 0; i < steps; i++)
+            {
+                x += stepX;
+                y += stepY;
+                msg.AppendFormat("[{0},{1}]", x, y);
+                movements.Add(new Point(x, y));
+            }
+
+            if (x != x2 || y != y2)
+            {
+                msg.AppendFormat("[{0},{1}]", x2, y2);
+                movements.Add(new Point(x2, y2));
+            }
+
+            logger.Debug(msg.ToString());
+
+            foreach (var point in movements)
+            {
+                this.CursorPosition = point;
+                Thread.Sleep(interval);
+            }
         }
 
         public void Down(MouseButton button)
