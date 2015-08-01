@@ -148,6 +148,7 @@
     <Compile Include="ResetStrategy.cs" />
     <Compile Include="UAC\IUACPomptHandler.cs" />
     <Compile Include="UI\IMouse.cs" />
+    <Compile Include="UI\IOverlay.cs" />
     <Compile Include="UI\IUIAutomation.cs" />
     <Compile Include="UI\IWindow.cs" />
     <Compile Include="UI\IWindowFactory.cs" />
@@ -169,6 +170,10 @@
     <Compile Include="Handlers\SetElementValueHandler.cs" />
     <Compile Include="UAC\UACPromptHandler.cs" />
     <Compile Include="UI\Mouse.cs" />
+    <Compile Include="UI\OverlayForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Overlay.cs" />
     <Compile Include="UI\UIAutomation.cs" />
     <Compile Include="UI\Window.cs" />
     <Compile Include="UI\WindowFactory.cs" />

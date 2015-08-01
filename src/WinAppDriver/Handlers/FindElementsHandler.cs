@@ -12,9 +12,15 @@
     {
         private IUIAutomation uiAutomation;
 
-        public FindElementsHandler(IUIAutomation uiAutomation)
+        private IOverlay overlay;
+
+        private IElementFactory elementFactory;
+
+        public FindElementsHandler(IUIAutomation uiAutomation, IOverlay overlay, IElementFactory elementFactory)
         {
             this.uiAutomation = uiAutomation;
+            this.overlay = overlay;
+            this.elementFactory = elementFactory;
         }
 
         public object Handle(Dictionary<string, string> urlParams, string body, ref ISession session)
@@ -66,12 +72,19 @@
                     new PropertyCondition(property, locator));
             }
 
+            var highlighted = new List<IElement>();
             var list = new List<Dictionary<string, string>>();
             foreach (AutomationElement element in elements)
             {
+                highlighted.Add(this.elementFactory.GetElement(element));
                 int id = session.AddUIElement(element);
                 list.Add(new Dictionary<string, string> { { "ELEMENT", id.ToString() } });
             }
+
+            this.overlay.Clear();
+            this.overlay.ContextElement = this.elementFactory.GetElement(start);
+            this.overlay.HighlightedElements = highlighted;
+            this.overlay.Show();
 
             return list;
         }

@@ -13,13 +13,14 @@ namespace WinAppDriver
         private static void Main(string[] args)
         {
             var sessionMgr = new SessionManager();
-            var requestMgr = InitRequestManager(sessionMgr);
+            IOverlay overlay = new Overlay();
+            var requestMgr = InitRequestManager(sessionMgr, overlay);
 
-            var driver = new Server(requestMgr);
-            driver.Start();
+            overlay.Open();
+            new Server(requestMgr).Start();
         }
 
-        private static RequestManager InitRequestManager(SessionManager sessionManager)
+        private static RequestManager InitRequestManager(SessionManager sessionManager, IOverlay overlay)
         {
             var context = new DriverContext();
             var manager = new RequestManager(sessionManager);
@@ -46,8 +47,8 @@ namespace WinAppDriver
             manager.AddHandler(new CloseWindowHandler(windowUtils));
             manager.AddHandler(new DeleteSessionHandler(sessionManager));
             manager.AddHandler(new DoubleClickHandler(mouse));
-            manager.AddHandler(new FindElementHandler(uiAutomation));
-            manager.AddHandler(new FindElementsHandler(uiAutomation));
+            manager.AddHandler(new FindElementHandler(uiAutomation, overlay, elementFactory));
+            manager.AddHandler(new FindElementsHandler(uiAutomation, overlay, elementFactory));
             manager.AddHandler(new GetElementAttributeHandler(elementFactory));
             manager.AddHandler(new GetElementLocationHandler(elementFactory));
             manager.AddHandler(new GetElementLocationInViewHandler(elementFactory));

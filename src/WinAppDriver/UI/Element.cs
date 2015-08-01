@@ -1,6 +1,7 @@
 ﻿namespace WinAppDriver.UI
 {
     using System;
+    using System.Drawing;
     using System.Windows;
     using System.Windows.Automation;
 
@@ -143,6 +144,15 @@
             {
                 object pattern;
                 return this.element.TryGetCurrentPattern(ScrollPattern.Pattern, out pattern);
+            }
+        }
+
+        public Rectangle Bounds
+        {
+            get
+            {
+                var rect = this.Rect;
+                return new Rectangle((int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height);
             }
         }
 

@@ -6,6 +6,8 @@ namespace WinAppDriver
 
     internal class Session : ISession
     {
+        private static ILogger logger = Logger.GetLogger("WinAppDriver");
+
         private List<AutomationElement> uiElements;
 
         public Session(string id, IApplication application, Capabilities capabilities)
@@ -29,7 +31,7 @@ namespace WinAppDriver
         {
             int id = this.uiElements.Count;
             this.uiElements.Add(element);
-            Console.WriteLine("UI element ({0})) added.", id);
+            logger.Debug("UI element ({0})) added.", id);
             return id;
         }
 

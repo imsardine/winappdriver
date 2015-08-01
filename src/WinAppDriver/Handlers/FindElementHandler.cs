@@ -11,9 +11,15 @@ namespace WinAppDriver.Handlers
     {
         private IUIAutomation uiAutomation;
 
-        public FindElementHandler(IUIAutomation uiAutomation)
+        private IOverlay overlay;
+
+        private IElementFactory elementFactory;
+
+        public FindElementHandler(IUIAutomation uiAutomation, IOverlay overlay, IElementFactory elementFactory)
         {
             this.uiAutomation = uiAutomation;
+            this.overlay = overlay;
+            this.elementFactory = elementFactory;
         }
 
         public object Handle(Dictionary<string, string> urlParams, string body, ref ISession session)
@@ -65,6 +71,11 @@ namespace WinAppDriver.Handlers
                     TreeScope.Descendants,
                     new PropertyCondition(property, locator));
             }
+
+            this.overlay.Clear();
+            this.overlay.ContextElement = this.elementFactory.GetElement(start);
+            this.overlay.HighlightedElement = (element == null) ? null : this.elementFactory.GetElement(element);
+            this.overlay.Show();
 
             if (element == null)
             {
