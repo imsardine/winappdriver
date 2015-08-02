@@ -53,6 +53,14 @@ namespace WinAppDriver.UI
             }
         }
 
+        public IElement FocusedElement
+        {
+            get
+            {
+                return this.elementFactory.GetElement(AutomationElement.FocusedElement);
+            }
+        }
+
         public void SetElementFactory(IElementFactory elementFactory)
         {
             this.elementFactory = elementFactory;

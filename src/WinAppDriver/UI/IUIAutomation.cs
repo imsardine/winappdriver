@@ -6,6 +6,8 @@ namespace WinAppDriver.UI
 
     internal interface IUIAutomation
     {
+        IElement FocusedElement { get; }
+
         AutomationElement GetFocusedWindowOrRoot();
 
         ISet<AutomationElement> GetTopLevelWindows();

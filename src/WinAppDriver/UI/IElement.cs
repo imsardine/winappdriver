@@ -49,6 +49,8 @@
 
         int Height { get; }
 
+        bool Equals(object obj);
+
         void SetFocus();
 
         void ScrollIntoView();

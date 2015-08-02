@@ -99,6 +99,8 @@
     <Compile Include="AppInstaller.cs" />
     <Compile Include="Capabilities.cs" />
     <Compile Include="ChangeBuildStrategy.cs" />
+    <Compile Include="Handlers\ActiveElementHandler.cs" />
+    <Compile Include="Handlers\SameElementHandler.cs" />
     <Compile Include="Handlers\ElementSearcher.cs" />
     <Compile Include="Handlers\IElementSearcher.cs" />
     <Compile Include="Handlers\ImplicitWaitHandler.cs" />

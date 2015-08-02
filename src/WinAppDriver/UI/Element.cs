@@ -218,6 +218,23 @@
             }
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj is IElement)
+            {
+                return this.element.Equals(((IElement)obj).AutomationElement);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return this.element.GetHashCode();
+        }
+
         public void SetFocus()
         {
             if (this.Focusable && !this.Focused)
@@ -346,7 +363,7 @@
                 logger.Debug(
                     "Done? {0}; element [{1},{2}][{3},{4}] in the scrollable container [{5},{6}][{7},{8}]",
                     done, this.X, this.Y, this.Width, this.Height, container.X, container.Y, container.Width, container.Height);
-            } 
+            }
             while (!done);
         }
     }

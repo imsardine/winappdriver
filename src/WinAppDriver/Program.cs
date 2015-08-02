@@ -41,6 +41,7 @@ namespace WinAppDriver
             var windowFactory = new WindowFactory(uiAutomation, keyboard, winUserWrap);
             var windowUtils = new WindowUtils(uiAutomation, windowFactory);
 
+            manager.AddHandler(new ActiveElementHandler(uiAutomation));
             manager.AddHandler(new ButtonUpHandler(mouse));
             manager.AddHandler(new ButtonDownHandler(mouse));
             manager.AddHandler(new ClearTextHandler(elementFactory));
@@ -69,6 +70,7 @@ namespace WinAppDriver
             manager.AddHandler(new IsElementSelectedHandler());
             manager.AddHandler(new MoveToHandler(mouse, elementFactory));
             manager.AddHandler(new NewSessionHandler(context, sessionManager, uacHandler, utils));
+            manager.AddHandler(new SameElementHandler());
             manager.AddHandler(new ScreenshotHandler());
             manager.AddHandler(new SendKeysHandler(wireKeyboard));
             manager.AddHandler(new SetElementValueHandler(wireKeyboard, elementFactory));
