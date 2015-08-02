@@ -6,11 +6,16 @@
 
     internal class StoreAppInstaller : AppInstaller<IStoreApp>
     {
+        private static ILogger logger = Logger.GetLogger("WinAppDriver");
+
+        private IStoreApp app;
+
         private IUtils utils;
 
         public StoreAppInstaller(IDriverContext context, IStoreApp app, IUtils utils)
             : base(context, app, utils)
         {
+            this.app = app;
             this.utils = utils;
         }
 

@@ -5,11 +5,16 @@
 
     internal class DesktopAppInstaller : AppInstaller<IDesktopApp>
     {
+        private static ILogger logger = Logger.GetLogger("WinAppDriver");
+
+        private IDesktopApp app;
+
         private IUACPomptHandler uacHandler;
 
         public DesktopAppInstaller(IDriverContext context, IDesktopApp app, IUACPomptHandler uacHandler, IUtils utils)
             : base(context, app, utils)
         {
+            this.app = app;
             this.uacHandler = uacHandler;
         }
 

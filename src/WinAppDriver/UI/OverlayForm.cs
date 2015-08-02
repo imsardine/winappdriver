@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Drawing;
     using System.Drawing.Drawing2D;
-    using System.Threading;
     using System.Windows.Forms;
 
     internal class OverlayForm : Form
@@ -26,13 +25,8 @@
             this.BackColor = Color.Gray;
             this.TransparencyKey = Color.Gray;
 
-            this.Shown += OnShown;
+            this.Shown += this.OnShown;
             this.Paint += this.OnPaint;
-        }
-
-        void OnShown(object sender, EventArgs e)
-        {
-            this.Hide();
         }
 
         public IElement ContextElement { get; set; }
@@ -44,6 +38,11 @@
         protected override bool ShowWithoutActivation
         {
             get { return true; }
+        }
+
+        private void OnShown(object sender, EventArgs e)
+        {
+            this.Hide();
         }
 
         private void OnPaint(object sender, PaintEventArgs e)

@@ -7,11 +7,11 @@
 
     internal abstract class AppInstaller<T> : IPackageInstaller where T : IApplication
     {
-        protected internal static ILogger logger = Logger.GetLogger("WinAppDriver");
+        private static ILogger logger = Logger.GetLogger("WinAppDriver");
+
+        private T app;
 
         private IDriverContext context;
-
-        protected internal T app;
 
         private IUtils utils;
 
@@ -81,6 +81,15 @@
 
         protected internal abstract void InstallImpl(string package, string checksum);
 
+        protected internal void UpdateCurrent(string checksum)
+        {
+            string path = this.CurrentFile;
+            checksum = checksum.ToLower();
+            logger.Debug("Update current build (checksum); app = [{0}], checksum = [{1}]", this.app.DriverAppID, checksum);
+
+            File.WriteAllText(path, checksum);
+        }
+
         private bool TryReadCurrent(out string checksum)
         {
             string path = this.CurrentFile;
@@ -96,15 +105,6 @@
             checksum = File.ReadAllText(path);
             logger.Debug("Current build (checksum): [{0}]", checksum);
             return true;
-        }
-
-        protected internal void UpdateCurrent(string checksum)
-        {
-            string path = this.CurrentFile;
-            checksum = checksum.ToLower();
-            logger.Debug("Update current build (checksum); app = [{0}], checksum = [{1}]", this.app.DriverAppID, checksum);
-
-            File.WriteAllText(path, checksum);
         }
 
         private string PrepareInstallationPackage(out string checksum)
