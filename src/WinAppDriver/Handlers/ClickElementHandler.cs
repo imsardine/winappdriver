@@ -1,6 +1,7 @@
 namespace WinAppDriver.Handlers
 {
     using System.Collections.Generic;
+    using System.Drawing;
     using System.Windows.Input;
     using WinAppDriver.UI;
 
@@ -11,11 +12,14 @@ namespace WinAppDriver.Handlers
 
         private IMouse mouse;
 
+        private IOverlay overlay;
+
         private IElementFactory elementFactory;
 
-        public ClickElementHandler(IMouse mouse, IElementFactory elementFactory)
+        public ClickElementHandler(IMouse mouse, IOverlay overlay, IElementFactory elementFactory)
         {
             this.mouse = mouse;
+            this.overlay = overlay;
             this.elementFactory = elementFactory;
         }
 
@@ -26,6 +30,10 @@ namespace WinAppDriver.Handlers
 
             int x = element.X + (element.Width / 2);
             int y = element.Y + (element.Height / 2);
+
+            this.overlay.Clear();
+            this.overlay.Target = new Point(x, y);
+            this.overlay.Show();
 
             this.mouse.MoveTo(x, y);
             this.mouse.Click(MouseButton.Left);

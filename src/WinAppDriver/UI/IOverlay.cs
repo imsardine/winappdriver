@@ -11,7 +11,7 @@
 
         IList<IElement> HighlightedElements { set; }
 
-        Point? PointTo { set; }
+        Point? Target { set; }
 
         void Open();
 

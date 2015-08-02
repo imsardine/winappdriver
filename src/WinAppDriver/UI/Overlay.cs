@@ -47,11 +47,11 @@
             }
         }
 
-        public Point? PointTo
+        public Point? Target
         {
             set
             {
-                this.form.PointTo = value;
+                this.form.Target = value;
             }
         }
 
@@ -65,8 +65,9 @@
 
         public void Clear()
         {
+            this.ContextElement = null;
             this.HighlightedElement = null;
-            this.PointTo = null;
+            this.Target = null;
         }
 
         public void Show()
@@ -77,7 +78,7 @@
                 this.form.Show();
             }));
 
-            Thread.Sleep(3000);
+            Thread.Sleep(1500);
 
             this.form.Invoke(new Action(delegate()
             {
