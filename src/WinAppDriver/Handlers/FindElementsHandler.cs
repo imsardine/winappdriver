@@ -2,6 +2,7 @@
 {
     using System.Collections;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Windows.Automation;
     using Newtonsoft.Json;
     using WinAppDriver.UI;
@@ -16,83 +17,64 @@
 
         private IElementFactory elementFactory;
 
-        public FindElementsHandler(IUIAutomation uiAutomation, IOverlay overlay, IElementFactory elementFactory)
+        private IElementSearcher searcher;
+
+        public FindElementsHandler(
+            IUIAutomation uiAutomation, IOverlay overlay, IElementFactory elementFactory,
+            IElementSearcher searcher)
         {
             this.uiAutomation = uiAutomation;
             this.overlay = overlay;
             this.elementFactory = elementFactory;
+            this.searcher = searcher;
         }
 
         public object Handle(Dictionary<string, string> urlParams, string body, ref ISession session)
         {
-            FindElementRequest request = JsonConvert.DeserializeObject<FindElementRequest>(body);
+            var request = JsonConvert.DeserializeObject<FindElementsRequest>(body);
 
-            AutomationElement start = null;
+            IElement context = null;
             if (urlParams.ContainsKey("id"))
             {
-                start = session.GetUIElement(int.Parse(urlParams["id"]));
+                context = this.elementFactory.GetElement(
+                    session.GetUIElement(int.Parse(urlParams["id"])));
             }
             else
             {
-                start = session.FocusOnCurrentWindow ? 
+                context = this.elementFactory.GetElement(
+                    session.FocusOnCurrentWindow ?
                     this.uiAutomation.GetFocusedWindowOrRoot() :
-                    AutomationElement.RootElement;
+                    AutomationElement.RootElement);
             }
 
-            IEnumerable elements = null;
-            if (request.Strategy == "xpath")
+            IList<IElement> elements = null;
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            do
             {
-                elements = this.uiAutomation.FindAllByXPath(start, request.Locator);
+                elements = this.searcher.FindAll(context, request.Strategy, request.Locator);
             }
-            else
-            {
-                var property = AutomationElement.AutomationIdProperty;
-                object locator = request.Locator;
-
-                if (request.Strategy == "name")
-                {
-                    property = AutomationElement.NameProperty;
-                }
-                else if (request.Strategy == "class name")
-                {
-                    property = AutomationElement.ClassNameProperty;
-                }
-                else if (request.Strategy == "id")
-                {
-                    property = AutomationElement.AutomationIdProperty;
-                }
-                else if (request.Strategy == "tag name")
-                {
-                    property = AutomationElement.ControlTypeProperty;
-                    locator = this.uiAutomation.FromTagName(request.Locator);
-                }
-
-                elements = start.FindAll(
-                    TreeScope.Descendants,
-                    new PropertyCondition(property, locator));
-            }
-
-            var highlighted = new List<IElement>();
-            var list = new List<Dictionary<string, string>>();
-            foreach (AutomationElement element in elements)
-            {
-                highlighted.Add(this.elementFactory.GetElement(element));
-                int id = session.AddUIElement(element);
-                list.Add(new Dictionary<string, string> { { "ELEMENT", id.ToString() } });
-            }
+            while (elements.Count == 0 && stopwatch.ElapsedMilliseconds < session.ImplicitWaitMillis);
 
             this.overlay.Clear();
-            this.overlay.ContextElement = this.elementFactory.GetElement(start);
-            this.overlay.HighlightedElements = highlighted;
+            this.overlay.ContextElement = context;
+            this.overlay.HighlightedElements = elements;
             this.overlay.Show();
+
+            var list = new List<Dictionary<string, string>>();
+            foreach (IElement element in elements)
+            {
+                int id = session.AddUIElement(element.AutomationElement);
+                list.Add(new Dictionary<string, string> { { "ELEMENT", id.ToString() } });
+            }
 
             return list;
         }
 
-        private class FindElementRequest
+        private class FindElementsRequest
         {
             [JsonProperty("using")]
-            internal string Strategy { get; set; }
+            internal LocatorStrategy Strategy { get; set; }
 
             [JsonProperty("value")]
             internal string Locator { get; set; }

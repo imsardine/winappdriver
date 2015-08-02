@@ -16,6 +16,7 @@ namespace WinAppDriver
             this.Application = application;
             this.Capabilities = capabilities;
             this.FocusOnCurrentWindow = true;
+            this.ImplicitWaitMillis = 0;
             this.uiElements = new List<AutomationElement>();
         }
 
@@ -26,6 +27,8 @@ namespace WinAppDriver
         public Capabilities Capabilities { get; private set; }
 
         public bool FocusOnCurrentWindow { get; set; }
+
+        public int ImplicitWaitMillis { get; set; }
 
         public int AddUIElement(AutomationElement element)
         {

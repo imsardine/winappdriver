@@ -1,6 +1,7 @@
 namespace WinAppDriver.Handlers
 {
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Windows.Automation;
     using Newtonsoft.Json;
     using WinAppDriver.UI;
@@ -15,81 +16,63 @@ namespace WinAppDriver.Handlers
 
         private IElementFactory elementFactory;
 
-        public FindElementHandler(IUIAutomation uiAutomation, IOverlay overlay, IElementFactory elementFactory)
+        private IElementSearcher searcher;
+
+        public FindElementHandler(
+            IUIAutomation uiAutomation, IOverlay overlay, IElementFactory elementFactory,
+            IElementSearcher searcher)
         {
             this.uiAutomation = uiAutomation;
             this.overlay = overlay;
             this.elementFactory = elementFactory;
+            this.searcher = searcher;
         }
 
         public object Handle(Dictionary<string, string> urlParams, string body, ref ISession session)
         {
             FindElementRequest request = JsonConvert.DeserializeObject<FindElementRequest>(body);
 
-            AutomationElement start = null;
+            IElement context = null;
             if (urlParams.ContainsKey("id"))
             {
-                start = session.GetUIElement(int.Parse(urlParams["id"]));
+                context = this.elementFactory.GetElement(
+                    session.GetUIElement(int.Parse(urlParams["id"])));
             }
             else
             {
-                start = session.FocusOnCurrentWindow ?
+                context = this.elementFactory.GetElement(
+                    session.FocusOnCurrentWindow ?
                     this.uiAutomation.GetFocusedWindowOrRoot() :
-                    AutomationElement.RootElement;
+                    AutomationElement.RootElement);
             }
 
-            AutomationElement element = null;
-            if (request.Strategy == "xpath")
+            IElement element = null;
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            do
             {
-                element = this.uiAutomation.FindFirstByXPath(start, request.Locator);
-            }
-            else
-            {
-                // TODO throw exceptions to indicate other strategies are not supported.
-                var property = AutomationElement.AutomationIdProperty;
-                object locator = request.Locator;
-
-                if (request.Strategy == "name")
-                {
-                    property = AutomationElement.NameProperty;
-                }
-                else if (request.Strategy == "class name")
-                {
-                    property = AutomationElement.ClassNameProperty;
-                }
-                else if (request.Strategy == "id")
-                {
-                    property = AutomationElement.AutomationIdProperty;
-                }
-                else if (request.Strategy == "tag name")
-                {
-                    property = AutomationElement.ControlTypeProperty;
-                    locator = this.uiAutomation.FromTagName(request.Locator);
-                }
-
-                element = start.FindFirst(
-                    TreeScope.Descendants,
-                    new PropertyCondition(property, locator));
-            }
+                element = this.searcher.FindFirst(context, request.Strategy, request.Locator);
+            } 
+            while (element == null && stopwatch.ElapsedMilliseconds < session.ImplicitWaitMillis);
 
             this.overlay.Clear();
-            this.overlay.ContextElement = this.elementFactory.GetElement(start);
-            this.overlay.HighlightedElement = (element == null) ? null : this.elementFactory.GetElement(element);
+            this.overlay.ContextElement = context;
+            this.overlay.HighlightedElement = element;
             this.overlay.Show();
 
             if (element == null)
             {
-                throw new NoSuchElementException(request.Strategy, request.Locator);
+                throw new NoSuchElementException(request.Strategy.ToString(), request.Locator);
             }
 
-            int id = session.AddUIElement(element);
+            int id = session.AddUIElement(element.AutomationElement);
             return new Dictionary<string, string> { { "ELEMENT", id.ToString() } };
         }
 
         private class FindElementRequest
         {
             [JsonProperty("using")]
-            internal string Strategy { get; set; }
+            internal LocatorStrategy Strategy { get; set; }
 
             [JsonProperty("value")]
             internal string Locator { get; set; }

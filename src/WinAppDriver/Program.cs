@@ -35,6 +35,7 @@ namespace WinAppDriver
             IElementFactory elementFactory = new ElementFactory();
             ((UIAutomation)uiAutomation).SetElementFactory(elementFactory);
             ((ElementFactory)elementFactory).SetUIAutomation(uiAutomation);
+            IElementSearcher elementSearcher = new ElementSearcher(uiAutomation, elementFactory);
 
             var uacHandler = new UACPromptHandler(uiAutomation, keyboard);
             var windowFactory = new WindowFactory(uiAutomation, keyboard, winUserWrap);
@@ -48,8 +49,8 @@ namespace WinAppDriver
             manager.AddHandler(new CloseWindowHandler(windowUtils));
             manager.AddHandler(new DeleteSessionHandler(sessionManager));
             manager.AddHandler(new DoubleClickHandler(mouse));
-            manager.AddHandler(new FindElementHandler(uiAutomation, overlay, elementFactory));
-            manager.AddHandler(new FindElementsHandler(uiAutomation, overlay, elementFactory));
+            manager.AddHandler(new FindElementHandler(uiAutomation, overlay, elementFactory, elementSearcher));
+            manager.AddHandler(new FindElementsHandler(uiAutomation, overlay, elementFactory, elementSearcher));
             manager.AddHandler(new GetElementAttributeHandler(elementFactory));
             manager.AddHandler(new GetElementLocationHandler(elementFactory));
             manager.AddHandler(new GetElementLocationInViewHandler(elementFactory));
@@ -62,6 +63,7 @@ namespace WinAppDriver
             manager.AddHandler(new GetWindowLocationHandler(windowFactory, windowUtils));
             manager.AddHandler(new GetWindowsHandler(windowUtils));
             manager.AddHandler(new GetWindowSizeHandler(windowFactory, windowUtils));
+            manager.AddHandler(new ImplicitWaitHandler());
             manager.AddHandler(new IsElementDisplayedHandler());
             manager.AddHandler(new IsElementEnabledHandler());
             manager.AddHandler(new IsElementSelectedHandler());

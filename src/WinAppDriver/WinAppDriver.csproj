@@ -99,6 +99,9 @@
     <Compile Include="AppInstaller.cs" />
     <Compile Include="Capabilities.cs" />
     <Compile Include="ChangeBuildStrategy.cs" />
+    <Compile Include="Handlers\ElementSearcher.cs" />
+    <Compile Include="Handlers\IElementSearcher.cs" />
+    <Compile Include="Handlers\ImplicitWaitHandler.cs" />
     <Compile Include="Handlers\DoubleClickHandler.cs" />
     <Compile Include="Handlers\ButtonUpHandler.cs" />
     <Compile Include="Handlers\ClickHandler.cs" />
@@ -139,6 +142,7 @@
     <Compile Include="IHandler.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="ISession.cs" />
+    <Compile Include="LocatorStrategy.cs" />
     <Compile Include="UI\Element.cs" />
     <Compile Include="UI\ElementFactory.cs" />
     <Compile Include="UI\IElement.cs" />
