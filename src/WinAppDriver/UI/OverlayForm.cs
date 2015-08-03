@@ -48,7 +48,7 @@
         private void OnPaint(object sender, PaintEventArgs e)
         {
             var g = e.Graphics;
-            g.SmoothingMode = SmoothingMode.AntiAlias;
+            // g.SmoothingMode = SmoothingMode.AntiAlias;
 
             var contextPen = new Pen(Color.Green, 5);
             contextPen.DashStyle = DashStyle.Dash;
@@ -76,7 +76,7 @@
             if (this.Target.HasValue)
             {
                 Point target = this.Target.Value;
-                this.DrawTarget(g, target.X, target.Y, 20);
+                this.DrawTarget(g, target.X, target.Y, 10);
             }
 
             contextPen.Dispose();
@@ -85,20 +85,16 @@
 
         private void DrawTarget(Graphics g, int x, int y, int radius)
         {
-            var pen = new Pen(Color.FromArgb(87, 85, 86), 3);
+            var pen = new Pen(Color.Red, 1);
+            int offset = radius / 2;
             g.DrawEllipse(pen, x - radius, y - radius, radius * 2, radius * 2);
-            g.DrawEllipse(pen, x - radius + 10, y - radius + 10, (radius - 10) * 2, (radius - 10) * 2);
+            g.DrawEllipse(pen, x - radius + offset, y - radius + offset, (radius - offset) * 2, (radius - offset) * 2);
 
-            pen.Width = 2;
             pen.StartCap = System.Drawing.Drawing2D.LineCap.Round;
-            g.DrawLine(pen, x, y - radius - 20, x, y - radius + 10);
-            g.DrawLine(pen, x, y + radius + 20, x, y + radius - 10);
-            g.DrawLine(pen, x - radius - 20, y, x - radius + 10, y);
-            g.DrawLine(pen, x + radius + 20, y, x + radius - 10, y);
-
-            pen.Width = 1;
-            pen.Color = Color.FromArgb(235, 80, 49);
-            g.DrawEllipse(pen, x - 3, y - 3, 6, 6);
+            g.DrawLine(pen, x, y - radius - offset, x, y - radius + offset);
+            g.DrawLine(pen, x, y + radius + offset, x, y + radius - offset);
+            g.DrawLine(pen, x - radius - offset, y, x - radius + offset, y);
+            g.DrawLine(pen, x + radius + offset, y, x + radius - offset, y);
 
             pen.Dispose();
         }
