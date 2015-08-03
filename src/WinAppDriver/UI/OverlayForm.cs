@@ -17,7 +17,6 @@
             this.DoubleBuffered = true;
 
             this.Bounds = Screen.PrimaryScreen.Bounds;
-            this.TopMost = true;
             this.FormBorderStyle = FormBorderStyle.None;
             this.ShowInTaskbar = false;
 
@@ -38,6 +37,17 @@
         protected override bool ShowWithoutActivation
         {
             get { return true; }
+        }
+
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                // http://stackoverflow.com/questions/156046/show-a-form-without-stealing-focus/
+                CreateParams createParams = base.CreateParams;
+                createParams.ExStyle |= 0x00000008; // WS_EX_TOPMOST
+                return createParams;
+            }
         }
 
         private void OnShown(object sender, EventArgs e)
