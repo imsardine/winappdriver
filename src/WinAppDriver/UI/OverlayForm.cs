@@ -94,7 +94,7 @@
 
         private void DrawTarget(Graphics g, int x, int y, int radius)
         {
-            var pen = new Pen(Color.Red, 1);
+            var pen = new Pen(Color.Red, 2);
             int segment = radius * 2 / 3;
 
             int vx = x - radius; // top-left vertex
@@ -117,11 +117,11 @@
             g.DrawLine(pen, vx, vy, vx, vy - segment);
             g.DrawLine(pen, vx, vy, vx - segment, vy);
 
-            var brush = new SolidBrush(Color.Red);
-            g.FillRectangle(brush, x, y, 1, 1); // single pixel
+            pen.Width = 1;
+            g.DrawLine(pen, x - (segment / 2), y, x + (segment / 2), y);
+            g.DrawLine(pen, x, y - (segment / 2), x, y + (segment / 2));
 
             pen.Dispose();
-            brush.Dispose();
         }
     }
 }
