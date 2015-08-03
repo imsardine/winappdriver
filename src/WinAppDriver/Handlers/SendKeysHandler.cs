@@ -21,7 +21,7 @@ namespace WinAppDriver.Handlers
             var keys = string.Join(string.Empty, request.KeySequence);
             logger.Debug("Keys: {0}", keys);
 
-            this.keyboard.SendKeys(keys.ToCharArray());
+            this.keyboard.SendKeys(keys.ToCharArray(), session.Capabilities.KeystrokeDelay);
 
             return null;
         }

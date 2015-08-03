@@ -42,6 +42,10 @@ namespace WinAppDriver
         [JsonProperty("closeCommand")]
         public string CloseCommand { get; set; }
 
+        [DefaultValue(50)]
+        [JsonProperty("keystrokeDelay")]
+        public int KeystrokeDelay { get; set; }
+
         [DefaultValue(ChangeBuildStrategy.Reinstall)]
         [JsonProperty("changeBuildStrategy")]
         public ChangeBuildStrategy ChangeBuildStrategy { get; set; }

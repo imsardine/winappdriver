@@ -25,7 +25,7 @@ namespace WinAppDriver.Handlers
             var text = string.Join(string.Empty, request.KeySequence);
 
             element.SetFocus();
-            this.keyboard.Type(text);
+            this.keyboard.Type(text, session.Capabilities.KeystrokeDelay);
 
             return null;
         }

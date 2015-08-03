@@ -2,8 +2,8 @@
 {
     internal interface IWireKeyboard
     {
-        void SendKeys(char[] keys);
+        void SendKeys(char[] keys, int delay);
 
-        void Type(string text);
+        void Type(string text, int delay);
     }
 }

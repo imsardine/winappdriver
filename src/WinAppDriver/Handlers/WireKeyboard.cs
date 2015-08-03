@@ -1,6 +1,7 @@
 ﻿namespace WinAppDriver.Handlers
 {
     using System.Collections.Generic;
+    using System.Threading;
     using System.Windows.Input;
     using WinAppDriver.UI;
 
@@ -74,18 +75,18 @@
             this.keyboard = keyboard;
         }
 
-        public void SendKeys(char[] keys)
+        public void SendKeys(char[] keys, int delay)
         {
-            this.SendKeysImpl(keys);
+            this.SendKeysImpl(keys, delay);
         }
 
-        public void Type(string text)
+        public void Type(string text, int delay)
         {
-            this.SendKeysImpl(text.ToCharArray());
+            this.SendKeysImpl(text.ToCharArray(), delay);
             this.keyboard.ReleaseAllModifierKeys();
         }
 
-        private void SendKeysImpl(char[] keys)
+        private void SendKeysImpl(char[] keys, int delay)
         {
             foreach (var keyChar in keys)
             {
@@ -107,6 +108,11 @@
                 {
                     logger.Debug("General key/char: {0}", keyChar);
                     this.keyboard.Type(keyChar);
+
+                    if (delay != 0)
+                    {
+                        Thread.Sleep(delay);
+                    } 
                 }
             }
         }
