@@ -48,7 +48,6 @@
         private void OnPaint(object sender, PaintEventArgs e)
         {
             var g = e.Graphics;
-            // g.SmoothingMode = SmoothingMode.AntiAlias;
 
             var contextPen = new Pen(Color.Green, 5);
             contextPen.DashStyle = DashStyle.Dash;
@@ -86,17 +85,33 @@
         private void DrawTarget(Graphics g, int x, int y, int radius)
         {
             var pen = new Pen(Color.Red, 1);
-            int offset = radius / 2;
-            g.DrawEllipse(pen, x - radius, y - radius, radius * 2, radius * 2);
-            g.DrawEllipse(pen, x - radius + offset, y - radius + offset, (radius - offset) * 2, (radius - offset) * 2);
+            int segment = radius * 2 / 3;
 
-            pen.StartCap = System.Drawing.Drawing2D.LineCap.Round;
-            g.DrawLine(pen, x, y - radius - offset, x, y - radius + offset);
-            g.DrawLine(pen, x, y + radius + offset, x, y + radius - offset);
-            g.DrawLine(pen, x - radius - offset, y, x - radius + offset, y);
-            g.DrawLine(pen, x + radius + offset, y, x + radius - offset, y);
+            int vx = x - radius; // top-left vertex
+            int vy = y - radius;
+            g.DrawLine(pen, vx, vy, vx, vy + segment);
+            g.DrawLine(pen, vx, vy, vx + segment, vy);
+
+            vx = x + radius; // top-right
+            vy = y - radius;
+            g.DrawLine(pen, vx, vy, vx, vy + segment);
+            g.DrawLine(pen, vx, vy, vx - segment, vy);
+
+            vx = x - radius; // bottom-left
+            vy = y + radius;
+            g.DrawLine(pen, vx, vy, vx, vy - segment);
+            g.DrawLine(pen, vx, vy, vx + segment, vy);
+
+            vx = x + radius; // bottom-right
+            vy = y + radius;
+            g.DrawLine(pen, vx, vy, vx, vy - segment);
+            g.DrawLine(pen, vx, vy, vx - segment, vy);
+
+            var brush = new SolidBrush(Color.Red);
+            g.FillRectangle(brush, x, y, 1, 1); // single pixel
 
             pen.Dispose();
+            brush.Dispose();
         }
     }
 }
