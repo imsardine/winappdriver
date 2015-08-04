@@ -28,8 +28,13 @@ namespace WinAppDriver.Handlers
             var id = int.Parse(urlParams["id"]);
             var element = this.elementFactory.GetElement(session.GetUIElement(id));
 
-            int x = element.X + (element.Width / 2);
-            int y = element.Y + (element.Height / 2);
+            if (!element.Visible)
+            {
+                throw new FailedCommandException("The element is not visible.", 11); // ElementNotVisible
+            }
+
+            int x = element.X.Value + (element.Width.Value / 2);
+            int y = element.Y.Value + (element.Height.Value / 2);
 
             this.overlay.Clear();
             this.overlay.Target = new Point(x, y);

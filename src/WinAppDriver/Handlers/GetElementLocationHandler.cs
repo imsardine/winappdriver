@@ -18,7 +18,7 @@
             var id = int.Parse(urlParams["id"]);
             var element = this.elementFactory.GetElement(session.GetUIElement(id));
 
-            return new Dictionary<string, int>
+            return new Dictionary<string, int?>
             {
                 { "x", element.X },
                 { "y", element.Y }

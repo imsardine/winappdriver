@@ -63,9 +63,10 @@
             contextPen.DashStyle = DashStyle.Dash;
             var elementPen = new Pen(Color.Red, 2);
 
-            if (this.ContextElement != null)
+            var context = this.ContextElement;
+            if (context != null && context.Bounds.HasValue)
             {
-                g.DrawRectangle(contextPen, this.ContextElement.Bounds);
+                g.DrawRectangle(contextPen, context.Bounds.Value);
             }
 
             bool numbered = this.HighlightedElements.Count > 1;
@@ -73,12 +74,16 @@
             {
                 var element = this.HighlightedElements[i];
                 var bounds = element.Bounds;
+                if (!bounds.HasValue)
+                {
+                    continue;
+                }
 
                 elementPen.DashStyle = element.Visible ? DashStyle.Solid : DashStyle.Dash;
-                g.DrawRectangle(elementPen, element.Bounds);
+                g.DrawRectangle(elementPen, bounds.Value);
                 if (numbered)
                 {
-                    g.DrawString(i.ToString(), new Font("Arial", 13), new SolidBrush(Color.Red), new PointF(bounds.X, bounds.Y));
+                    g.DrawString(i.ToString(), new Font("Arial", 13), new SolidBrush(Color.Red), new PointF(bounds.Value.X, bounds.Value.Y));
                 }
             }
 

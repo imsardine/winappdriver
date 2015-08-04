@@ -39,15 +39,15 @@
 
         bool Scrollable { get; }
 
-        Rectangle Bounds { get; }
+        Rectangle? Bounds { get; }
 
-        int X { get; }
+        int? X { get; }
 
-        int Y { get; }
+        int? Y { get; }
 
-        int Width { get; }
+        int? Width { get; }
 
-        int Height { get; }
+        int? Height { get; }
 
         bool Equals(object obj);
 

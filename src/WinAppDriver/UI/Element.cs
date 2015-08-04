@@ -147,48 +147,56 @@
             }
         }
 
-        public Rectangle Bounds
+        public Rectangle? Bounds
         {
             get
             {
-                var rect = this.Rect;
-                return new Rectangle((int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height);
+                if (this.X.HasValue)
+                {
+                    // X is just a representative
+                    var rect = this.Rect;
+                    return new Rectangle((int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height);
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
-        public int X
+        public int? X
         {
             get
             {
                 double x = this.Rect.X;
-                return double.IsInfinity(x) ? int.MaxValue : (int)x;
+                return double.IsInfinity(x) ? (int?)null : (int)x;
             }
         }
 
-        public int Y
+        public int? Y
         {
             get
             {
                 double y = this.Rect.Y;
-                return double.IsInfinity(y) ? int.MaxValue : (int)y;
+                return double.IsInfinity(y) ? (int?)null : (int)y;
             }
         }
 
-        public int Width
+        public int? Width
         {
             get
             {
                 double width = this.Rect.Width;
-                return double.IsInfinity(width) ? -1 : (int)width;
+                return double.IsInfinity(width) ? (int?)null : (int)width;
             }
         }
 
-        public int Height
+        public int? Height
         {
             get
             {
                 double height = this.Rect.Height;
-                return double.IsInfinity(height) ? -1 : (int)height;
+                return double.IsInfinity(height) ? (int?)null : (int)height;
             }
         }
 
@@ -254,10 +262,10 @@
             var scrollbar = (ScrollPattern)container.AutomationElement.GetCurrentPattern(
                 ScrollPattern.Pattern);
 
-            if (this.Width == -1 || this.Height == -1)
+            if (!this.Bounds.HasValue)
             {
-                // invisible elements in some apps (XAML-based only?) may report
-                // double.Infinite as their x/y coordinates and dimensions.
+                // invisible elements may report double.Infinite as their x/y 
+                // coordinates and dimensions.
                 try
                 {
                     scrollbar.SetScrollPercent(0, ScrollPattern.NoScroll);
@@ -278,10 +286,17 @@
             }
 
             // to reveal top, bottom, left and right border respectively.
-            bool up = this.Y <= container.Y;
-            bool down = this.Y + this.Height >= container.Y + container.Height;
-            bool left = this.X <= container.X;
-            bool right = this.X + this.Width >= container.X + container.Width;
+            bool up = false;
+            bool down = true;
+            bool left = false;
+            bool right = true;
+            if (this.Bounds.HasValue)
+            {
+                up = this.Y <= container.Y;
+                down = this.Y + this.Height >= container.Y + container.Height;
+                left = this.X <= container.X;
+                right = this.X + this.Width >= container.X + container.Width;
+            }
 
             if (left ^ right)
             {
@@ -312,16 +327,16 @@
             this.rectCache = null;
         }
 
-        private void ScrollIntoView(IElement container, ScrollPattern scrollbar, bool horizontally, bool incrementally)
+        private void ScrollIntoView(IElement container, ScrollPattern scrollbar, bool horizontally, bool increasing)
         {
             // TODO To make scrolling more efficient, make big steps in the beginning.
-            var step = incrementally ? ScrollAmount.SmallIncrement : ScrollAmount.SmallDecrement;
+            var step = increasing ? ScrollAmount.SmallIncrement : ScrollAmount.SmallDecrement;
 
             bool done = false;
             do
             {
                 // dimensions of partially displayed elements only reveal visible parts. (XAML-based only)
-                int before = horizontally ? this.Width : this.Height;
+                int? before = horizontally ? this.Width : this.Height;
                 if (horizontally)
                 {
                     scrollbar.Scroll(step, ScrollAmount.NoAmount);
@@ -333,11 +348,11 @@
 
                 System.Threading.Thread.Sleep(20); // or the following readings could be stale
                 this.ResetCache();
-                int after = horizontally ? this.Width : this.Height;
+                int? after = horizontally ? this.Width : this.Height;
 
                 if (horizontally)
                 {
-                    if (incrementally)
+                    if (increasing)
                     {
                         done = this.X + this.Width <= container.X + container.Width;
                     }
@@ -348,7 +363,7 @@
                 }
                 else
                 {
-                    if (incrementally)
+                    if (increasing)
                     {
                         done = this.Y + this.Height <= container.Y + container.Height;
                     }

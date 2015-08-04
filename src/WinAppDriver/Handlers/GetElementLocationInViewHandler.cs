@@ -22,8 +22,8 @@
 
             return new Dictionary<string, int>
             {
-                { "x", element.X },
-                { "y", element.Y }
+                { "x", element.X.Value },
+                { "y", element.Y.Value }
             };
         }
     }

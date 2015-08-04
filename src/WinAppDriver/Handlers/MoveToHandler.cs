@@ -31,16 +31,21 @@
                 var id = int.Parse(request.ID);
                 var element = this.elementFactory.GetElement(session.GetUIElement(id));
 
+                if (!element.Bounds.HasValue)
+                {
+                    throw new FailedCommandException("Element's bounds are unknown.", 29); // InvalidElementCoordinates
+                }
+
                 int x = 0, y = 0;
                 if (request.XOffset == null)
                 {
-                    x = element.X + (element.Width / 2);
-                    y = element.Y + (element.Height / 2);
+                    x = element.X.Value + (element.Width.Value / 2);
+                    y = element.Y.Value + (element.Height.Value / 2);
                 }
                 else
                 {
-                    x = element.X + int.Parse(request.XOffset);
-                    y = element.Y + int.Parse(request.YOffset);
+                    x = element.X.Value + int.Parse(request.XOffset);
+                    y = element.Y.Value + int.Parse(request.YOffset);
                 }
 
                 this.overlay.Clear();
