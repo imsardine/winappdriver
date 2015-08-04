@@ -41,7 +41,7 @@ namespace WinAppDriver
             var windowFactory = new WindowFactory(uiAutomation, keyboard, winUserWrap);
             var windowUtils = new WindowUtils(uiAutomation, windowFactory);
 
-            manager.AddHandler(new ActiveElementHandler(uiAutomation));
+            manager.AddHandler(new ActiveElementHandler(uiAutomation, overlay));
             manager.AddHandler(new ButtonUpHandler(mouse));
             manager.AddHandler(new ButtonDownHandler(mouse));
             manager.AddHandler(new ClearTextHandler(elementFactory));

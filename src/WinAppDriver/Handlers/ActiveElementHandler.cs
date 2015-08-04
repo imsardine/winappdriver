@@ -10,14 +10,23 @@
 
         private IUIAutomation uiAutomation;
 
-        public ActiveElementHandler(IUIAutomation uiAutomation)
+        private IOverlay overlay;
+
+        public ActiveElementHandler(IUIAutomation uiAutomation, IOverlay overlay)
         {
             this.uiAutomation = uiAutomation;
+            this.overlay = overlay;
         }
 
         public object Handle(Dictionary<string, string> urlParams, string body, ref ISession session)
         {
-            int id = session.AddUIElement(this.uiAutomation.FocusedElement.AutomationElement);
+            var element = this.uiAutomation.FocusedElement;
+
+            this.overlay.Clear();
+            this.overlay.HighlightedElement = element;
+            this.overlay.Show();
+
+            int id = session.AddUIElement(element.AutomationElement);
             return new Dictionary<string, string> { { "ELEMENT", id.ToString() } };
         }
     }
