@@ -59,9 +59,9 @@
         {
             var g = e.Graphics;
 
-            var contextPen = new Pen(Color.Green, 5);
+            var contextPen = new Pen(Color.Green, 2);
             contextPen.DashStyle = DashStyle.Dash;
-            var elementPen = new Pen(Color.Red, 5);
+            var elementPen = new Pen(Color.Red, 2);
 
             if (this.ContextElement != null)
             {
