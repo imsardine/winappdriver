@@ -19,10 +19,10 @@
             this.winUser = winUser;
         }
 
-        private Point CursorPosition
+        public Point Position
         {
             get { return System.Windows.Forms.Cursor.Position; }
-            set { System.Windows.Forms.Cursor.Position = value; }
+            private set { System.Windows.Forms.Cursor.Position = value; }
         }
 
         public void Click(MouseButton button)
@@ -39,13 +39,13 @@
 
         public void Move(int x, int y)
         {
-            Point pos = this.CursorPosition;
+            Point pos = this.Position;
             this.MoveTo(pos.X + x, pos.Y + y);
         }
 
         public void MoveTo(int x2, int y2)
         {
-            Point pos = this.CursorPosition;
+            Point pos = this.Position;
             int x = pos.X;
             int y = pos.Y;
 
@@ -84,7 +84,7 @@
 
             foreach (var point in movements)
             {
-                this.CursorPosition = point;
+                this.Position = point;
                 Thread.Sleep(interval);
             }
         }

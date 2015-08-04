@@ -68,7 +68,7 @@ namespace WinAppDriver
             manager.AddHandler(new IsElementDisplayedHandler());
             manager.AddHandler(new IsElementEnabledHandler());
             manager.AddHandler(new IsElementSelectedHandler());
-            manager.AddHandler(new MoveToHandler(mouse, elementFactory));
+            manager.AddHandler(new MoveToHandler(mouse, overlay, elementFactory));
             manager.AddHandler(new NewSessionHandler(context, sessionManager, uacHandler, utils));
             manager.AddHandler(new SameElementHandler());
             manager.AddHandler(new ScreenshotHandler());

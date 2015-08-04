@@ -1,6 +1,7 @@
 ﻿namespace WinAppDriver.Handlers
 {
     using System.Collections.Generic;
+    using System.Drawing;
     using Newtonsoft.Json;
     using WinAppDriver.UI;
 
@@ -9,11 +10,14 @@
     {
         private IMouse mouse;
 
+        private IOverlay overlay;
+
         private IElementFactory elementFactory;
 
-        public MoveToHandler(IMouse mouse, IElementFactory elementFactory)
+        public MoveToHandler(IMouse mouse, IOverlay overlay, IElementFactory elementFactory)
         {
             this.mouse = mouse;
+            this.overlay = overlay;
             this.elementFactory = elementFactory;
         }
 
@@ -39,6 +43,10 @@
                     y = element.Y + int.Parse(request.YOffset);
                 }
 
+                this.overlay.Clear();
+                this.overlay.Target = new Point(x, y);
+                this.overlay.ShowAndWait(session.Capabilities.OverlayTargetDelay);
+
                 this.mouse.MoveTo(x, y);
             }
             else
@@ -46,6 +54,11 @@
                 // relative to current position of the mouse
                 int x = int.Parse(request.XOffset);
                 int y = int.Parse(request.YOffset);
+
+                Point pos = this.mouse.Position;
+                this.overlay.Clear();
+                this.overlay.Target = new Point(pos.X + x, pos.Y + y);
+                this.overlay.ShowAndWait(session.Capabilities.OverlayTargetDelay);
 
                 this.mouse.Move(x, y);
             }

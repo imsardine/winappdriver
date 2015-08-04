@@ -43,8 +43,16 @@ namespace WinAppDriver
         public string CloseCommand { get; set; }
 
         [DefaultValue(50)]
-        [JsonProperty("keystrokeDelay")]
+        [JsonProperty("keystrokeDelay", DefaultValueHandling = DefaultValueHandling.Populate)]
         public int KeystrokeDelay { get; set; }
+
+        [DefaultValue(500)]
+        [JsonProperty("overlayHighlightDelay", DefaultValueHandling = DefaultValueHandling.Populate)]
+        public int OverlayHighlightDelay { get; set; }
+
+        [DefaultValue(50)]
+        [JsonProperty("overlayTargetDelay", DefaultValueHandling = DefaultValueHandling.Populate)]
+        public int OverlayTargetDelay { get; set; }
 
         [DefaultValue(ChangeBuildStrategy.Reinstall)]
         [JsonProperty("changeBuildStrategy")]

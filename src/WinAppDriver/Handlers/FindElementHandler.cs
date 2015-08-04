@@ -58,7 +58,7 @@ namespace WinAppDriver.Handlers
             this.overlay.Clear();
             this.overlay.ContextElement = context;
             this.overlay.HighlightedElement = element;
-            this.overlay.Show();
+            this.overlay.ShowAndWait(session.Capabilities.OverlayHighlightDelay);
 
             if (element == null)
             {

@@ -24,7 +24,7 @@
 
             this.overlay.Clear();
             this.overlay.HighlightedElement = element;
-            this.overlay.Show();
+            this.overlay.ShowAndWait(session.Capabilities.OverlayHighlightDelay);
 
             int id = session.AddUIElement(element.AutomationElement);
             return new Dictionary<string, string> { { "ELEMENT", id.ToString() } };

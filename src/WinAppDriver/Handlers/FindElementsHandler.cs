@@ -59,7 +59,7 @@
             this.overlay.Clear();
             this.overlay.ContextElement = context;
             this.overlay.HighlightedElements = elements;
-            this.overlay.Show();
+            this.overlay.ShowAndWait(session.Capabilities.OverlayHighlightDelay);
 
             var list = new List<Dictionary<string, string>>();
             foreach (IElement element in elements)

@@ -17,6 +17,6 @@
 
         void Clear();
 
-        void Show();
+        void ShowAndWait(int delay);
     }
 }

@@ -70,15 +70,20 @@
             this.Target = null;
         }
 
-        public void Show()
+        public void ShowAndWait(int delay)
         {
+            if (delay == 0)
+            {
+                return;
+            }
+
             this.form.Invoke(new Action(delegate()
             {
                 this.form.Invalidate();
                 this.form.Show();
             }));
 
-            Thread.Sleep(1500);
+            Thread.Sleep(delay);
 
             this.form.Invoke(new Action(delegate()
             {

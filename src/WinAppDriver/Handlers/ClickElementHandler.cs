@@ -33,7 +33,7 @@ namespace WinAppDriver.Handlers
 
             this.overlay.Clear();
             this.overlay.Target = new Point(x, y);
-            this.overlay.Show();
+            this.overlay.ShowAndWait(session.Capabilities.OverlayTargetDelay);
 
             this.mouse.MoveTo(x, y);
             this.mouse.Click(MouseButton.Left);

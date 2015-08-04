@@ -1,9 +1,12 @@
 ﻿namespace WinAppDriver.UI
 {
+    using System.Drawing;
     using System.Windows.Input;
 
     internal interface IMouse
     {
+        Point Position { get; }
+
         void Click(MouseButton button);
 
         void DoubleClick();
