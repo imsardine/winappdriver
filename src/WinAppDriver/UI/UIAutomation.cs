@@ -252,11 +252,21 @@ namespace WinAppDriver.UI
                 "bounds",
                 string.Format("[{0},{1}][{2},{3}]", element.X, element.Y, element.Width, element.Height));
 
-            var child = walker.GetFirstChild(parent);
-            while (child != null)
+            var node = walker.GetFirstChild(parent);
+            var children = new List<AutomationElement>();
+            while (node != null)
             {
-                this.WalkTree(child, walker, writer, elements);
-                child = walker.GetNextSibling(child);
+                this.WalkTree(node, walker, writer, elements);
+                children.Add(node);
+                node = walker.GetNextSibling(node);
+
+                // GetNextSibling may recursively return the first child again.
+                if (node != null && children.Contains(node))
+                {
+                    logger.Warn("Next sibling node causes a loop. STOP!");
+                    node = null;
+                    break;
+                }
             }
 
             writer.WriteEndElement();
