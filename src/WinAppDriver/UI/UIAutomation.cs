@@ -2,6 +2,7 @@ namespace WinAppDriver.UI
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
     using System.Windows.Automation;
     using System.Xml;
@@ -57,7 +58,23 @@ namespace WinAppDriver.UI
         {
             get
             {
-                return this.elementFactory.GetElement(AutomationElement.FocusedElement);
+                // AutomationElement.FocusedElement may temporarily return null.
+                var stopwatch = new Stopwatch();
+                stopwatch.Start();
+
+                AutomationElement element = null;
+                do
+                {
+                    element = AutomationElement.FocusedElement;
+                }
+                while (element == null && stopwatch.ElapsedMilliseconds <= 3000);
+
+                if (element == null)
+                {
+                    throw new WinAppDriverException("There is no focused element available.");
+                }
+
+                return this.elementFactory.GetElement(element);
             }
         }
 
@@ -69,7 +86,7 @@ namespace WinAppDriver.UI
         public AutomationElement GetFocusedWindowOrRoot()
         {
             var walker = TreeWalker.ContentViewWalker;
-            var node = AutomationElement.FocusedElement;
+            var node = this.FocusedElement.AutomationElement;
             var parent = node;
 
             while (parent != AutomationElement.RootElement)
