@@ -32,7 +32,7 @@
         {
             get
             {
-                // "Win32", "WinForm", "DirectUI", "XAML", "WPF", etc.
+                // "Win32", "WinForm", "Silverlight", "DirectUI", "XAML", "WPF", etc.
                 return this.Info.FrameworkId;
             }
         }
