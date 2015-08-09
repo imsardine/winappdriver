@@ -41,6 +41,11 @@
             get { return this.capabilities; }
         }
 
+        public string StatesDir
+        {
+            get { return Path.Combine(this.context.GetAppWorkingDir(this), "States"); }
+        }
+
         public IPackageInstaller Installer
         {
             get
@@ -91,7 +96,7 @@
             ps.AddCommand("Remove-AppxPackage");
             ps.AddArgument(this.PackageFullName);
             ps.Invoke();
-            this.utils.DeleteDirectory(this.InitialStatesDir);
+            this.utils.DeleteDirectoryIfExists(this.StatesDir);
         }
 
         public bool IsInstalled()
@@ -118,21 +123,26 @@
             api.TerminateAllProcesses(this.PackageFullName);
         }
 
-        public void BackupInitialStates()
+        public bool BackupInitialStates(bool overwrite)
         {
-            this.utils.CopyDirectory(this.PackageFolderDir + @"\Settings", this.InitialStatesDir + @"\Settings");
-            this.utils.CopyDirectory(this.PackageFolderDir + @"\LocalState", this.InitialStatesDir + @"\LocalState");
+            if (this.utils.DirectoryExists(this.StatesDir) && !overwrite)
+            {
+                return false;
+            }
+
+            if (overwrite)
+            {
+                this.utils.DeleteDirectoryIfExists(this.StatesDir);
+            }
+
+            this.utils.CopyDirectoryAndSecurity(this.PackageFolderDir, this.StatesDir);
+            return true;
         }
 
         public void RestoreInitialStates()
         {
-            this.utils.CopyDirectory(this.InitialStatesDir + @"\Settings", this.PackageFolderDir + @"\Settings");
-            this.utils.CopyDirectory(this.InitialStatesDir + @"\LocalState", this.PackageFolderDir + @"\LocalState");
-        }
-
-        private string InitialStatesDir
-        {
-            get { return Path.Combine(this.context.GetAppWorkingDir(this), "States"); }
+            var src = Path.Combine(this.StatesDir, Path.GetFileName(this.PackageFolderDir));
+            this.utils.CopyDirectoryAndSecurity(src, Path.GetDirectoryName(this.PackageFolderDir));
         }
 
         private AppInfo GetInstalledAppInfo()

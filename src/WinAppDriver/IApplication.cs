@@ -6,6 +6,8 @@
 
         Capabilities Capabilities { get; }
 
+        string StatesDir { get; }
+
         IPackageInstaller Installer { get; }
 
         bool IsInstalled();
@@ -14,7 +16,7 @@
 
         void Terminate();
 
-        void BackupInitialStates();
+        bool BackupInitialStates(bool overwrite);
 
         void RestoreInitialStates();
 

@@ -11,9 +11,15 @@
     {
         string ExpandEnvironmentVariables(string input);
 
-        void CopyDirectory(string source, string destination);
+        bool DirectoryExists(string path);
 
-        void DeleteDirectory(string source);
+        void CopyDirectoryAndSecurity(string src, string dir);
+
+        void CopyFileAndSecurity(string src, string dir);
+
+        bool CreateDirectoryIfNotExists(string path);
+
+        bool DeleteDirectoryIfExists(string path);
 
         string GetFileMD5(string filePath);
 
@@ -31,62 +37,97 @@
             return Environment.ExpandEnvironmentVariables(input);
         }
 
-        public void CopyDirectory(string sourcePath, string destinationPath)
+        public bool DirectoryExists(string path)
         {
-            if (Directory.Exists(sourcePath))
+            return Directory.Exists(path);
+        }
+
+        public void CopyDirectoryAndSecurity(string src, string dir)
+        {
+            var dest = Path.Combine(dir, Path.GetFileName(src));
+            logger.Debug("Copy directory (and security) from \"{0}\" to \"{1}\".", src, dest);
+
+            this.DeleteDirectoryIfExists(dest);
+            this.CreateDirectoryIfNotExists(dest);
             {
-                DirectoryInfo sourceInfo = new DirectoryInfo(sourcePath);
-                DirectoryInfo destinationInfo = new DirectoryInfo(destinationPath);
-                DirectoryInfo[] sourceSubFolders = sourceInfo.GetDirectories();
-                FileInfo[] sourceFiles = sourceInfo.GetFiles();
+                var security = Directory.GetAccessControl(src);
+                security.SetAccessRuleProtection(true, true);
+                Directory.SetAccessControl(dest, security);
+            }
 
-                if (!sourceInfo.Exists)
-                {
-                    throw new DirectoryNotFoundException(
-                        "Source directory does not exist or could not be found: "
-                        + sourcePath);
-                }
+            foreach (var file in Directory.GetFiles(src))
+            {
+                this.CopyFileAndSecurity(file, dir);
+            }
 
-                if (Directory.Exists(destinationPath))
-                {
-                    Directory.Delete(destinationPath, true);
-                }
-
-                Directory.CreateDirectory(destinationPath);
-
-                // Copy directory security
-                {
-                    var security = sourceInfo.GetAccessControl();
-                    security.SetAccessRuleProtection(true, true);
-                    destinationInfo.SetAccessControl(security);
-                }
-
-                logger.Debug("DCH: Directory Copy Begin");
-                foreach (FileInfo sourceFile in sourceFiles)
-                {
-                    string destinationFilePath = Path.Combine(destinationPath, sourceFile.Name);
-                    sourceFile.CopyTo(destinationFilePath, false);
-
-                    // Copy file security
-                    var security = sourceFile.GetAccessControl();
-                    security.SetAccessRuleProtection(true, true);
-                    File.SetAccessControl(destinationFilePath, security);
-                }
-
-                foreach (DirectoryInfo sourceSubFolder in sourceSubFolders)
-                {
-                    string temppath = Path.Combine(destinationPath, sourceSubFolder.Name);
-                    this.CopyDirectory(sourceSubFolder.FullName, temppath);
-                }
+            foreach (var subdir in Directory.GetDirectories(src))
+            {
+                this.CopyDirectoryAndSecurity(subdir, dest);
             }
         }
 
-        public void DeleteDirectory(string sourcePath)
+        public void CopyFileAndSecurity(string src, string dir)
         {
-            if (Directory.Exists(sourcePath))
+            var dest = Path.Combine(dir, Path.GetFileName(src));
+            logger.Debug("Copy file (and security) from \"{0}\" to \"{1}\".", src, dest);
+
+            File.Copy(src, dest, true);
+
+            var security = File.GetAccessControl(src);
+            security.SetAccessRuleProtection(true, true);
+            File.SetAccessControl(dest, security);
+        }
+
+        public bool CreateDirectoryIfNotExists(string path)
+        {
+            if (this.DirectoryExists(path))
             {
-                DirectoryInfo sourceInfo = new DirectoryInfo(sourcePath);
-                sourceInfo.Delete(true);
+                return false;
+            }
+            else
+            {
+                Directory.CreateDirectory(path);
+                return true;
+            }
+        }
+
+        public bool DeleteDirectoryIfExists(string path)
+        {
+            if (this.DirectoryExists(path))
+            {
+                foreach (var subdir in Directory.GetDirectories(path))
+                {
+                    this.DeleteDirectoryIfExists(subdir);
+                }
+
+                foreach (var file in Directory.GetFiles(path))
+                {
+                    logger.Debug("Delete file: {0}", file);
+                    File.Delete(file);
+                }
+
+                logger.Debug("Delete directory: {0}", path);
+
+                try
+                {
+                    Directory.Delete(path);
+                }
+                catch (IOException e)
+                {
+                    // Seems like a timing issue that the built-in Directory.Delete(path, true)
+                    // did not take into account.
+                    logger.Warn("IOException raised while deleting the directory: {0} ({1})", path, e.Message);
+                    logger.Debug("Sleep for a while (2s), and try again...");
+
+                    System.Threading.Thread.Sleep(2000);
+                    Directory.Delete(path);
+                }
+
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
@@ -111,10 +152,10 @@
             while (retryCounter > 0)
             {
                 retryCounter--;
-                
+
                 // Download the Web resource and save it into temp folder.
                 myWebClient.DownloadFile(webResource, storeFileName);
- 
+
                 string checksumActual = this.GetFileMD5(storeFileName);
                 if (checksum != null && checksum != this.GetFileMD5(storeFileName))
                 {

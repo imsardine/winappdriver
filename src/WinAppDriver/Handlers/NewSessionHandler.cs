@@ -73,7 +73,7 @@ namespace WinAppDriver.Handlers
                             // reset strategy is irrelevant here
                             app.Uninstall();
                             app.Installer.Install();
-                            app.BackupInitialStates();
+                            app.BackupInitialStates(true);
                         }
                         else if (caps.ChangeBuildStrategy == ChangeBuildStrategy.Upgrade)
                         {
@@ -82,7 +82,7 @@ namespace WinAppDriver.Handlers
                             {
                                 app.RestoreInitialStates();
                                 app.Installer.Install();
-                                app.BackupInitialStates();
+                                app.BackupInitialStates(true);
                             }
                         }
                     }
@@ -100,7 +100,7 @@ namespace WinAppDriver.Handlers
                             app.Terminate();
                             app.Uninstall();
                             app.Installer.Install();
-                            app.BackupInitialStates();
+                            app.BackupInitialStates(true);
                         }
                     }
                 }
@@ -114,7 +114,10 @@ namespace WinAppDriver.Handlers
                     if (caps.ResetStrategy == ResetStrategy.Fast)
                     {
                         app.Terminate();
-                        app.RestoreInitialStates();
+                        if (!app.BackupInitialStates(false))
+                        {
+                            app.RestoreInitialStates();
+                        }
                     }
                 }
             }
@@ -127,7 +130,7 @@ namespace WinAppDriver.Handlers
                         app.DriverAppID);
 
                     app.Installer.Install();
-                    app.BackupInitialStates();
+                    app.BackupInitialStates(true);
                 }
                 else
                 {

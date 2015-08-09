@@ -1,6 +1,5 @@
 ﻿namespace WinAppDriver.Desktop
 {
-    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
@@ -89,24 +88,35 @@
             }
         }
 
-        public void BackupInitialStates()
+        public bool BackupInitialStates(bool overwrite)
         {
             var command = this.capabilities.BackupStatesCommand;
-            if (command != null)
+            if (command == null || (this.utils.DirectoryExists(this.StatesDir) && !overwrite))
             {
-                int exitCode;
-                this.TriggerCustomAction(command, null, out exitCode);
+                return false;
             }
+
+            var envs = new Dictionary<string, string>();
+            this.PrepareStatesDir(envs, overwrite);
+
+            int exitCode; // TODO throw exception and delete the directory
+            this.TriggerCustomAction(command, envs, out exitCode);
+            return true;
         }
 
         public void RestoreInitialStates()
         {
             var command = this.capabilities.RestoreStatesCommand;
-            if (command != null)
+            if (command == null || !this.utils.DirectoryExists(this.StatesDir))
             {
-                int exitCode;
-                this.TriggerCustomAction(command, null, out exitCode);
+                return;
             }
+
+            var envs = new Dictionary<string, string>();
+            this.PrepareStatesDir(envs, false);
+
+            int exitCode; // TODO throw exception and delete the directory
+            this.TriggerCustomAction(command, envs, out exitCode);
         }
 
         public void Uninstall()
@@ -131,11 +141,6 @@
         public Process TriggerCustomAction(string command, IDictionary<string, string> envs)
         {
             envs = envs ?? new Dictionary<string, string>();
-
-            // make sure the states dir is available to external programs.
-            var statesDir = Directory.CreateDirectory(this.StatesDir);
-            envs.Add("WinAppDriverStatesDir", statesDir.FullName);
-
             return this.utils.Execute(command, envs);
         }
 
@@ -146,6 +151,19 @@
 
             waitExitCode = process.ExitCode;
             return process;
+        }
+
+        private void PrepareStatesDir(IDictionary<string, string> envs, bool overwrite)
+        {
+            var dir = this.StatesDir;
+
+            if (overwrite)
+            {
+                this.utils.DeleteDirectoryIfExists(dir);
+            }
+
+            this.utils.CreateDirectoryIfNotExists(dir);
+            envs.Add("WINAPPDRIVER_STATES_DIR", dir);
         }
     }
 }
