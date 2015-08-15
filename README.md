@@ -1,51 +1,22 @@
-WinAppDriver - WebDriver for Windows Applications
-=================================================
+# WinAppDriver - WebDriver for Windows Applications
 
-WinAppDriver is a [WebDriver implementation](//github.com/imsardine/winappdriver/wiki/Protocol-Implementation) for Windows applications, including [desktop applications](//github.com/imsardine/winappdriver/wiki/Desotop-Applications) and [universal apps](//github.com/imsardine/winappdriver/wiki/Universal-Apps) (formerly known as store apps, modern UI apps, or Metro-style apps). Support of [CEF-based desktop applications](//github.com/imsardine/winappdriver/wiki/Hybrid-Desktop-Applications) and [Windows Phone apps](//github.com/imsardine/winappdriver/wiki/Windows-Phone-Apps) is also planned.
+WinAppDriver is a GUI test automation library for use with Windows applications, and technically it is a [WebDriver implementation](https://github.com/imsardine/winappdriver/wiki/Protocol-Implementation) for Windows applications.
 
-Give it a try, and your feeback is appreciated.
+In the beginning, it supports only [store apps](https://github.com/imsardine/winappdriver/wiki/Store-Apps), and then the support for [traditional desktop application](https://github.com/imsardine/winappdriver/wiki/Desktop-Applications) is added. As the name suggests, it aims for being a single tool for test automation of all kinds of Windows applications, therefore the support for [CEF-based desktop applications](https://github.com/imsardine/winappdriver/wiki/CEF-Based-Applications) and [Windows Phone apps](https://github.com/imsardine/winappdriver/wiki/Phone-Apps) are planned as well.
 
-##Getting Started
+**Give it a try! To get started, follow the instructions described in [Getting Started](https://github.com/imsardine/winappdriver/wiki/Getting-Started), and your [feedback](https://github.com/imsardine/winappdriver/issues) is highly appreciated.**
 
-###Install WinAppDriver:
+Hope that this tool will make our life more easier if you are asked to implement automated test against Windows applications.
 
- 1. [Download](https://github.com/imsardine/winappdriver/releases/download/v0.1/WinAppDriverInstaller.msi) the installer and execute it. A desktop shortcut will be created for launching _WinAppDriver Server_.
+## Documentation
 
- 2. Launch the server, and it listens on port 4444 on all addresses.
+In addition to [wiki](https://github.com/imsardine/winappdriver/wiki), Here are some documents/slides:
 
-Then you can control the application under test (or even whole desktop) with any [WebDriver language bindings](http://docs.seleniumhq.org/download/#client-drivers) you prefer. Several [desired capabilities](//github.com/imsardine/winappdriver/wiki/Desired-Capabilities) could be used to how the server behaves for a specific session.
-
-###Quick Start
-
-Take whole desktop as an example:
-
-(Python)
-```python
-from selenium.webdriver import Remote, DesiredCapabilities
-
-desired_caps = {}
-driver = Remote('http://your-winappdriver-server:4444/wd/hub', desired_caps)
-
-driver.find_element_by_id('username').send_keys('your-username')
-driver.find_element_by_id('password').send_keys('your-password')
-driver.find_element_by_id('signin').click()
-```
-
-TBD: C#, Java, Ruby
-
-Here are other scenarios supported by WinAppDriver:
-
- * [Whole Desktop](//github.com/imsardine/winappdriver/wiki/Whole-Desktop) (for more details)
- * [Desktop Applications](//github.com/imsardine/winappdriver/wiki/Desotop-Applications) ([already installed?](//github.com/imsardine/winappdriver/wiki/Desotop-Applications-Already-Installed))
- * [Universal Apps](//github.com/imsardine/winappdriver/wiki/Universal-Apps) ([already installed?](//github.com/imsardine/winappdriver/wiki/Universal-Apps-Already-Installed))
-
-##Documentation
-
-In addition to [wiki](//github.com/imsardine/winappdriver/wiki), Here are some documents/slides:
-
- * [Windows Store Apps Test Automation](http://www.slideshare.net/jeremykao92/winappdriver-windows-store-apps-test-automation)
- * [WinAppDriver Developemnt](http://www.slideshare.net/jeremykao92/winappdriver-development)
+ * [WinAppDriver - Drive Windows Applications Using Selenium (GTAC 2015 Submission)](https://www.youtube.com/watch?v=OyjaU2d63Kw) (Aug 10, 2015)
+ * [WinAppDriver Development](http://www.slideshare.net/jeremykao92/winappdriver-development) (Dec 17, 2014)
+ * [Windows Store Apps Test Automation](http://www.slideshare.net/jeremykao92/winappdriver-windows-store-apps-test-automation) (Dec 11, 2014)
 
 ##License
 
 WinAppDriver is licensed under MIT. Refer to [LICENSE](LICENSE) for more information.
+
