@@ -113,8 +113,36 @@
 
         public void Activate()
         {
-            // TODO thorw exception if needed
-            Process.Start("ActivateStoreApp", this.AppUserModelId);
+            logger.Info(
+                "Activate the store app; current working directory = [{0}], " +
+                "AppUserModelID = [{1}].",
+                Environment.CurrentDirectory, this.AppUserModelId);
+
+            var info = new ProcessStartInfo(
+                Path.Combine(Environment.CurrentDirectory, "ActivateStoreApp.exe"),
+                this.AppUserModelId);
+            info.UseShellExecute = false;
+            info.RedirectStandardOutput = true;
+            info.RedirectStandardError = true;
+
+            var process = Process.Start(info);
+            logger.Debug("PID of ActivateStoreApp.exe = {0}.", process.Id);
+            process.WaitForExit();
+
+            if (process.ExitCode == 0)
+            {
+                logger.Debug("STDOUT = [{0}].", process.StandardOutput.ReadToEnd());
+            }
+            else
+            {
+                string msg = string.Format(
+                    "Error occurred while activating the store app; " +
+                    "code = {0}, STDOUT = [{1}], STDERR = [{2}].",
+                    process.ExitCode,
+                    process.StandardOutput.ReadToEnd(),
+                    process.StandardError.ReadToEnd());
+                throw new WinAppDriverException(msg);
+            }
         }
 
         public void Terminate()

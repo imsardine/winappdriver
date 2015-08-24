@@ -117,9 +117,9 @@
                     // Seems like a timing issue that the built-in Directory.Delete(path, true)
                     // did not take into account.
                     logger.Warn("IOException raised while deleting the directory: {0} ({1})", path, e.Message);
-                    logger.Debug("Sleep for a while (2s), and try again...");
+                    logger.Debug("Sleep for a while (5s), and try again...");
 
-                    System.Threading.Thread.Sleep(2000);
+                    System.Threading.Thread.Sleep(5000);
                     Directory.Delete(path);
                 }
 
