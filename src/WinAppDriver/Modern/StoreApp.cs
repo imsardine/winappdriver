@@ -127,7 +127,7 @@
 
             var process = Process.Start(info);
             logger.Debug("PID of ActivateStoreApp.exe = {0}.", process.Id);
-            process.WaitForExit(5 * 1000);
+            process.WaitForExit();
 
             if (process.ExitCode == 0)
             {
