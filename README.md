@@ -12,6 +12,7 @@ Hope that this tool will make our life more easier if you are asked to implement
 
 In addition to [wiki](https://github.com/imsardine/winappdriver/wiki), Here are some documents/slides:
 
+ * [WinAppDriver - 用 Selenium 驅動 Windows 應用程式 (COSCUP 2015)](https://docs.google.com/presentation/d/1ci4eLAee2h1LuTgqkPUmWZHkd0XemvGeIUcc3tlbq8A/edit?usp=sharing) (Aug 16, 2015)
  * [WinAppDriver - Drive Windows Applications Using Selenium (GTAC 2015 Submission)](https://www.youtube.com/watch?v=OyjaU2d63Kw) (Aug 10, 2015)
  * [WinAppDriver Development](http://www.slideshare.net/jeremykao92/winappdriver-development) (Dec 17, 2014)
  * [Windows Store Apps Test Automation](http://www.slideshare.net/jeremykao92/winappdriver-windows-store-apps-test-automation) (Dec 11, 2014)
