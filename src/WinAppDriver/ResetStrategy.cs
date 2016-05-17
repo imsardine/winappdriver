@@ -14,6 +14,9 @@
         Full,
 
         [EnumMember(Value = "noReset")]
-        No
+        No,
+
+        [EnumMember(Value = "skipActivate")]
+        SkipActivate
     }
 }
