@@ -21,8 +21,41 @@
 
         public Point Position
         {
-            get { return System.Windows.Forms.Cursor.Position; }
-            private set { System.Windows.Forms.Cursor.Position = value; }
+            get
+            {
+                return System.Windows.Forms.Cursor.Position;
+            }
+
+            private set
+            {
+                Point normalizedXY = AdjustXYToScreen(value.X, value.Y);
+
+                INPUT input = new INPUT
+                {
+                    type = (int)INPUTTYPE.MOUSE,
+                    u = new InputUnion
+                    {
+                        mi = new MOUSEINPUT
+                        {
+                            dx = normalizedXY.X,
+                            dy = normalizedXY.Y,
+                            mouseData = 0,
+                            dwFlags = (uint)(MOUSEEVENTF.MOVE | MOUSEEVENTF.ABSOLUTE | MOUSEEVENTF.VIRTUALDESK),
+                            time = 0,
+                            dwExtraInfo = new IntPtr(0),
+                        }
+                    }
+                };
+                this.winUser.SendInput(1, new INPUT[] { input }, Marshal.SizeOf(typeof(INPUT)));
+            }
+        }
+
+        public static Point AdjustXYToScreen(int x, int y)
+        {
+            Rectangle bounds = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
+            int x = (0xffff * x) / bounds.Width;
+            int y = (0xffff * y) / bounds.Height;
+            return new Point(x, y);
         }
 
         public void Click(MouseButton button)

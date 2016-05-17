@@ -15,6 +15,8 @@
 
         uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);
 
+        int GetSystemMetrics(int nIndex);
+
         IntPtr GetMessageExtraInfo();
 
         short VkKeyScan(char ch);
@@ -84,6 +86,7 @@
         MIDDLEDOWN = 0x0020,
         MIDDLEUP = 0x0040,
         ABSOLUTE = 0x8000,
+        VIRTUALDESK = 0x4000
     }
 
     [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed.")]

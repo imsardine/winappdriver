@@ -156,7 +156,11 @@ namespace WinAppDriver.Handlers
                 }
             }
 
+            if (caps.ResetStrategy != ResetStrategy.SkipActivate)
+            {
             app.Activate();
+            }
+
             session = this.sessionManager.CreateSession(app, caps);
 
             // TODO turn off IME, release all modifier keys
