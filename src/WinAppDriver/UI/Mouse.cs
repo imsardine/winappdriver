@@ -10,6 +10,8 @@
 
     internal class Mouse : IMouse
     {
+        private const int NormalizedMaximum = 0xFFFF;
+
         private static ILogger logger = Logger.GetLogger("WinAppDriver");
 
         private IWinUserWrap winUser;
@@ -28,7 +30,7 @@
 
             private set
             {
-                Point normalizedXY = AdjustXYToScreen(value.X, value.Y);
+                Point normalizedXY = this.NormalizeCoordinates(value.X, value.Y);
 
                 INPUT input = new INPUT
                 {
@@ -50,12 +52,11 @@
             }
         }
 
-        public static Point AdjustXYToScreen(int x, int y)
+        public Point NormalizeCoordinates(int x, int y)
         {
-            Rectangle bounds = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
-            int x = (0xffff * x) / bounds.Width;
-            int y = (0xffff * y) / bounds.Height;
-            return new Point(x, y);
+            int normalizedX = (NormalizedMaximum * x) / width;
+            int normalizedY = (NormalizedMaximum * y) / height;
+            return new Point(normalizedX, normalizedY);
         }
 
         public void Click(MouseButton button)

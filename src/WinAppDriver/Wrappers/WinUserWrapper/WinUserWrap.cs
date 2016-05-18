@@ -33,11 +33,6 @@
             return WinUserExtern.VkKeyScan(ch);
         }
 
-        public int GetSystemMetrics(int nIndex)
-        {
-            return WinUserExtern.GetSystemMetrics(nIndex);
-        }
-
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed.")]
         public bool SetForegroundWindow(IntPtr hWnd)
         {
@@ -66,9 +61,6 @@
             [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed.")]
             [DllImport("user32.dll", SetLastError = true)]
             public static extern bool SetForegroundWindow(IntPtr hWnd);
-
-            [DllImport("user32.dll", ExactSpelling = true, EntryPoint = "GetSystemMetrics", CharSet = CharSet.Auto)]
-            public static extern int GetSystemMetrics(int nIndex);
         }
     }
 }

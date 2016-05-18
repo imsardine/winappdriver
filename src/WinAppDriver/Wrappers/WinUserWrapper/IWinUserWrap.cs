@@ -15,8 +15,6 @@
 
         uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);
 
-        int GetSystemMetrics(int nIndex);
-
         IntPtr GetMessageExtraInfo();
 
         short VkKeyScan(char ch);
