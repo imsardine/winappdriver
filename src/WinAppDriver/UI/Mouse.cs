@@ -54,6 +54,8 @@
 
         public Point NormalizeCoordinates(int x, int y)
         {
+            var width = System.Windows.Forms.SystemInformation.VirtualScreen.Width;
+            var height = System.Windows.Forms.SystemInformation.VirtualScreen.Height;
             int normalizedX = (NormalizedMaximum * x) / width;
             int normalizedY = (NormalizedMaximum * y) / height;
             return new Point(normalizedX, normalizedY);
