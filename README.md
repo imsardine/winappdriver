@@ -17,7 +17,7 @@ In addition to [wiki](https://github.com/imsardine/winappdriver/wiki), Here are 
  * [WinAppDriver Development](http://www.slideshare.net/jeremykao92/winappdriver-development) (Dec 17, 2014)
  * [Windows Store Apps Test Automation](http://www.slideshare.net/jeremykao92/winappdriver-windows-store-apps-test-automation) (Dec 11, 2014)
 
-##License
+## License
 
 WinAppDriver is licensed under MIT. Refer to [LICENSE](LICENSE) for more information.
 
