@@ -84,6 +84,7 @@
         MIDDLEDOWN = 0x0020,
         MIDDLEUP = 0x0040,
         ABSOLUTE = 0x8000,
+        VIRTUALDESK = 0x4000
     }
 
     [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed.")]
